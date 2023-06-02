@@ -6,9 +6,36 @@ Reputation alias that handles reputation with organizations and groups. **Curren
 - Me (ShadowsStride)
 
 ## Current Plans:
-- The ability to add, modify, or remove organizations using server variables.
+- Update in-line code documentation
 
-## Code:
+## Help:
+In order to run this properly, you need to do the following:
+- Create a server variable for each organization (i.e. Renown)
+- Create a server variable containing each organization's name called `org_list`
+
+### Organization Server Variable
+This server variable uses a json in order to work properly. It uses the "name" property to identify the name of the organization. And it uses numbers to identify reward thresholds. Here is an example:
+```json
+{"name": "Renown", "10":["+1 Spell Focus", "+1 Shield", "10x10 Plot of Land"], "15": ["+1 Armor"], "20": ["+2 Spell Focus","+2 Shield", "10x20 Plot of Land"], "25": ["+2 Armor"], "30": ["+3 Spell Focus", "+3 Shield", "20x20 Plot of Land"], "35": ["+3 Armor"]}
+```
+
+For each "threshold," you need to have the key be a string and the value to be a list of strings. i.e. the threshold is 10 and the items you can get at reputation level 10 is Jelly Beans and Cotton Candy:
+
+```"10": ["Jelly Beans", "Cotton Candy"]```
+
+### Organization List Server Variable
+Thi server variable uses a json in order to work properly. You must use the svar name ***org_settings*** You can set the key values to be anything (as long there is no duplicates), but I recommend using numbers in ascending order (as strings). The values closer to the beginning of the json will be checked first. Here is an example:
+```json
+{"1": "Renown", "2": "uni_fed_settings", "3": "potato_uni_settings"}
+```
+
+For each organization name, you will need to have it match the name of the server variable you created up in [Organization Server Variable](#organization-server-variable). If you named the server variable for the Renowned as "RenRep" then you need to insert "RenRep" in the Organization List Server Variable.
+
+**UPDATING THIS SERVER VARIABLE**
+
+You will need to run `!svar org_settings` to copy over the previous settings before you update the server variable as it overwrites the existing data.
+
+## Source Code:
 
 ```py
 embed
