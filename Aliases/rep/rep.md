@@ -6,7 +6,7 @@ Reputation alias that handles reputation with organizations and groups. **Curren
 - Me (ShadowsStride)
 
 ## Current Plans:
-- The ability to add, modify, or remove organizations using a server variables.
+- The ability to add, modify, or remove organizations using server variables.
 
 ## Code:
 
