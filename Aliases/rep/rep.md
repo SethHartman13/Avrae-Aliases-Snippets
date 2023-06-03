@@ -6,7 +6,7 @@ Reputation alias that handles reputation with organizations and groups. **Curren
 - Me (ShadowsStride)
 
 ## Current Plans:
-- Update in-line code documentation
+- Nothing (for now)
 
 ## Help:
 In order to run this properly, you need to do the following:
@@ -56,10 +56,11 @@ def main(inputs) -> list:
         # Starts rewards list
         rewards = ["**Available redemption list:**"]
 
-        # If checking rep
+        # If checking rep/getting help
         if len(inputs) == 1:
             num = 0
 
+            # If they are needing help
             if rep_input == "help":
                 output = []
                 output.append(f"{name} needs help!")
@@ -128,33 +129,39 @@ def main(inputs) -> list:
         # For each organization, it will create iterations, then compare input against them
         for org_name in org_names:
 
-            
+            # Makes it so that the first organization found first is selected
             if repfound == 0:
+
+                # Creates all the valid iterations
                 initial_org_iterations = []
                 org_iterations = []
                 lst = []
                 lst[:] = org_name.lower()
 
-                for _ in range(len(org_name) + 1):
-                    initial_org_iterations.append(lst[:_])
 
+                for i in range(len(org_name) + 1):
+                    initial_org_iterations.append(lst[:i])
+
+                # So, what happens is it will create iterations like 'r' and 're'
+                # This removes the first two so that at least three letters are needed
                 initial_org_iterations.pop(0)
                 initial_org_iterations.pop(0)
 
+                # Puts the iterations into a single list.
                 for iteration in initial_org_iterations:
                     org_iterations.append("".join(iteration))
 
+                # If it does find an organization
                 if rep_input in org_iterations:
                     rep_input = org_name
                     repfound = 1
 
+                    # Pulls the dictionary and sets it as the dictionary to pull form
                     for dictionary in org_dictionaries:
                         if rep_input == dictionary["name"]:
                             global_dictionary = dictionary
                         else:
                             pass
-
-
 
                 else:
                     pass
@@ -162,8 +169,7 @@ def main(inputs) -> list:
             else:
                 pass
         
-
-
+        # If it does not find an organization
         if repfound == 0:
             error.append("Organization not found")
             rep_input = "Error"
@@ -200,13 +206,14 @@ def main(inputs) -> list:
 
         thresholds = []
 
+        # For each key that is below the current cc value
         for key in int_keys:
 
             if currentcc >= int(key):
                 thresholds.append(key)
 
+        # If there is at least 1 threshold breached, it will print out the rewards for that value
         if len(thresholds) > 0:
-
             for threshold in thresholds:
                 rewards.append(f"**{threshold} Points:**")
                 for item in global_dictionary[threshold]:
@@ -216,11 +223,13 @@ def main(inputs) -> list:
         else:
             rewards.append("None")
 
+        # Join together all the rewards into a string
         rewardstring = "\n".join(rewards)
     
     else:
         pass
 
+    # If there are no errors, then it writes out a title describing what the code did
     if len(error) == 0:
         if num >= 1:
             title = f"{name} adds {num} to their {desc}"
@@ -229,12 +238,13 @@ def main(inputs) -> list:
         else:
             title = f"{name} checks their {desc}"
 
+    # If there was an error, it writes out the errors
     else:
         title = f"{name} had following error(s) occur:"
         rewardstring = ", ".join(error)
         currentcc = "N/A"
 
-
+    # Handles outsputs
     output_list = []
     output_list.append(title)
     output_list.append(rewardstring)
@@ -242,7 +252,7 @@ def main(inputs) -> list:
 
     return output_list
 
-
+# Main function
 output = main(&ARGS&)
 
 title = output[0]
