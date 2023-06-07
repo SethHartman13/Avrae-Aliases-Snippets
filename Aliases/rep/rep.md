@@ -36,7 +36,7 @@ For each organization name, you will need to have it match the name of the serve
 You will need to run `!svar org_settings` to copy over the previous settings before you update the server variable as it overwrites the existing data.
 
 ## Changelog:
-6/6/2023 - Subaliases list and rewards have been created. Check the markdown files within the folders marked with their names for additional details.
+6/6/2023 - Subaliases [list](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/rep/list/list.md) and [rewards](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/rep/rewards/rewards.md) have been created. Check the markdown files within the folders marked with their names for additional details.
 
 ## Source Code:
 

@@ -1,0 +1,15 @@
+embed
+<drac2>
+
+# Grabs cvar
+ch = character()
+
+# Sets up output
+title = f"{name} needs help!"
+string = f"Please run `!help rep` instead"
+
+</drac2>
+
+-title "{{title}}"
+-f "{{string}}"
+-footer "!rep help | Updated 6/6/23 | ShadowsStride"
