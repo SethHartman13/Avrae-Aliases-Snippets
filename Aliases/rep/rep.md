@@ -10,7 +10,7 @@ Reputation alias that handles reputation with organizations and groups. **Curren
 
 ## Help:
 `!rep [organization] <#>`
-[]'s imply required argument, <>'s imply optional arguments
+[]'s imply required argument, <>'s imply optional argument
 
 In order to run this properly, you need to do the following:
 - Create a server variable for each organization (i.e. Renown)
