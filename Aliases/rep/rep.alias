@@ -77,8 +77,6 @@ def main(inputs) -> list:
         except:
             rep_input = "Error"
             error.append("svar org_list does not exist!")
-
-            testoutput = organization_list
             
     # If there have been no errors so far
     if len(error) == 0:

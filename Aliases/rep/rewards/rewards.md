@@ -1,93 +1,45 @@
-# Rep Alias
+# Rewards Subalias
 
-Reputation alias that handles reputation with organizations and groups. **Currently only supports organizations manually entered into the code**
+Subalias that lists out the rewards of the specified organization.
 
 ## Owner(s):
 - Me (ShadowsStride)
 
 ## Current Plans:
-- Move help command to a subalias
+- None
 
 ## Help:
-In order to run this properly, you need to do the following:
-- Create a server variable for each organization (i.e. Renown)
-- Create a server variable containing each organization's name called `org_list`
-
-### Organization Server Variable
-This server variable uses a json in order to work properly. It uses the "name" property to identify the name of the organization. And it uses numbers to identify reward thresholds. Here is an example:
-```json
-{"name": "Renown", "10":["+1 Spell Focus", "+1 Shield", "10x10 Plot of Land"], "15": ["+1 Armor"], "20": ["+2 Spell Focus","+2 Shield", "10x20 Plot of Land"], "25": ["+2 Armor"], "30": ["+3 Spell Focus", "+3 Shield", "20x20 Plot of Land"], "35": ["+3 Armor"]}
-```
-
-For each "threshold," you need to have the key be a string and the value to be a list of strings. i.e. the threshold is 10 and the items you can get at reputation level 10 is Jelly Beans and Cotton Candy:
-
-```"10": ["Jelly Beans", "Cotton Candy"]```
-
-### Organization List Server Variable
-Thi server variable uses a json in order to work properly. You must use the svar name ***org_settings*** You can set the key values to be anything (as long there is no duplicates), but I recommend using numbers in ascending order (as strings). The values closer to the beginning of the json will be checked first. Here is an example:
-```json
-{"1": "Renown", "2": "uni_fed_settings", "3": "potato_uni_settings"}
-```
-
-For each organization name, you will need to have it match the name of the server variable you created up in [Organization Server Variable](#organization-server-variable). If you named the server variable for the Renowned as "RenRep" then you need to insert "RenRep" in the Organization List Server Variable.
-
-**UPDATING THIS SERVER VARIABLE**
-
-You will need to run `!svar org_settings` to copy over the previous settings before you update the server variable as it overwrites the existing data.
+`!rep rewards [organization]` 
 
 ## Changelog:
-6/6/2023 - Subaliases list and rewards have been created. Check the markdown files within the folders marked with their names for additional details.
+6/6/2023 - Subalias created
 
 ## Source Code:
 
 ```py
 embed
 <drac2>
+# Grabs cvar and creates error list
 
-def main(inputs) -> list:
+def main(inputs:str) -> list:
 
-    # Grabs cvar and creates error list
     ch=character()
     error = []
 
     # Checks to see if it has the valid number of inputs
-    if len(inputs) == 1 or len(inputs) == 2:
+    if len(inputs) == 1:
 
         # Lowercases input
         rep_input = inputs[0].lower()
 
         # Starts rewards list
-        rewards = ["**Available redemption list:**"]
+        rewards = ["**Rewards:**"]
 
-        # If checking rep/getting help
-        if len(inputs) == 1:
-            num = 0
-
-            # If they are needing help
-            if rep_input == "help":
-                output = []
-                output.append(f"{name} needs help!")
-                output.append(f"Please run `!help rep` instead")
-                output.append("")
-
-                return output
-        
-        # If adding/subtracting from rep
-        else:
-            
-            # Checks to see if second argument is an integer
-            try:
-                int(inputs[1])
-            except "ValueError":
-                rep_input = "Error"
-                error.append("Integer expected in second argument")
-            else:
-                num = int(inputs[1])
 
     # If it does not have a valid number of inputs
     else:
         rep_input = "Error"
-        error.append("Expected 1 or 2 arguments")
+        error.append("Expected 1 argument")
 
     # Grabs the organization dictionary
     organization_dictionary = load_json(get_svar("org_settings"))
@@ -181,17 +133,8 @@ def main(inputs) -> list:
     else:
         pass
 
-    
     if len(error) == 0:
         org_name = global_dictionary["name"]
-        cc = f"Rep - {org_name}"
-        desc = f"reputation with {org_name}"
-
-        ch.create_cc_nx(cc, None, None, "none", "Number", None, None, cc, desc, 0)
-        ch.mod_cc(cc, num)
-
-        # Gets reputation amount
-        currentcc = ch.get_cc(cc)
 
         # Finds keys that are supposed to be integers
         int_keys = []
@@ -207,13 +150,11 @@ def main(inputs) -> list:
 
         thresholds = []
 
-        # For each key that is below the current cc value
+        # Pulls each key and puts them in the thresholds
         for key in int_keys:
+            thresholds.append(key)
 
-            if currentcc >= int(key):
-                thresholds.append(key)
-
-        # If there is at least 1 threshold breached, it will print out the rewards for that value
+        # Prints out rewards
         if len(thresholds) > 0:
             for threshold in thresholds:
                 rewards.append(f"**{threshold} Points:**")
@@ -230,26 +171,18 @@ def main(inputs) -> list:
     else:
         pass
 
-    # If there are no errors, then it writes out a title describing what the code did
     if len(error) == 0:
-        if num >= 1:
-            title = f"{name} adds {num} to their {desc}"
-        elif num <= -1:
-            title = f"{name} subtracts {abs(num)} from their {desc}"
-        else:
-            title = f"{name} checks their {desc}"
+        title = f"{name} checks the rewards of {org_name}"
 
     # If there was an error, it writes out the errors
     else:
         title = f"{name} had following error(s) occur:"
         rewardstring = ", ".join(error)
-        currentcc = "N/A"
 
     # Handles outputs
     output_list = []
     output_list.append(title)
     output_list.append(rewardstring)
-    output_list.append(f"**Current Rep: {currentcc}**")
 
     return output_list
 
@@ -258,11 +191,10 @@ output = main(&ARGS&)
 
 title = output[0]
 rewardstring = output[1]
-currentcc = output[2]
+
 </drac2>
 
 -title "{{title}}"
 -f "{{rewardstring}}"
--f "{{currentcc}}"
--footer "!rep [organization] [#] | Updated 6/2/23 | ShadowsStride"
+-footer "!rep rewards [organization] | Updated 6/6/23 | ShadowsStride"
 ```
