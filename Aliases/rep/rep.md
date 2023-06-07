@@ -241,7 +241,7 @@ def main(inputs) -> list:
         rewardstring = ", ".join(error)
         currentcc = "N/A"
 
-    # Handles outsputs
+    # Handles outputs
     output_list = []
     output_list.append(title)
     output_list.append(rewardstring)
