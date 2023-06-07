@@ -6,9 +6,12 @@ Reputation alias that handles reputation with organizations and groups. **Curren
 - Me (ShadowsStride)
 
 ## Current Plans:
-- Move help command to a subalias
+- None
 
 ## Help:
+`!rep [organization] <#>`
+[]'s imply required argument, <>'s imply optional arguments
+
 In order to run this properly, you need to do the following:
 - Create a server variable for each organization (i.e. Renown)
 - Create a server variable containing each organization's name called `org_list`
@@ -36,7 +39,9 @@ For each organization name, you will need to have it match the name of the serve
 You will need to run `!svar org_settings` to copy over the previous settings before you update the server variable as it overwrites the existing data.
 
 ## Changelog:
-6/6/2023 - Subaliases [list](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/rep/list/list.md) and [rewards](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/rep/rewards/rewards.md) have been created. Check the markdown files within the folders marked with their names for additional details.
+6/6/2023 - Subaliases [list](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/rep/list/list.md), [rewards](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/rep/rewards/rewards.md), and [help](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/rep/help/help.md) have been created. Check the markdown files within the folders marked with their names for additional details.
+
+6/6/2023 - Added notes to help, teaching optional versus required arguments.
 
 ## Source Code:
 
@@ -62,15 +67,6 @@ def main(inputs) -> list:
         # If checking rep/getting help
         if len(inputs) == 1:
             num = 0
-
-            # If they are needing help
-            if rep_input == "help":
-                output = []
-                output.append(f"{name} needs help!")
-                output.append(f"Please run `!help rep` instead")
-                output.append("")
-
-                return output
         
         # If adding/subtracting from rep
         else:
@@ -245,7 +241,7 @@ def main(inputs) -> list:
         rewardstring = ", ".join(error)
         currentcc = "N/A"
 
-    # Handles outputs
+    # Handles outsputs
     output_list = []
     output_list.append(title)
     output_list.append(rewardstring)
@@ -259,10 +255,12 @@ output = main(&ARGS&)
 title = output[0]
 rewardstring = output[1]
 currentcc = output[2]
+left_carrot = "<"
+
 </drac2>
 
 -title "{{title}}"
 -f "{{rewardstring}}"
 -f "{{currentcc}}"
--footer "!rep [organization] [#] | Updated 6/2/23 | ShadowsStride"
+-footer "!rep [organization] {{left_carrot}}#> | Updated 6/6/23 | ShadowsStride"
 ```

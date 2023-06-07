@@ -207,9 +207,11 @@ output = main(&ARGS&)
 title = output[0]
 rewardstring = output[1]
 currentcc = output[2]
+left_carrot = "<"
+
 </drac2>
 
 -title "{{title}}"
 -f "{{rewardstring}}"
 -f "{{currentcc}}"
--footer "!rep [organization] [#] | Updated 6/2/23 | ShadowsStride"
+-footer "!rep [organization] {{left_carrot}}#> | Updated 6/6/23 | ShadowsStride"
