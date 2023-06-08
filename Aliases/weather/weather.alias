@@ -1,0 +1,266 @@
+embed
+<drac2>
+
+def roll_dice(dice_type:str, baseline: int) -> list:
+    
+    # Makes and breaks apart the dice roll
+    roll_obj = vroll(dice_type)
+    if baseline == 0:
+        roll_string = f"{roll_obj.dice} = {roll_obj.total}"
+    else:
+        roll_string = f"{roll_obj.dice} + {baseline} = {baseline + roll_obj.total}"
+
+    return [roll_string, baseline + roll_obj.total]
+
+def to_celsius(degrees: int) -> float:
+    return round((degrees - 32) * (5/9), 1)
+
+def main(args: list) -> list:
+    error = []
+    seasons = ['Fall', 'Spring', 'Summer', 'Winter', 'Autumn']
+    weather_water_conditions = ["fog/mist", "light", "heavy", "overcast", "clear"]
+    weather_wind_conditions = ["light wind", "heavy wind", "gentle breeze", "none"]
+    
+
+    if len(args) > 0:
+
+        #try:
+
+        # Grab the settings dict
+        weather_settings_dict = load_json(get_svar("weather_settings"))
+        location_list = []
+        for value in weather_settings_dict.values():
+                location_list.append(value)
+
+        location_dictionaries = []
+
+        # Grabs the dictionaries for each of the locations
+        for location in location_list:
+            location_dictionaries.append(load_json(get_svar(location)))
+
+
+        #except:
+            #error.append(f"Error loading and reading a dictionary")
+        
+            
+        if len(error) == 0:
+
+
+            season_input = args[0].lower()
+
+            seasonfound = 0
+
+            # For each season, it will create iterations, then compare input against them
+            for season_name in seasons:
+
+                # Makes it so that the first organization found first is selected
+                if seasonfound == 0:
+
+                    # Creates all the valid iterations
+                    initial_season_iterations = []
+                    season_iterations = []
+                    lst = []
+                    lst[:] = season_name.lower()
+
+
+                    for i in range(len(season_name) + 1):
+                        initial_season_iterations.append(lst[:i])
+
+                    # So, what happens is it will create iterations like 'r' and 're'
+                    # This removes the first two so that at least three letters are needed
+                    initial_season_iterations.pop(0)
+                    initial_season_iterations.pop(0)
+
+                    # Puts the iterations into a single list.
+                    for iteration in initial_season_iterations:
+                        season_iterations.append("".join(iteration))
+
+                    # If it does find an organization
+                    if season_input in season_iterations:
+                        season_input = season_name
+                        seasonfound = 1
+                        if season_input == "Autumn":
+                            season_input = "Fall"
+                        else:
+                            pass
+
+                    else:
+                        pass
+
+                else:
+                    pass
+
+            # If it does not find an organization
+            if seasonfound == 0:
+                error.append("Season not found.")
+
+            else:
+                pass
+
+        else:
+            pass
+
+
+        if len(error) == 0:
+            results = []
+
+            for location_dictionary in location_dictionaries:
+
+                #try:
+                results.append(f"**{location_dictionary['name']}:**")
+                season_settings = location_dictionary[season_input]
+                temperature_roll_list = roll_dice(season_settings['temp_dice'], season_settings['temp_base'])
+                water_roll_list = roll_dice(season_settings['water_chance_dice'], 0)
+                wind_roll_list = roll_dice(season_settings['wind_chance_dice'], 0)
+
+                #except:
+                    #error.append("There was a problem rolling for a dictionary")
+
+
+
+                if len(error) == 0:
+
+
+                    #try:
+                    if temperature_roll_list[1] <= 32:
+                        freezing = 1
+                    else:
+                        freezing = 0
+
+                    results.append(f"{temperature_roll_list[0]} degrees fahrenheit ({to_celsius(temperature_roll_list[1])} degrees celsius)")
+                    results.append("")
+                    #except:
+                    #error.append(f"There was an error rolling temperature for {location_dictionary['name']}")
+
+                    if len(error) == 0:
+
+                        #try:
+                        for key in season_settings['water_roll_thresholds'].keys():
+                            if water_roll_list[1] >= int(key):
+                                water_result = season_settings['water_roll_thresholds'][key]
+                            else:
+                                pass
+
+                        if water_result.lower() in weather_water_conditions:
+                            
+                            if water_result.lower() == "heavy":
+                                water_rate = randint(5,20) / 10
+                                disadv = "Disadvantage on Wisdom (Perception) checks"
+                                
+                            elif water_result.lower() == "fog/mist":
+                                water_rate = 0
+                                disadv = "Disadvantage on sight-based Wisdom (Perception) checks"
+
+                            elif water_result.lower() == "light":
+                                water_rate = randint(1,3) / 10
+                                disadv = "None"
+
+                            else:
+                                water_rate = 0
+                                disadv = "None"
+
+                            if water_result.lower() == "light" or water_result.lower() == "heavy":
+                                if freezing == 0:
+                                    water_result = f"`{water_result} Rain`  {water_rate} in/hr ({round(water_rate * 25.4,1)} mm/hr)"
+                                else:
+                                    water_result = f"`{water_result} Snow`  {water_rate} in/hr ({round(water_rate * 25.4,1)} mm/hr)"
+
+                            else:
+                                water_result = f"`{water_result}`"                                
+
+                            results.append(f"{water_roll_list[0]} {water_result}")
+
+                            if disadv != "None":
+                                results.append(f"**{disadv}**")
+                                results.append("")
+
+                            else:
+                                results.append("")
+
+                        else:
+                            error.append(f"Invalid moisture type for {location_dictionary['name']}")
+
+                        #except:
+                            #error.append(f"There was an error rolling moisture for {location_dictionary['name']}")
+
+                        if len(error) == 0:
+
+                            #try:
+                            for key in season_settings['wind_roll_thresholds'].keys():
+                                if wind_roll_list[1] >= int(key):
+                                    wind_result = season_settings['wind_roll_thresholds'][key]
+                                else:
+                                    pass
+                            if wind_result.lower() in weather_wind_conditions:
+
+                                if wind_result.lower() == "heavy wind":
+                                    wind_rate = randint(25,54)
+                                    wind_result = f"`{wind_result}`  {wind_rate} mph ({round(wind_rate * 1.60934, 1)} km/h)"
+                                    disadv = "Disadvantage on ranged weapon attacks"
+
+                                elif wind_result.lower() == "light wind":
+                                    wind_rate = randint(8,54)
+                                    wind_result = f"`{wind_result}`  {wind_rate} mph ({round(wind_rate * 1.60934, 1)} km/h)"
+                                    disadv = "None"
+
+                                elif wind_result.lower() == "gentle breeze":
+                                    wind_rate = randint(1,7)
+                                    wind_result = f"`{wind_result}`  {wind_rate} mph ({round(wind_rate * 1.60934, 1)} km/h)"
+                                    disadv = "None"
+
+                                else:
+                                    wind_result = f"`{wind_result}`"
+                                    disadv = "None"
+
+                                results.append(f"{wind_roll_list[0]} {wind_result}")
+
+                                if disadv != "None":
+                                    results.append(f"**{disadv}**")
+                                    results.append("")
+
+                                else:
+                                    results.append("")
+
+                            else:
+                                error.append(f"Invalid wind type for {location_dictionary['name']}")
+
+                            #except:
+                                #error.append(f"There was an error rolling wind for {location_dictionary['name']}")
+
+                        else:
+                            pass
+                    else:
+                        pass
+                else:
+                    pass
+
+                if len(error) == 0:
+                    results.append("")
+                else:
+                    pass
+        else:
+            pass
+    else:
+        error.append("You are missing the season argument")
+
+    if len(error) == 0:
+        title = "Daily weather report"
+        result_string = "\n".join(results)
+    else:
+        title = "Error running daily weather report"
+        error_string = '\n'.join(error)
+        result_string = f"Error(s):\n{error_string}"
+
+    return [title, result_string]
+
+
+output = main(&ARGS&)
+
+title = output[0]
+result_string = output[1]
+
+</drac2>
+
+-title "{{title}}"
+-f "{{result_string}}"
+-footer "!weath [season] | Updated 6/7/2023 | ShadowsStride"
