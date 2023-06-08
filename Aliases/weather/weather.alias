@@ -263,4 +263,5 @@ result_string = output[1]
 
 -title "{{title}}"
 -f "{{result_string}}"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/weather/image.png"
 -footer "!weath [season] | Updated 6/7/2023 | ShadowsStride"
