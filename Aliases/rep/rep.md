@@ -1,6 +1,6 @@
-# Rep Alias
+<h1>Rep Alias<img align="right" src="image.png" width="100px"></h1>
 
-Reputation alias that handles reputation with organizations and groups. **Currently only supports organizations manually entered into the code**
+Reputation alias that handles reputation with organizations and groups.
 
 ## Owner(s):
 - Me (ShadowsStride)
@@ -42,6 +42,8 @@ You will need to run `!svar org_settings` to copy over the previous settings bef
 6/6/2023 - Subaliases [list](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/rep/list/list.md), [rewards](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/rep/rewards/rewards.md), and [help](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/rep/help/help.md) have been created. Check the markdown files within the folders marked with their names for additional details.
 
 6/6/2023 - Added notes to help, teaching optional versus required arguments.
+
+6/7/2023 - Copyright notice and image added
 
 ## Source Code:
 
@@ -264,3 +266,15 @@ left_carrot = "<"
 -f "{{currentcc}}"
 -footer "!rep [organization] {{left_carrot}}#> | Updated 6/6/23 | ShadowsStride"
 ```
+
+## Copyright Notice
+
+Copyright 2023 Seth Hartman (aka ShadowsStride)
+
+All rights reserved.
+
+The code and images I own in this repository are protected by copyright law. Unauthorized use, reproduction, or distribution of this material is strictly prohibited. This includes, but is not limited to, copying large portions of code or uploading the code and images to any other platform or website without written consent.
+
+If you wish to use or reproduce any part of this repository, please contact ShadowsStride at shadowsstride@gmail.com for permission.
+
+Any infringement of copyright will result in legal action.
