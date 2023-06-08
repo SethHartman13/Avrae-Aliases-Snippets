@@ -14,7 +14,7 @@ Subalias that lists out the rewards of the specified organization.
 ## Changelog:
 6/6/2023 - Subalias created
 
-6/7/2023 - Copyright notice and image added
+6/8/2023 - Copyright notice and image added
 
 ## Source Code:
 
@@ -176,15 +176,22 @@ def main(inputs:str) -> list:
     if len(error) == 0:
         title = f"{name} checks the rewards of {org_name}"
 
+        try:
+            thumbnail = global_dictionary["imgurl"]
+        except:
+            thumbnail = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
+
     # If there was an error, it writes out the errors
     else:
         title = f"{name} had following error(s) occur:"
         rewardstring = ", ".join(error)
+        thumbnail = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
 
-    # Handles outputs
+    # Handles outsputs
     output_list = []
     output_list.append(title)
     output_list.append(rewardstring)
+    output_list.append(thumbnail)
 
     return output_list
 
@@ -193,12 +200,14 @@ output = main(&ARGS&)
 
 title = output[0]
 rewardstring = output[1]
+thumbnail = output[2]
 
 </drac2>
 
 -title "{{title}}"
 -f "{{rewardstring}}"
--footer "!rep rewards [organization] | Updated 6/6/23 | ShadowsStride"
+-thumb "{{thumbnail}}"
+-footer "!rep rewards [organization] | Updated 6/8/23 | ShadowsStride"
 ```
 
 ## Copyright Notice

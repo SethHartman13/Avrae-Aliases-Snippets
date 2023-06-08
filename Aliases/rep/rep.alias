@@ -187,17 +187,24 @@ def main(inputs) -> list:
         else:
             title = f"{name} checks their {desc}"
 
+        try:
+            thumbnail = global_dictionary["imgurl"]
+        except:
+            thumbnail = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
+
     # If there was an error, it writes out the errors
     else:
         title = f"{name} had following error(s) occur:"
         rewardstring = ", ".join(error)
         currentcc = "N/A"
+        thumbnail = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
 
     # Handles outputs
     output_list = []
     output_list.append(title)
     output_list.append(rewardstring)
     output_list.append(f"**Current Rep: {currentcc}**")
+    output_list.append(thumbnail)
 
     return output_list
 
@@ -207,6 +214,7 @@ output = main(&ARGS&)
 title = output[0]
 rewardstring = output[1]
 currentcc = output[2]
+thumbnail = output[3]
 left_carrot = "<"
 
 </drac2>
@@ -214,4 +222,5 @@ left_carrot = "<"
 -title "{{title}}"
 -f "{{rewardstring}}"
 -f "{{currentcc}}"
--footer "!rep [organization] {{left_carrot}}#> | Updated 6/6/23 | ShadowsStride"
+-thumb "{{thumbnail}}"
+-footer "!rep [organization] {{left_carrot}}#> | Updated 6/8/23 | ShadowsStride"

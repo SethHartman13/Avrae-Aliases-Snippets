@@ -14,7 +14,7 @@ Subalias that lists out all known organizations.
 ## Changelog:
 6/6/2023 - Subalias created
 
-6/7/2023 - Copyright notice and image added
+6/8/2023 - Copyright notice and image added
 
 ## Source Code:
 
@@ -63,7 +63,7 @@ def main() -> list:
         orgstring = "/n".join(org_names)
 
 
-    # Handles outputs
+    # Handles outsputs
     output_list = []
     output_list.append(title)
     output_list.append(orgstring)
@@ -80,7 +80,8 @@ orgstring = output[1]
 
 -title "{{title}}"
 -f "{{orgstring}}"
--footer "!rep list | Updated 6/6/23 | ShadowsStride"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
+-footer "!rep list | Updated 6/8/23 | ShadowsStride"
 ```
 
 ## Copyright Notice

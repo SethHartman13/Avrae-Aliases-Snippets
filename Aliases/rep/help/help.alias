@@ -12,4 +12,5 @@ string = f"Please run `!help rep` instead"
 
 -title "{{title}}"
 -f "{{string}}"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
 -footer "!rep help | Updated 6/6/23 | ShadowsStride"

@@ -19,7 +19,7 @@ In order to run this properly, you need to do the following:
 ### Organization Server Variable
 This server variable uses a json in order to work properly. It uses the "name" property to identify the name of the organization. And it uses numbers to identify reward thresholds. Here is an example:
 ```json
-{"name": "Renown", "10":["+1 Spell Focus", "+1 Shield", "10x10 Plot of Land"], "15": ["+1 Armor"], "20": ["+2 Spell Focus","+2 Shield", "10x20 Plot of Land"], "25": ["+2 Armor"], "30": ["+3 Spell Focus", "+3 Shield", "20x20 Plot of Land"], "35": ["+3 Armor"]}
+{"name": "Renown", "10":["+1 Spell Focus", "+1 Shield", "10x10 Plot of Land"], "15": ["+1 Armor"], "20": ["+2 Spell Focus","+2 Shield", "10x20 Plot of Land"], "25": ["+2 Armor"], "30": ["+3 Spell Focus", "+3 Shield", "20x20 Plot of Land"], "35": ["+3 Armor"], "imgurl": "www.someimage.png"}
 ```
 
 For each "threshold," you need to have the key be a string and the value to be a list of strings. i.e. the threshold is 10 and the items you can get at reputation level 10 is Jelly Beans and Cotton Candy:
@@ -43,7 +43,7 @@ You will need to run `!svar org_settings` to copy over the previous settings bef
 
 6/6/2023 - Added notes to help, teaching optional versus required arguments.
 
-6/7/2023 - Copyright notice and image added
+6/8/2023 - Copyright notice and image added
 
 ## Source Code:
 
@@ -237,17 +237,24 @@ def main(inputs) -> list:
         else:
             title = f"{name} checks their {desc}"
 
+        try:
+            thumbnail = global_dictionary["imgurl"]
+        except:
+            thumbnail = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
+
     # If there was an error, it writes out the errors
     else:
         title = f"{name} had following error(s) occur:"
         rewardstring = ", ".join(error)
         currentcc = "N/A"
+        thumbnail = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
 
     # Handles outputs
     output_list = []
     output_list.append(title)
     output_list.append(rewardstring)
     output_list.append(f"**Current Rep: {currentcc}**")
+    output_list.append(thumbnail)
 
     return output_list
 
@@ -257,6 +264,7 @@ output = main(&ARGS&)
 title = output[0]
 rewardstring = output[1]
 currentcc = output[2]
+thumbnail = output[3]
 left_carrot = "<"
 
 </drac2>
@@ -264,7 +272,8 @@ left_carrot = "<"
 -title "{{title}}"
 -f "{{rewardstring}}"
 -f "{{currentcc}}"
--footer "!rep [organization] {{left_carrot}}#> | Updated 6/6/23 | ShadowsStride"
+-thumb "{{thumbnail}}"
+-footer "!rep [organization] {{left_carrot}}#> | Updated 6/8/23 | ShadowsStride"
 ```
 
 ## Copyright Notice

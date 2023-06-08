@@ -14,7 +14,7 @@ Subalias that supplies help menu.
 ## Changelog:
 6/6/2023 - Subalias created
 
-6/7/2023 - Copyright notice and image added
+6/8/2023 - Copyright notice and image added
 
 ## Source Code:
 
@@ -33,6 +33,7 @@ string = f"Please run `!help rep` instead"
 
 -title "{{title}}"
 -f "{{string}}"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
 -footer "!rep help | Updated 6/6/23 | ShadowsStride"
 ```
 
