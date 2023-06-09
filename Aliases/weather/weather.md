@@ -37,17 +37,17 @@ For each season it uses the following properties:
 - temp_base (int): Base temperature
 - water_chance_die (str): Dice used to roll what moisture will be dropped (if any)
 - water_roll_thresholds(dict(str:str)): Thresholds that result in the moisture received. Here are the valid moisture conditions (heavy and light adapt to current temperature on wether it is rain or snow):
-- - Clear
-- - Overcast
-- - Fog/Mist
-- - Light
-- - Heavy
+    - Clear
+    - Overcast
+    - Fog/Mist
+    - Light
+    - Heavy
 - wind_chance_dice (str): Dice used to roll what wind will occur (if any)
 - wind_roll_thresholds(dict(str:str)): Thresholds that result in the wind conditions. Here are the valid wind conditions:
-- - None
-- - Gentle Breeze
-- - Light Wind
-- - Heavy Wind
+    - None
+    - Gentle Breeze
+    - Light Wind
+    - Heavy Wind
 
 **Note: Both water and wind thresholds must have a value at 1**
 
