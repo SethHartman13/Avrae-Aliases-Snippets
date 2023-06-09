@@ -32,7 +32,7 @@ Here is template that you can use:
 ```
 
 ### Organization List Server Variable
-The server variable uses a json in order to work properly. You must use the svar name ***org_settings*** You can set the key values to be anything (as long there is no duplicates), but I recommend using numbers in ascending order (as strings). The values closer to the beginning of the json will be checked first. Here is an example:
+This server variable uses a json in order to work properly. You must use the svar name ***org_settings*** You can set the key values to be anything (as long there is no duplicates), but I recommend using numbers in ascending order (as strings). The values closer to the beginning of the json will be checked first. Here is an example:
 ```json
 {"1": "Renown", "2": "uni_fed_settings", "3": "potato_uni_settings"}
 ```
