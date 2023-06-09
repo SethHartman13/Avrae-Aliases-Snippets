@@ -18,7 +18,7 @@ In order to run this properly, you need to do the following:
 This server variable uses a json in order to work properly. It uses the "name" property to identify the name of the location. Then it organizes the weather settings by season: Here is an example
 ```json
 {
-    "name": "Hael",
+    "name": "Haell",
     "Winter": { "temp_dice": "2d6", "temp_base": 60, "water_chance_dice": "1d20", "water_roll_thresholds": {"1":"Clear", "3": "Overcast", "5": "Fog/Mist", "8": "Light", "17": "Heavy"}, "wind_chance_dice": "1d20", "wind_roll_thresholds": {"1": "None", "4": "Gentle Breeze", "10": "Light Wind", "16": "Heavy Wind"}
     },
 
