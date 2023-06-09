@@ -14,10 +14,10 @@ Reputation alias that handles reputation with organizations and groups.
 
 In order to run this properly, you need to do the following:
 - Create a server variable for each organization (i.e. Renown)
-- Create a server variable containing each organization's name called `org_list`
+- Create a server variable containing the name of the svars for each organization called `org_list`
 
 ### Organization Server Variable
-This server variable uses a json in order to work properly. It uses the "name" property to identify the name of the organization. And it uses numbers to identify reward thresholds. Here is an example:
+This server variable uses a json in order to work properly. It uses the "name" property to identify the name of the organization. And it uses numbers to identify reward thresholds. It also has a place to put an url for an icon for the organization, if not filled out, it defaults to the icon shown in the top right corner of this markdown file. Here is an example:
 ```json
 {"name": "Renown", "10":["+1 Spell Focus", "+1 Shield", "10x10 Plot of Land"], "15": ["+1 Armor"], "20": ["+2 Spell Focus","+2 Shield", "10x20 Plot of Land"], "25": ["+2 Armor"], "30": ["+3 Spell Focus", "+3 Shield", "20x20 Plot of Land"], "35": ["+3 Armor"], "imgurl": "www.someimage.png"}
 ```
@@ -26,6 +26,11 @@ For each "threshold," you need to have the key be a string and the value to be a
 
 ```"10": ["Jelly Beans", "Cotton Candy"]```
 
+Here is template that you can use:
+```json
+{"name": "Name of org", "10":[""], "15": [""], "20": [""], "25": [""], "30": [""], "35": [""], "imgurl": ""}
+```
+
 ### Organization List Server Variable
 Thi server variable uses a json in order to work properly. You must use the svar name ***org_settings*** You can set the key values to be anything (as long there is no duplicates), but I recommend using numbers in ascending order (as strings). The values closer to the beginning of the json will be checked first. Here is an example:
 ```json
@@ -33,6 +38,11 @@ Thi server variable uses a json in order to work properly. You must use the svar
 ```
 
 For each organization name, you will need to have it match the name of the server variable you created up in [Organization Server Variable](#organization-server-variable). If you named the server variable for the Renowned as "RenRep" then you need to insert "RenRep" in the Organization List Server Variable.
+
+Here is a template that you can use:
+```json
+{"1": "Organization 1 svar", "2": "Organization 2 svar", "3": "Organization 3 svar"}
+```
 
 **UPDATING THIS SERVER VARIABLE**
 
@@ -43,7 +53,9 @@ You will need to run `!svar org_settings` to copy over the previous settings bef
 
 6/6/2023 - Added notes to help, teaching optional versus required arguments.
 
-6/8/2023 - Copyright notice and image added
+6/8/2023 - Copyright notice and image added.
+
+6/8/2023 - Added template jsons for svars.
 
 ## Source Code:
 
