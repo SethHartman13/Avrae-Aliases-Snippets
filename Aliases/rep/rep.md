@@ -34,10 +34,10 @@ Here is template that you can use:
 ### Organization List Server Variable
 This server variable uses a json in order to work properly. You must use the svar name ***org_settings*** You can set the key values to be anything (as long as there are no duplicates), but I recommend using numbers in ascending order (as strings). The values closer to the beginning of the json will be checked first. Here is an example:
 ```json
-{"1": "Renown", "2": "uni_fed_settings", "3": "potato_uni_settings"}
+{"1": "renown_settings", "2": "uni_fed_settings", "3": "potato_uni_settings"}
 ```
 
-For each organization name, you will need to have it match the name of the server variable you created up in [Organization Server Variable](#organization-server-variable). If you named the server variable for the Renowned as "RenRep" then you need to insert "RenRep" in the Organization List Server Variable.
+For each organization name, you will need to have it match the name of the server variable you created up in [Organization Server Variable](#organization-server-variable). If you named the server variable for the Renowned as "RenRep" then you need to insert "RenRep" in the Organization List server variable.
 
 Here is a template that you can use:
 ```json
