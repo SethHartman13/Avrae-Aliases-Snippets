@@ -1,0 +1,16 @@
+embed
+<drac2>
+
+# Grabs cvar
+ch = character()
+
+# Sets up output
+title = f"{name} needs help!"
+string = f"Please run `!help weath` instead"
+
+</drac2>
+
+-title "{{title}}"
+-f "{{string}}"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/weather/image.png"
+-footer "!weath help | Updated 6/8/23 | ShadowsStride"
