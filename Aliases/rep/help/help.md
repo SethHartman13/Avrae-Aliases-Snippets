@@ -16,35 +16,22 @@ Subalias that supplies help menu.
 
 6/8/2023 - Copyright notice and image added
 
-## Source Code:
-
-```py
-embed
-<drac2>
-
-# Grabs cvar
-ch = character()
-
-# Sets up output
-title = f"{name} needs help!"
-string = f"Please run `!help rep` instead"
-
-</drac2>
-
--title "{{title}}"
--f "{{string}}"
--thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
--footer "!rep help | Updated 6/6/23 | ShadowsStride"
-```
+6/14/2023 - Updated copyright notice
 
 ## Copyright Notice
 
-Copyright 2023 Seth Hartman (aka ShadowsStride)
+Copyright (C) Seth Hartman - All Rights Reserved.
 
-All rights reserved.
+THE CONTENTS OF THIS PROJECT ARE PROPRIETARY AND CONFIDENTIAL.
+UNAUTHORIZED COPYING, TRANSFERRING OR REPRODUCTION OF THE CONTENTS OF THIS PROJECT, VIA ANY MEDIUM IS STRICTLY PROHIBITED.
 
-The code and images I own in this repository are protected by copyright law. Unauthorized use, reproduction, or distribution of this material is strictly prohibited. This includes, but is not limited to, copying large portions of code or uploading the code and images to any other platform or website without written consent.
+The receipt or possession of the source code and/or any parts thereof does not convey or imply any right to use them
+for any purpose other than the purpose for which they were provided to you.
 
-If you wish to use or reproduce any part of this repository, please contact ShadowsStride at shadowsstride@gmail.com for permission.
+The software is provided "AS IS", without warranty of any kind, express or implied, including but not limited to
+the warranties of merchantability, fitness for a particular purpose and non infringement.
+In no event shall the authors or copyright holders be liable for any claim, damages or other liability,
+whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software
+or the use or other dealings in the software.
 
-Any infringement of copyright will result in legal action.
+Abbreviations of the above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.

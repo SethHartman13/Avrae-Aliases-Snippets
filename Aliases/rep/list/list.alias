@@ -1,9 +1,17 @@
 embed
 <drac2>
-# Grabs cvar and creates error list
+# *******************************************************
+#  * Copyright (C) 2023 Seth Hartman - shadowsstride@gmail.com
+#  * 
+#  * This file is part of the Organization Reputation Manager.
+#  * 
+#  * Organization Reputation Manager can not be copied and/or distributed without the express
+#  * permission of Seth Hartman
+#  *******************************************************
 
 def main() -> list:
 
+    # Grabs cvar
     ch=character()
 
     # Grabs the organization dictionary
@@ -60,4 +68,4 @@ orgstring = output[1]
 -title "{{title}}"
 -f "{{orgstring}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
--footer "!rep list | Updated 6/8/23 | ShadowsStride"
+-footer "!rep list | Updated 6/14/23 | ShadowsStride"

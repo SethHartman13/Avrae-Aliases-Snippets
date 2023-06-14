@@ -1,24 +1,3 @@
-<h1>List Subalias<img align="right" src="../image.png" width="100px"></h1>
-
-Subalias that lists out all known organizations.
-
-## Owner(s):
-- Me (ShadowsStride)
-
-## Current Plans:
-- None
-
-## Help:
-`!rep list` 
-
-## Changelog:
-6/6/2023 - Subalias created
-
-6/8/2023 - Copyright notice and image added
-
-6/14/2023 - Updated Copyright notice
-
-## Copyright Notice
 Copyright (C) Seth Hartman - All Rights Reserved.
 
 THE CONTENTS OF THIS PROJECT ARE PROPRIETARY AND CONFIDENTIAL.

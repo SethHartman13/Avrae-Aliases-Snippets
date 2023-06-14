@@ -1,5 +1,13 @@
 embed
 <drac2>
+# *******************************************************
+#  * Copyright (C) 2023 Seth Hartman - shadowsstride@gmail.com
+#  * 
+#  * This file is part of the Organization Reputation Manager.
+#  * 
+#  * Organization Reputation Manager can not be copied and/or distributed without the express
+#  * permission of Seth Hartman
+#  *******************************************************
 
 # Grabs cvar
 ch = character()
@@ -13,4 +21,4 @@ string = f"Please run `!help rep` instead"
 -title "{{title}}"
 -f "{{string}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
--footer "!rep help | Updated 6/6/23 | ShadowsStride"
+-footer "!rep help | Updated 6/14/23 | ShadowsStride"
