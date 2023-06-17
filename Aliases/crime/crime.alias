@@ -111,12 +111,6 @@ result_string, title = main(&1&, &2&)
 
 </drac2>
 -title {{title}}
--f "{{}}"
-
-
-
-
-
-
-
-
+-f "{{result_string}}"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/ce0f79ad19956141a48567cfae15cfc4bd8ace26/Aliases/crime/image.png"
+-footer "!weath [player_name] [character_name]"
