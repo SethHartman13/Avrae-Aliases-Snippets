@@ -1,0 +1,122 @@
+embed
+<drac2>
+
+def unpack_search_dict(query: str, key_list:list) -> str:
+
+    # For each key in the key_list
+    for key in key_list:
+
+        # Sets up process to creater iterations
+        initial_iterations = []
+        iterations = []
+        lst = []
+        lst[:] = key.lower()
+
+        for i in range(len(key) + 1):
+            initial_iterations.append(lst[:i])
+
+
+        # So, what happens is it will create iterations like 'r' and 're'
+        # This removes the first two so that at least three letters are needed
+        initial_iterations.pop(0)
+        initial_iterations.pop(0)
+
+        # Puts all the iterations of the key in a list
+        for iteration in initial_iterations:
+            iterations.append("".join(iteration))
+
+        # If the query returns a match, it will return the key
+        if query.lower() in iterations:
+            return key
+
+        else:
+            pass
+
+    # If none of the queries return a match with the keys
+    return "None"
+
+
+def main(player_query, character_query):
+    error = []
+
+    # If the player name is not empty
+    if player_query != None:
+        try:
+            # Grab the crime dict
+            full_dict = load_json(get_svar("crime_dict"))
+            player_list = []
+
+            # Grabs all the players' names
+            for value in full_dict.keys():
+                    player_list.append(value)
+        except:
+            error.append("Problems loading crime dictionary")
+
+        if len(error) == 0
+            player_key = unpack_search_dict(player_query, player_list)
+
+            if player_key != "None"
+                pass:
+            else:
+                error.append("Player not found!")
+
+        else:
+            pass
+    else:
+        error.append("No arguments were given!")
+
+    if len(error) == 0:
+        character_list = full_dict[player_key].keys()
+
+        character_key = unpack_search_dict(character_query, character_list)
+
+        if character_key != "None":
+            pass
+        else:
+            error.append(f"Character not found for {player_query}")
+
+    else:
+        pass
+
+
+    if len(error) == 0:
+        response_list = []
+
+
+        for crime_cost in full_dict[player_key][character_key]:
+            response_list.append(f"{crime_cost[0]}: {crime_cost[1]} gp")
+
+        response_string = "\n".join(response_list)
+
+        return response_string, f"{character_key}'s Criminal Record"
+
+    else:
+        response_string = "\n".join(error)
+        
+        return response_string, "Court Record Error!"
+
+
+result_string, title = main(&1&, &2&)
+
+
+
+
+
+
+#!crime [Player name] [charname] 
+#{
+#  "Shadow": {"Zylee": [["Robbery", 1000], ["Homicide", 50000]], "Bob": [["Loitering", 8000]]},
+#  "Gen": {"STEEVE": [["Disorderly conduct", 50000]]}
+#}
+
+</drac2>
+-title {{title}}
+-f "{{}}"
+
+
+
+
+
+
+
+
