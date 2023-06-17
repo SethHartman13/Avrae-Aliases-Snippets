@@ -98,17 +98,6 @@ def main(player_query, character_query):
 
 result_string, title = main(&1&, &2&)
 
-
-
-
-
-
-#!crime [Player name] [charname] 
-#{
-#  "Shadow": {"Zylee": [["Robbery", 1000], ["Homicide", 50000]], "Bob": [["Loitering", 8000]]},
-#  "Gen": {"STEEVE": [["Disorderly conduct", 50000]]}
-#}
-
 </drac2>
 -title {{title}}
 -f "{{result_string}}"
