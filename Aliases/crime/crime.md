@@ -8,7 +8,7 @@ Crime alias that handles court records for criminals.
 - Potentially add additional images for the alias for variety.
 
 ## Help:
-`!crime [player_name] [character_name]
+`!crime [player_name] [character_name]`
 
 In order to run this properly, you need to do the following:
 - Create a server variable containing the records called `crime_dict`
