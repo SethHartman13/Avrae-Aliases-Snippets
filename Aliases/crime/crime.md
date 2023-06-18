@@ -47,7 +47,6 @@ Here is a template that you can use:
 }
 ```
 
-
 **UPDATING THIS SERVER VARIABLE**
 
 You will need to run `!svar crime_dict` to copy over the previous settings before you update the server variable as it overwrites the existing data.
@@ -55,4 +54,22 @@ You will need to run `!svar crime_dict` to copy over the previous settings befor
 ## Changelog:
 6/16/2023 - Alias created
 
-6/17/2023 - Documentation and 
+6/17/2023 - Documentation and [list](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/crime/list/list.md) alias has been created. Check the markdown file within the folde marked with their names for additional details.
+
+## Copyright Notice
+
+Copyright (C) Seth Hartman - All Rights Reserved.
+
+THE CONTENTS OF THIS PROJECT ARE PROPRIETARY AND CONFIDENTIAL.
+UNAUTHORIZED COPYING, TRANSFERRING OR REPRODUCTION OF THE CONTENTS OF THIS PROJECT, VIA ANY MEDIUM IS STRICTLY PROHIBITED.
+
+The receipt or possession of the source code and/or any parts thereof does not convey or imply any right to use them
+for any purpose other than the purpose for which they were provided to you.
+
+The software is provided "AS IS", without warranty of any kind, express or implied, including but not limited to
+the warranties of merchantability, fitness for a particular purpose and non infringement.
+In no event shall the authors or copyright holders be liable for any claim, damages or other liability,
+whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software
+or the use or other dealings in the software.
+
+Abbreviations of the above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
