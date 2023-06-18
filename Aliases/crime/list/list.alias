@@ -1,6 +1,16 @@
 embed
 
 <drac2>
+# *******************************************************
+#  * Copyright (C) 2023 Seth Hartman - shadowsstride@gmail.com
+#  * 
+#  * This file is part of the Crime Record Manager.
+#  * 
+#  * Crime Record Manager can not be copied and/or distributed without the express
+#  * permission of Seth Hartman
+#  *******************************************************
+
+
 def main() -> list:
     error = []
     result_list = []
