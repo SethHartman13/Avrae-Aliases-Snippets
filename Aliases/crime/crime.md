@@ -54,7 +54,9 @@ You will need to run `!svar crime_dict` to copy over the previous settings befor
 ## Changelog:
 6/16/2023 - Alias created
 
-6/17/2023 - Documentation and [list](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/crime/list/list.md) alias has been created. Check the markdown file within the folde marked with their names for additional details.
+6/17/2023 - Documentation and [list](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/crime/list/list.md) subalias has been created. Check the markdown file within the folder marked with their names for additional details.
+
+6/17/2023 - Subalias [help](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/crime/help/help.md) has been created. Check the markdown file within the folder marked with their names for additional details.
 
 ## Copyright Notice
 
