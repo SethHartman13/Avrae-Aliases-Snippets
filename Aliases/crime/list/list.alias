@@ -1,0 +1,51 @@
+embed
+
+<drac2>
+def main() -> list:
+    error = []
+    result_list = []
+
+    try:
+        # Grab the crime dict
+        full_dict = load_json(get_svar("crime_dict"))
+        player_list = []
+
+        # Grabs all the players' names
+        for value in full_dict.keys():
+            player_list.append(value)
+    except:
+        error.append("Problems loading crime dictionary")
+        
+
+    if len(error) == 0:
+
+        for player in player_list:
+            result_list.append(f"**{player}:**")
+
+            for character_name in full_dict[player].keys():
+                result_list.append(character_name)
+
+            result_list.append("")
+
+        title = f"Current Criminal Court Records"
+        result_string = "\n".join(result_list)
+        return [title, result_string]
+
+    else:
+        title = "Court Record Error!"
+
+        string = "\n".join(error)
+        result_string = f"**Error(s):**\n"
+        return [title, result_string + string]
+
+
+result_list = main()
+
+title = result_list[0]
+result_string = result_list[1]
+
+</drac2>
+-title "{{title}}"
+-f "{{result_string}}"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/ce0f79ad19956141a48567cfae15cfc4bd8ace26/Aliases/crime/image.png"
+-footer "!crime list | Updated 6/17/23 | ShadowsStride"
