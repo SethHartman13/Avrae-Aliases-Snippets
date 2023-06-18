@@ -1,7 +1,17 @@
 embed
 <drac2>
 
-def unpack_search_dict(query: str, key_list:list) -> str:
+def search_key(query: str, key_list:list) -> str:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
 
     # For each key in the key_list
     for key in key_list:
@@ -36,40 +46,58 @@ def unpack_search_dict(query: str, key_list:list) -> str:
     return "None"
 
 
-def main(player_query, character_query):
+def main(player_query: str, character_query: str) -> list:
+    """
+    Main program function
+
+    Args:
+        player_query (str): Name of player
+        character_query (str): Name of character
+
+    Return:
+        (list): Results
+
+    """
     error = []
 
     # If the player name is not empty
-    if player_query != None:
+    if player_query != "Error":
         try:
-            # Grab the crime dict
+            # Grab the crime dict and player names
             full_dict = load_json(get_svar("crime_dict"))
-            player_list = []
+            player_list = full_dict.keys()
 
-            # Grabs all the players' names
-            for value in full_dict.keys():
-                    player_list.append(value)
         except:
             error.append("Problems loading crime dictionary")
 
-        if len(error) == 0
-            player_key = unpack_search_dict(player_query, player_list)
+        if len(error) == 0:
 
-            if player_key != "None"
-                pass:
+            # Grabs player key that matches
+            player_key = search_key(player_query, player_list)
+
+            # "None" if it doesn't find it.
+            if player_key != "None":
+                pass
             else:
-                error.append("Player not found!")
+                error.append(f"Player not found!")
 
         else:
             pass
-    else:
-        error.append("No arguments were given!")
 
+    # If 2 arguments were not found
+    else:
+        error.append("2 arguments were expected")
+
+    # If there are no errors
     if len(error) == 0:
+
+        # Grabs character names under the player
         character_list = full_dict[player_key].keys()
 
-        character_key = unpack_search_dict(character_query, character_list)
+        # Grabs player key that matches
+        character_key = search_key(character_query, character_list)
 
+        # "None" if it doesn't find it.
         if character_key != "None":
             pass
         else:
@@ -78,28 +106,48 @@ def main(player_query, character_query):
     else:
         pass
 
-
+    # If there are no errors
     if len(error) == 0:
+
+        # Creates list for the response
         response_list = []
+        response_list.append("**Crimes:**")
 
-
+        # Pulls crime and cost 
         for crime_cost in full_dict[player_key][character_key]:
-            response_list.append(f"{crime_cost[0]}: {crime_cost[1]} gp")
+            response_list.append(f"**{crime_cost[0]}:** {crime_cost[1]} gp")
 
+        # Creates string response and title
         response_string = "\n".join(response_list)
-
-        return response_string, f"{character_key}'s Criminal Record"
+        title = f"Criminal Record for {character_key}"
 
     else:
+        # If there were errors, displays error
         response_string = "\n".join(error)
-        
-        return response_string, "Court Record Error!"
+        title = "Court Record Error!"
+    
+    return [response_string, title]
 
+# Grabs input
+input_list = &ARGS&
 
-result_string, title = main(&1&, &2&)
+# Verifies that it gets two inputs
+try:
+    player_query = input_list[0]
+    character_query = input_list[1]
+except:
+    player_query = "Error"
+    character_query = "Error"
+
+# Main function all
+result_list = main(player_query, character_query)
+
+# Extracts outputs
+result_string = result_list[0]
+title = result_list[1]
 
 </drac2>
--title {{title}}
+-title "{{title}}"
 -f "{{result_string}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/ce0f79ad19956141a48567cfae15cfc4bd8ace26/Aliases/crime/image.png"
--footer "!weath [player_name] [character_name]"
+-footer "!crime [player name] [character name] | Updated 6/17/23 | ShadowsStride"
