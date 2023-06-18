@@ -45,6 +45,14 @@ Here is a template that you can use:
         "Character 1": [["crime", 0]]
     }
 }
-
-
 ```
+
+
+**UPDATING THIS SERVER VARIABLE**
+
+You will need to run `!svar crime_dict` to copy over the previous settings before you update the server variable as it overwrites the existing data.
+
+## Changelog:
+6/16/2023 - Alias created
+
+6/17/2023 - Documentation and 

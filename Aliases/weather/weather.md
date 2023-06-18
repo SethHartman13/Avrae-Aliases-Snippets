@@ -84,7 +84,7 @@ Here is a template that you can use:
 
 **UPDATING THIS SERVER VARIABLE**
 
-You will need to run `!svar weather_location_list` to copt over the previous settings before you update the server variable as it overwrites the existing data.
+You will need to run `!svar weather_location_list` to copy over the previous settings before you update the server variable as it overwrites the existing data.
 
 ## Changelog:
 6/8/2023 - Alias created and documentation written.
