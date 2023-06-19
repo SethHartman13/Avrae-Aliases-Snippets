@@ -1,0 +1,99 @@
+embed
+<drac2>
+# *******************************************************
+#  * Copyright (C) 2023 Seth Hartman - shadowsstride@gmail.com
+#  * 
+#  * This file is part of the User Image Library Manager.
+#  * 
+#  * User Image Library Manager can not be copied and/or distributed without the express
+#  * permission of Seth Hartman
+#  *******************************************************
+
+def restore_image() -> list[str]:
+    """
+    Function that handles restoring the image requested.
+
+    Return:
+        ['status', 'status message']
+    
+    """
+
+    # Checks to see if the uvars exists
+    if uvar_exists("imageLibraryBackup") and uvar_exists("imageLibrary"):
+
+        # Grabs image dictionaries from backup and standard
+        restore_image_dict = load_json(get_uvar("imageLibraryBackup"))
+        image_dict = load_json(get_uvar("imageLibrary"))
+
+        # Places backup into standard uvar, and standard into backup uvar
+        set_uvar("imageLibrary", dump_json(restore_image_dict))
+        set_uvar("imageLibraryBackup", dump_json(image_dict))
+
+        return ['Success', 'Previous backup restored!']
+
+    # If either uvar does not exist
+    else:
+
+        # If both do not exist
+        if not uvar_exists("imageLibraryBackup") and not uvar_exists("imageLibrary"):
+            return ['Error', "Uvars `imageLibrary` and `imageLibraryBackup` do not exist!"]
+
+        # If only imageLibraryBackup does not exist
+        elif not uvar_exists("imageLibraryBackup"):
+            return ['Error', "Uvar `imageLibraryBackup` does not exist!"]
+
+        # IF only imageLibrary does not exist
+        else:
+            return ['Error', "Uvar `imageLibrary` does not exist!"]
+
+
+
+def main() -> list[str]:
+    """
+    Main program function
+    
+    Return:
+        ['title of embed', 'caption of embed', 'image url']
+    """
+
+    # Searches and restores the image data
+    results = restore_image()
+
+    # If it gets a status of success
+    if results[0] == "Success":
+        pass
+
+    # If it gets an error status
+    else:
+        error.append(results[1])
+
+    # If there were no errors, constructs success output
+    if len(error) == 0:
+        title = "Image data restored!"
+        caption = results[1]
+        img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/restore/image.png" # Restore image
+
+    # If there were errors, constructs error output
+    else:
+        title = "An error has occurred!"
+        caption = "\n".join(error)
+        img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png" # Error image
+
+    # Return output
+    return [title, caption, img_url]
+
+
+# Call main program and pull outputs
+response_list = main()
+
+# Stores outputs for human readability
+title = response_list[0]
+caption = response_list[1]
+img_url = response_list[2]
+
+
+</drac2>
+-title "{{title}}"
+-image "{{img_url}}"
+-f "{{caption}}"
+-footer "!image remove [image name] | Updated 6/19/23 | ShadowsStride"
