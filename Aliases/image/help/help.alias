@@ -1,0 +1,25 @@
+embed
+<drac2>
+# *******************************************************
+#  * Copyright (C) 2023 Seth Hartman - shadowsstride@gmail.com
+#  * 
+#  * This file is part of the Crime Record Manager.
+#  * 
+#  * Crime Record Manager can not be copied and/or distributed without the express
+#  * permission of Seth Hartman
+#  *******************************************************
+
+
+# Grabs cvar
+ch = character()
+
+# Sets up output
+title = f"{name} needs help!"
+string = f"Please run `!help image` instead"
+
+
+</drac2>
+-title "{{title}}"
+-f "{{string}}"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/list/canvas.png"
+-footer "!crime image | Updated 6/19/23 | ShadowsStride"
