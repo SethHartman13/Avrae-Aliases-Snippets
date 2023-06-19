@@ -48,7 +48,7 @@ def search_key(query: str, key_list: list[str]) -> str:
             return key
 
         else:
-            return None
+            return "None"
 
 
 def remove_image(img_name: str) -> list[str]:
@@ -62,7 +62,7 @@ def remove_image(img_name: str) -> list[str]:
             if len(image_dict_keys) > 0:
                 key_result = search_key(img_name, image_dict_keys)
 
-                if typeof(key_result) == "str":
+                if key_result == "None":
                     lst = []
                     key_result_list.append(key_result)
 
