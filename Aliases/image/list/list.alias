@@ -9,39 +9,50 @@ embed
 #  * permission of Seth Hartman
 #  *******************************************************
 
-
+# Checks to see if the uvar exists
 if uvar_exists("imageLibrary"):
+    # Grabs dictionary and then searches dictionary for matches
     image_dict = load_json(get_uvar("imageLibrary"))
     image_dict_keys = image_dict.keys()
 
+    # If there are images in the library
     if len(image_dict_keys) != 0:
+        
+        # Create list to store keys
         choices = []
-
         for key in image_dict_keys:
             choices.append(key)
 
+        # Select a random image url
         img_url_choice = randchoice(choices)
 
+        # UI formatting
         choices.append("")
         choices.append(f"**Random image from library: {img_url_choice}**")
 
+        # Join the image list (and formatting)
         caption = "\n".join(choices)
+
+        # Pull img_url from dictionary
         img_url = image_dict[img_url_choice]
+
+    # If there are no images in the library
     else:
         caption = "None"
-        img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/list/canvas.png"
+        img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/list/canvas.png" # No image
 
+    # All instances has this title
     title = "Your current image library"
     
-
+# If the uvar does not exist
 else:
     title = "An error has occurred!"
     caption = "Uvar `imageLibrary` does not exist!"
-    img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png"
+    img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png" # Error image
 
 
 </drac2>
 -title "{{title}}"
 -image "{{img_url}}"
 -f "{{caption}}"
--footer "!image list | Updated 6/18/23 | ShadowsStride"
+-footer "!image list | Updated 6/19/23 | ShadowsStride"

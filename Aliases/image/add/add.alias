@@ -11,68 +11,110 @@ embed
 
 
 def add_image(img_name: str, img_url: str) -> list[str]:
+    """
+    Function that handles adding the image requested
 
+    Args:
+        img_name (str): Name of the image
+        img_url (str): URL of the image
+
+    Return:
+        ['status', 'status message']
+    """
+
+    # Checks to see if the uvar exists
     if uvar_exists("imageLibrary"):
+
+        # Grabs dictionary
         image_dict = load_json(get_uvar("imageLibrary"))
 
+        # Checks to see if the image name already exists and adds entry to dictionary
         if img_name not in image_dict.keys():
             image_dict[str(img_name)] = str(img_url)
 
+        # If the image already exists
         else:
             return ["Error", "Image name already exists"]
 
-    
+    # If the uvar does not exist, creates an empty dictionary and then adds image data to dictionary
     else:
         image_dict = dict()
         image_dict[str(img_name)] = str(img_url)
 
+    # Alters the imageLibrary with the new dictionary, creating imageLibrary if necessary
     try:
         set_uvar("imageLibrary", dump_json(image_dict))
         return ["Success", f"{img_name} added to your image library!"]
 
+    # If it has any issues altering the imageLibrary uvar
     except:
         return ["Error", "There was an issue setting your user variable"]
 
 
 def main(inputs: list[str]) -> list[str]:
+    """
+    Main program function
+
+    Args:
+        inputs (list[str]): List containing image name and url
+    
+    Return:
+        ['title of embed', 'caption of embed', 'image url']
+    """
+
+    # Creates error list to catch errors
     error = []
 
-
+    # If there are exactly two inputs
     if len(inputs) == 2:
 
+        # Stores image name and url
         img_name = inputs[0]
         img_url = inputs[1]
 
+        # Checks to see if the url starts with http
         url_split = img_url.lower().split("http")
 
+        # If it doesn't
         if url_split[0] != "":
             error.append("Invalid URL. The URL must start with https or http")
 
+        # If it does
         else:
+
+            # Adds the image to the library
             results = add_image(img_name, img_url)
+
+            # If it gets a status of success
             if results[0] == "Success":
                 pass
 
+            # If it get an error status
             else:
                 error.append(results[1])
+
+    # If it does not get 2 arguments
     else:
         error.append("2 arguments expected!")
 
+    # If there were no errors, constructs success output
     if len(error) == 0:
-
         title = "Image added to your library"
         caption = img_name
 
+    # If there were errors, constructs error output
     else:
         title = "An error has occurred!"
         caption = "\n".join(error)
-        img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png"
+        img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png" # Error image
 
+    # Return output
     return [title, caption, img_url]
 
+# Call main program and pull outputs
 response_list = main(&ARGS&)
 
-
+# Store outputs for human readabilitiy
 title = response_list[0]
 caption = response_list[1]
 img_url = response_list[2]
@@ -82,4 +124,4 @@ img_url = response_list[2]
 -title "{{title}}"
 -image "{{img_url}}"
 -f "{{caption}}"
--footer "!image add [image name] [image URL] | Updated 6/18/23 | ShadowsStride"
+-footer "!image add [image name] [image URL] | Updated 6/19/23 | ShadowsStride"

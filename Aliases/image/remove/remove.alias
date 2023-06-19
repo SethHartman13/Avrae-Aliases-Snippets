@@ -22,7 +22,9 @@ def search_key(query: str, key_list: list[str]) -> list[str]|str:
         (str): If it finds it, it returns the key, otherwise it returns 'None'
     """
 
+    # Creates list to store matches
     results_keys = []
+
     # For each key in the key_list
     for key in key_list:
 
@@ -54,69 +56,120 @@ def search_key(query: str, key_list: list[str]) -> list[str]|str:
         else:
             pass
 
+    # If there are matches, return a list
     if len(results_keys) != 0:
         return results_keys
 
+    # If there are no matches, return a string
     else:
         return "None"
 
 
 def remove_image(img_name: str) -> list[str]:
+    """
+    Function that handles removing the image requested.
 
+    Args:
+        img_name (str): Name of the image
+
+    Return:
+        ['status', 'status message']
+    
+    """
+
+    # Checks to see if the uvar exists
     if uvar_exists("imageLibrary"):
+
+        # Grabs dictionary and then searches dictionary for matches
         image_dict = load_json(get_uvar("imageLibrary"))
         key_result = search_key(img_name, image_dict.keys())
 
+        # If it comes back with at least one match
         if key_result != "None":
+
+            # If it comes iwth only one match
             if len(key_result) == 1:
+
+                # Creates backup uvar incase user deletes incorrect image
                 set_uvar("imageLibraryBackup", dump_json(image_dict))
 
+                # Creates a new dictionary excluding the key:value that was requested to be removed
                 new_image_dict = {key: val for key, val in image_dict.items() if key != key_result[0]}
 
+                # Sets uvar to new dictionary
                 set_uvar("imageLibrary", dump_json(new_image_dict))
-
                 return ["Success", f"{img_name} removed from your image library!"]
 
+            # If it comes back with multiple matches
             else:
                 key_result.insert(0, "**Multiple images found:**")
                 return ["Error", "\n".join(key_result)]
 
+        # If it comes back with no matches
         else:
             return ["Error", "Image not found!"]
 
+    # If the uvar does not exist
     else:
         return ['Error', "Uvar `imageLibrary` does not exist!"]
 
 
 
 def main(inputs: list[str]) -> list[str]:
-    error = []
-    if len(inputs) > 0:
-        results = remove_image(inputs[0])
+    """
+    Main program function
 
+    Args:
+        inputs (list[str]): List containing image name
+    
+    Return:
+        ['title of embed', 'caption of embed', 'image url']
+    """
+
+    # Creates error list to catch errors
+    error = []
+
+    # If there is at least one input, though it ignores additional inputs other than the first
+    if len(inputs) >= 1:
+
+        # Stores image name
+        img_name = inputs[0]
+
+        # Searches and removes the image
+        results = remove_image(img_name)
+
+        # If it gets a status of success
         if results[0] == "Success":
             pass
+
+        # If it gets an error status
         else:
             error.append(results[1])
 
+    # If it does not at least get one argument
     else:
         error.append("1 argument expected!")
 
-
+    # If there were no errors, constructs success output
     if len(error) == 0:
         title = "Image removed from your library"
-        caption = inputs[0]
-        img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/remove/rubble.png"
+        caption = img_name
+        img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/remove/rubble.png" # Remove image
 
+    # If there were errors, constructs error output
     else:
         title = "An error has occurred!"
         caption = "\n".join(error)
-        img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png"
+        img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png" # Error image
 
+    # Return output
     return [title, caption, img_url]
 
+
+# Call main program and pull outputs
 response_list = main(&ARGS&)
 
+# Stores outputs for human readability
 title = response_list[0]
 caption = response_list[1]
 img_url = response_list[2]
@@ -126,4 +179,4 @@ img_url = response_list[2]
 -title "{{title}}"
 -image "{{img_url}}"
 -f "{{caption}}"
--footer "!image remove [image name] | Updated 6/18/23 | ShadowsStride"
+-footer "!image remove [image name] | Updated 6/19/23 | ShadowsStride"

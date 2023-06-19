@@ -99,7 +99,7 @@ def get_image(img_name: str) -> list[str]:
         else:
             return ["Error", f"Image not found!"]
 
-    # If the Uvar does not exist
+    # If the uvar does not exist
     else:
         return ['Error', "Uvar `imageLibrary` does not exist!"]
 
@@ -118,37 +118,38 @@ def main(inputs: list[str]) -> list[str]:
     # Creates error list to catch errors
     error = []
 
-    # If there is at least one input, though we ignore additional inputs other than the first
+    # If there is at least one input, though it ignores additional inputs other than the first
     if len(inputs) >= 1:
 
+        # Stores image name
         img_name = inputs[0]
         
         # Searches for the image
         results = get_image(img_name)
 
-        # If we get a status of success
+        # If it gets a status of success
         if results[0] == "Success":
             pass
 
-        # If we get an error status
+        # If it gets an error status
         else:
             error.append(results[1])
 
-    # If it gets no inputs
+    # If it does not at least get one argument
     else:
         error.append("1 argument expected!")
 
-    # If there were no errors, construct success output
+    # If there were no errors, constructs success output
     if len(error) == 0:
         title = "Image:"
-        caption = inputs[0]
+        caption = img_name
         img_url = results[1]
 
-    # If there were errors, construct error output
+    # If there were errors, constructs error output
     else:
         title = "An error has occurred!"
         caption = "\n".join(error)
-        img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png"
+        img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png" # Error image
 
     # Return output
     return [title, caption, img_url]
