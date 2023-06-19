@@ -11,7 +11,7 @@ Subalias that handles removing images from user's library.
 ## Help:
 `!image remove [image name]`
 
-This subalias creates/accesses a backup user variable that allows for the user to restore their data if they make a mistake. See restore subalias.
+This subalias creates/accesses a backup user variable that allows for the user to restore their data if they make a mistake. See [restore](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/image/restore/restore.md) subalias.
 
 ## Changelog:
 6/19/2023 - Subalias created
