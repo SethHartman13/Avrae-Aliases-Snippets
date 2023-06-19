@@ -1,6 +1,6 @@
 <h1>Image Alias<img align="right" src="./list/canvas.png" width="100px"></h1>
 
-Image alias that handles user images.
+Image alias that handles storing and viewing user images.
 
 ## Owner(s):
 - Me (ShadowsStride)
