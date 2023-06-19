@@ -1,0 +1,125 @@
+embed
+<drac2>
+# *******************************************************
+#  * Copyright (C) 2023 Seth Hartman - shadowsstride@gmail.com
+#  * 
+#  * This file is part of the User Image Library Manager.
+#  * 
+#  * User Image Library Manager can not be copied and/or distributed without the express
+#  * permission of Seth Hartman
+#  *******************************************************
+
+def search_key(query: str, key_list: list[str]) -> str:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
+
+    # For each key in the key_list
+    for key in key_list:
+
+        # Sets up process to creater iterations
+        initial_iterations = []
+        iterations = []
+        lst = []
+        lst[:] = key.lower()
+
+        for i in range(len(key) + 1):
+            initial_iterations.append(lst[:i])
+
+
+        # So, what happens is it will create iterations like 'r' and 're'
+        # This removes the first two so that at least three letters are needed
+        initial_iterations.pop(0)
+        initial_iterations.pop(0)
+
+        # Puts all the iterations of the key in a list
+        for iteration in initial_iterations:
+            iterations.append("".join(iteration))
+
+        # If the query returns a match, it will return the key
+        if query.lower() in iterations:
+            return key
+
+        else:
+            pass
+
+
+def remove_image(img_name: str) -> list[str]:
+
+    if uvar_exists("imageLibrary"):
+        image_dict = load_json(get_uvar("imageLibrary"))
+        image_dict_keys = image_dict.keys()
+        key_result_list = []
+
+        while True:
+
+            key_result = search_key(img_name, image_dict_keys)
+
+            if typeof(key_result) == "str":
+                key_result_list.append(key_result)
+                image_dict_keys.remove(key_result)
+
+            else:
+
+                if len(key_result_list) == 1:
+
+                    del image_dict[key_result_list[0]]
+                    set_uvar("imageLibrary", dump_json(image_dict))
+                    return ["Success", f"{img_name} added to your image library!"]
+
+                elif len(key_result_list) > 1:
+                    key_result_list.insert(0, "**Multiple images found:**")
+                    return ["Error", "\n".join(key_result_list)]
+
+                else:
+                    return ["Error", "Image not found!"]
+    else:
+        return ['Error', "Uvar `imageLibrary` does not exist!"]
+
+
+
+def main(inputs: list[str]) -> list[str]:
+    error = []
+    if len(inputs) > 0:
+        results = remove_image(inputs[0])
+
+        if results[0] == "Success":
+            pass
+        else:
+            error.append(results[1])
+
+    else:
+        error.append("1 argument expected!")
+
+
+    if len(error) == 0:
+        title = "Image removed from your library"
+        caption = img_name
+        img_url = 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</drac2>
+
+-title "{{title}}"
+-image "{{img_url}}"
+-f "{{caption}}"
+-footer "!image add [image name] [image URL] | Updated 6/18/23 | ShadowsStride"
