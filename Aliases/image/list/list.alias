@@ -13,8 +13,12 @@ embed
 if uvar_exists("imageLibrary"):
     image_dict = load_json(get_uvar("imageLibrary"))
 
+    if len(image_dict.keys()) != 0:
+        caption = "\n".join(image_dict.keys())
+    else:
+        caption = "None"
+
     title = "Your current image library"
-    caption = "\n".join(image_dict.keys())
     img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/list/canvas.png"
 
 else:

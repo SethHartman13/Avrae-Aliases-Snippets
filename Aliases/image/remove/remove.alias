@@ -9,7 +9,7 @@ embed
 #  * permission of Seth Hartman
 #  *******************************************************
 
-def search_key(query: str, key_list: list[str]) -> str:
+def search_key(query: str, key_list: list[str]) -> list[str]|str:
     """
     Searches for dictionary key.
 
@@ -21,6 +21,7 @@ def search_key(query: str, key_list: list[str]) -> str:
         (str): If it finds it, it returns the key, otherwise it returns 'None'
     """
 
+    results_keys = []
     # For each key in the key_list
     for key in key_list:
 
@@ -39,60 +40,49 @@ def search_key(query: str, key_list: list[str]) -> str:
         initial_iterations.pop(0)
         initial_iterations.pop(0)
 
+
         # Puts all the iterations of the key in a list
         for iteration in initial_iterations:
             iterations.append("".join(iteration))
 
         # If the query returns a match, it will return the key
         if query.lower() in iterations:
-            return key
+
+            results_keys.append(key)
 
         else:
-            return "None"
+            pass
+
+    if len(results_keys) != 0:
+        return results_keys
+
+    else:
+        return "None"
 
 
 def remove_image(img_name: str) -> list[str]:
 
     if uvar_exists("imageLibrary"):
         image_dict = load_json(get_uvar("imageLibrary"))
-        image_dict_keys = image_dict.keys()
-        key_result_list = []
+        key_result = search_key(img_name, image_dict.keys())
 
-        while True:
-            if len(image_dict_keys) > 0:
-                key_result = search_key(img_name, image_dict_keys)
+        if key_result != "None":
+            if len(key_result) == 1:
+                set_uvar("imageLibraryBackup", dump_json(image_dict))
 
-                if key_result == "None":
-                    lst = []
-                    key_result_list.append(key_result)
+                new_image_dict = {key: val for key, val in image_dict.items() if key != key_result[0]}
 
-                    for key in image_dict_keys:
-                        if key != key_result:
-                            lst.append(key)
-                        else:
-                            pass
+                set_uvar("imageLibrary", dump_json(new_image_dict))
 
-                    image_dict_keys = lst[:]
+                return ["Success", f"{img_name} removed from your image library!"]
 
-                else:
-                    image_dict_keys = []
             else:
+                key_result.insert(0, "**Multiple images found:**")
+                return ["Error", "\n".join(key_result)]
 
-                if len(key_result_list) == 1:
-                    set_uvar("imageLibraryBackup", dump_json(image_dict))
+        else:
+            return ["Error", "Image not found!"]
 
-                    new_image_dict = {key: val for key, val in image_dict.items() if key != key_result_list[0]}
-
-                    set_uvar("imageLibrary", dump_json(new_image_dict))
-
-                    return ["Success", f"{img_name} added to your image library!"]
-
-                elif len(key_result_list) > 1:
-                    key_result_list.insert(0, "**Multiple images found:**")
-                    return ["Error", "\n".join(key_result_list)]
-
-                else:
-                    return ["Error", "Image not found!"]
     else:
         return ['Error', "Uvar `imageLibrary` does not exist!"]
 
@@ -129,8 +119,9 @@ response_list = main(&ARGS&)
 title = response_list[0]
 caption = response_list[1]
 img_url = response_list[2]
-</drac2>
 
+
+</drac2>
 -title "{{title}}"
 -image "{{img_url}}"
 -f "{{caption}}"
