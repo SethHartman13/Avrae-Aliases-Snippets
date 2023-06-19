@@ -11,8 +11,8 @@ embed
 
 def add_image(img_name: str, img_url: str) -> list[str]:
 
-    if uvar_exists("images"):
-        image_dict = load_json(get_uvar("images"))
+    if uvar_exists("imageLibrary"):
+        image_dict = load_json(get_uvar("imageLibrary"))
 
         if img_name not in image_dict.keys():
             image_dict[str(img_name)] = str(img_url)
@@ -26,7 +26,7 @@ def add_image(img_name: str, img_url: str) -> list[str]:
         image_dict[str(img_name)] = str(img_url)
 
     try:
-        set_uvar_nx("images", dump_json(image_dict))
+        set_uvar_nx("imageLibrary", dump_json(image_dict))
         return ["Success", f"{img_name} added to your image library!"]
 
     except:
