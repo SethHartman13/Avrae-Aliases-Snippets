@@ -6,7 +6,7 @@ Image alias that handles storing and viewing user images.
 - Me (ShadowsStride)
 
 # Current Plans:
-- Add rename subalias
+- None
 
 ## Help:
 `!image [image name] [image url]`
