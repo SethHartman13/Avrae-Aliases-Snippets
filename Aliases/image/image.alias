@@ -9,60 +9,6 @@ embed
 #  * permission of Seth Hartman
 #  *******************************************************
 
-def add_to_uvar(url:str, key:str) -> list[str]:
-    error = []
-    
-
-            
-
-
-
-
-
-
-
-
-
-
-
-    else:
-        set_uvar("images", "{}")
-        image_dict = dict()
-
-
-
-
-    
-
-
-
-
-
-    else:
-        error.append(f"{key} already exists!")
-        error.append("")
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def search_key(query: str, key_list:list) -> str:
     """
     Searches for dictionary key.
@@ -115,9 +61,6 @@ def main(request: str) -> list[str]:
 
             except:
                 return ["None", "URL not found in second argument"]
-
-
-
 
         try:
             request[0].lower().index("http")
