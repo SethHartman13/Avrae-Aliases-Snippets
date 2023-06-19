@@ -26,7 +26,7 @@ def add_image(img_name: str, img_url: str) -> list[str]:
         image_dict[str(img_name)] = str(img_url)
 
     try:
-        set_uvar_nx("imageLibrary", dump_json(image_dict))
+        set_uvar("imageLibrary", dump_json(image_dict))
         return ["Success", f"{img_name} added to your image library!"]
 
     except:

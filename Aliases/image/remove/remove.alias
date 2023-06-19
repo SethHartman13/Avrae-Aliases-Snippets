@@ -48,7 +48,7 @@ def search_key(query: str, key_list: list[str]) -> str:
             return key
 
         else:
-            pass
+            return None
 
 
 def remove_image(img_name: str) -> list[str]:
@@ -63,15 +63,26 @@ def remove_image(img_name: str) -> list[str]:
             key_result = search_key(img_name, image_dict_keys)
 
             if typeof(key_result) == "str":
+                lst = []
                 key_result_list.append(key_result)
-                image_dict_keys.remove(key_result)
+
+                for key in image_dict_keys:
+                    if key != key_result:
+                        lst.append(key)
+                    else:
+                        pass
+
+                image_dict_keys = lst[:]
 
             else:
 
                 if len(key_result_list) == 1:
+                    set_uvar("imageLibraryBackup", dump_json(image_dict))
 
-                    del image_dict[key_result_list[0]]
-                    set_uvar("imageLibrary", dump_json(image_dict))
+                    new_image_dict = {key: val for key, val in image_dict.items() if key != key_result_list[0]}
+
+                    set_uvar("imageLibrary", dump_json(new_image_dict))
+
                     return ["Success", f"{img_name} added to your image library!"]
 
                 elif len(key_result_list) > 1:
@@ -101,25 +112,24 @@ def main(inputs: list[str]) -> list[str]:
 
     if len(error) == 0:
         title = "Image removed from your library"
-        caption = img_name
-        img_url = 
+        caption = inputs[0]
+        img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/remove/rubble.png"
 
+    else:
+        title = "An error has occurred!"
+        caption = "\n".join(error)
+        img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png"
 
+    return [title, caption, img_url]
 
+response_list = main(&ARGS&)
 
-
-
-
-
-
-
-
-
-
-
+title = response_list[0]
+caption = response_list[1]
+img_url = response_list[2]
 </drac2>
 
 -title "{{title}}"
 -image "{{img_url}}"
 -f "{{caption}}"
--footer "!image add [image name] [image URL] | Updated 6/18/23 | ShadowsStride"
+-footer "!image remove [image name] | Updated 6/18/23 | ShadowsStride"
