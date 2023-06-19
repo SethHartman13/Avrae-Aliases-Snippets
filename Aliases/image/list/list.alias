@@ -12,14 +12,27 @@ embed
 
 if uvar_exists("imageLibrary"):
     image_dict = load_json(get_uvar("imageLibrary"))
+    image_dict_keys = image_dict.keys()
 
-    if len(image_dict.keys()) != 0:
-        caption = "\n".join(image_dict.keys())
+    if len(image_dict_keys) != 0:
+        choices = []
+
+        for key in image_dict_keys:
+            choices.append(key)
+
+        img_url_choice = randchoice(choices)
+
+        choices.append("")
+        choices.append(f"**Random image from library: {img_url_choice}**")
+
+        caption = "\n".join(choices)
+        img_url = image_dict[img_url_choice]
     else:
         caption = "None"
+        img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/list/canvas.png"
 
     title = "Your current image library"
-    img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/list/canvas.png"
+    
 
 else:
     title = "An error has occurred!"
