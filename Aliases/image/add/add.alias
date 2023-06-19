@@ -9,6 +9,7 @@ embed
 #  * permission of Seth Hartman
 #  *******************************************************
 
+
 def add_image(img_name: str, img_url: str) -> list[str]:
 
     if uvar_exists("imageLibrary"):
@@ -75,8 +76,9 @@ response_list = main(&ARGS&)
 title = response_list[0]
 caption = response_list[1]
 img_url = response_list[2]
-</drac2>
 
+
+</drac2>
 -title "{{title}}"
 -image "{{img_url}}"
 -f "{{caption}}"

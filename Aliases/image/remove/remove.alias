@@ -9,6 +9,7 @@ embed
 #  * permission of Seth Hartman
 #  *******************************************************
 
+
 def search_key(query: str, key_list: list[str]) -> list[str]|str:
     """
     Searches for dictionary key.
