@@ -15,6 +15,8 @@ Image alias that handles storing and viewing user images.
 In order to run this properly, you need to do the following:
 - Run `!image add [image name] [image url]`, see [add](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/image/add/add.md) subalias for additional information. If you do not, then it will throw an error.
 
+If your are having problems displaying your image, verify that the image url ends in a .png, .jpeg, .jpg, etc.
+
 ## Changelog:
 6/19/2023 - Alias created
 

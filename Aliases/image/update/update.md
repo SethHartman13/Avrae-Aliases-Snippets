@@ -13,6 +13,9 @@ Subalias that handles updating images in a user's library.
 
 This subalias creates/accesses a backup user variable that allows for the user to restore their data if they make a mistake. See [restore](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/image/restore/restore.md) subalias.
 
+In order to run this properly, you need to do the following:
+- Run `!image add [image name] [image url]`, see [add](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/image/add/add.md) subalias for additional information. If you do not, then it will throw an error.
+
 ## Changelog:
 6/19/2023 - Subalias created
 

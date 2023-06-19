@@ -11,6 +11,9 @@ Subalias that handles listing images in user's library. Also supplies random ima
 ## Help:
 `!image list`
 
+In order to run this properly, you need to do the following:
+- Run `!image add [image name] [image url]`, see [add](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/image/add/add.md) subalias for additional information. If you do not, then it will throw an error.
+
 ## Changelog:
 6/19/2023 - Subalias created
 
