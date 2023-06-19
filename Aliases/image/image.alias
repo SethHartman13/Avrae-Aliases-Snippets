@@ -1,0 +1,197 @@
+embed
+<drac2>
+# *******************************************************
+#  * Copyright (C) 2023 Seth Hartman - shadowsstride@gmail.com
+#  * 
+#  * This file is part of the Crime Record Manager.
+#  * 
+#  * Crime Record Manager can not be copied and/or distributed without the express
+#  * permission of Seth Hartman
+#  *******************************************************
+
+def add_to_uvar(url:str, key:str) -> list[str]:
+    error = []
+    
+
+            
+
+
+
+
+
+
+
+
+
+
+
+    else:
+        set_uvar("images", "{}")
+        image_dict = dict()
+
+
+
+
+    
+
+
+
+
+
+    else:
+        error.append(f"{key} already exists!")
+        error.append("")
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def search_key(query: str, key_list:list) -> str:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
+
+    # For each key in the key_list
+    for key in key_list:
+
+        # Sets up process to creater iterations
+        initial_iterations = []
+        iterations = []
+        lst = []
+        lst[:] = key.lower()
+
+        for i in range(len(key) + 1):
+            initial_iterations.append(lst[:i])
+
+
+        # So, what happens is it will create iterations like 'r' and 're'
+        # This removes the first two so that at least three letters are needed
+        initial_iterations.pop(0)
+        initial_iterations.pop(0)
+
+        # Puts all the iterations of the key in a list
+        for iteration in initial_iterations:
+            iterations.append("".join(iteration))
+
+        # If the query returns a match, it will return the key
+        if query.lower() in iterations:
+            return key
+
+        else:
+            pass
+
+def main(request: str) -> list[str]:
+    error = []
+    
+    if len(request) > 0:
+
+        if len(request) > 1:
+            try:
+                request[1].lower().index("http")
+
+            except:
+                return ["None", "URL not found in second argument"]
+
+
+
+
+        try:
+            request[0].lower().index("http")
+            
+            if len(request) > 1:
+
+
+
+        except:
+            query = request[0]
+    else:
+        error.append("No arguments found!")
+
+
+
+
+    if len(error) == 0:
+
+        image_str = get_uvar("images")
+        
+        if typeof(image_str) == str:
+            image_match_list = []
+            image_dict = load_json(image_str)
+            image_keys = image_dict.keys()
+            duplicates = True
+            
+            while duplicates:
+                key_result = search_key(query, image_keys)
+
+                if key_result != "None":
+                    image_match_list.append(key_result)
+                    image_keys.remove(key_result)
+                else:
+                    duplicates = False
+                    if len(image_match_list) > 0:
+                        pass
+                    else:
+                        error.append("No images with that name found!")
+
+            if len(image_match_list) > 1:
+                error.append("The following images were found:\n" + "\n".join(image_match_list))
+
+            else:
+                pass
+        else:
+            error.append("User variable not found!")
+
+
+    else:
+        pass
+
+
+    if len(error) == 0:
+        image_url = image_dict[image_match_list[0]]
+        caption = "None"
+    else:
+        image_url = "None"
+        caption = "\n".join(error)
+
+
+    return [image_url, caption]
+
+
+result_list = main(&ARGS&)
+
+if result_list[0] != "None":
+    url = result_list[0]
+    caption = " "
+
+else:
+    url = 
+
+
+
+
+</drac2>
+

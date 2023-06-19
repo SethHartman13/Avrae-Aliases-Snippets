@@ -1,0 +1,74 @@
+embed
+<drac2>
+# *******************************************************
+#  * Copyright (C) 2023 Seth Hartman - shadowsstride@gmail.com
+#  * 
+#  * This file is part of the User Image Library Manager.
+#  * 
+#  * User Image Library Manager can not be copied and/or distributed without the express
+#  * permission of Seth Hartman
+#  *******************************************************
+
+def add_image(img_name: str, img_url: str) -> list[str]:
+
+    if uvar_exists("images"):
+        image_dict = load_json(get_uvar("images"))
+
+        if key not in image_dict.keys():
+            image_dict[str(key)] = str(url)
+
+        else:
+            return ["Error", "Image name already exists"]
+
+    
+    else:
+        image_dict = dict()
+        image_dict[str(key)] = str(url)
+
+    try:
+        set_uvar("images", dump_json(image_dict))
+        return ["Success", f"{key} added to your image library!"]
+
+    except:
+        return ["Error", "There was an issue setting your user variable"]
+
+
+
+
+def main(inputs: list[str]) -> list[str]:
+    error = []
+
+
+    if len(inputs) >= 2:
+
+        img_name = inputs[0]
+        img_url = inputs[1]
+
+        url_split = img_url.lower().split("://")
+
+        if url_split[0] != "https" or url_split[0] != "http":
+            error.append("Invalid URL. The URL must start with https or http")
+
+        else:
+            results = add_image(img_name, img_url)
+            title = results[1]
+
+            if results[0] == "Success":
+                caption = img_name
+            else:
+                caption = "Error!"
+                img_url = 
+    else:
+        error.append("2 arguments expected!")
+
+    if len(error) == 0:
+        return [title, caption]
+
+
+
+
+</drac2>
+
+
+
+
