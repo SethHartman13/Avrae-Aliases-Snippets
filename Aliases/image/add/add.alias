@@ -44,7 +44,7 @@ def main(inputs: list[str]) -> list[str]:
 
         url_split = img_url.lower().split("http")
 
-        if url_split[0] != "" or url_split[0] != "":
+        if url_split[0] != "":
             error.append("Invalid URL. The URL must start with https or http")
 
         else:
