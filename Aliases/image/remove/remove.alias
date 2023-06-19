@@ -59,21 +59,23 @@ def remove_image(img_name: str) -> list[str]:
         key_result_list = []
 
         while True:
+            if len(image_dict_keys) > 0:
+                key_result = search_key(img_name, image_dict_keys)
 
-            key_result = search_key(img_name, image_dict_keys)
+                if typeof(key_result) == "str":
+                    lst = []
+                    key_result_list.append(key_result)
 
-            if typeof(key_result) == "str":
-                lst = []
-                key_result_list.append(key_result)
+                    for key in image_dict_keys:
+                        if key != key_result:
+                            lst.append(key)
+                        else:
+                            pass
 
-                for key in image_dict_keys:
-                    if key != key_result:
-                        lst.append(key)
-                    else:
-                        pass
+                    image_dict_keys = lst[:]
 
-                image_dict_keys = lst[:]
-
+                else:
+                    image_dict_keys = []
             else:
 
                 if len(key_result_list) == 1:

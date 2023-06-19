@@ -48,7 +48,7 @@ def search_key(query: str, key_list: list[str]) -> str:
             return key
 
         else:
-            return None
+            return "None"
 
 
 def update_image(img_name: str, img_url: str) -> list[str]:
@@ -59,23 +59,25 @@ def update_image(img_name: str, img_url: str) -> list[str]:
         key_result_list = []
 
         while True:
+            if len(image_dict_keys) > 0:
+                key_result = search_key(img_name, image_dict_keys)
 
-            key_result = search_key(img_name, image_dict_keys)
+                if key_result != "None":
+                    lst = []
+                    key_result_list.append(key_result)
 
-            if typeof(key_result) == "str":
-                lst = []
-                key_result_list.append(key_result)
+                    for key in image_dict_keys:
+                        if key != key_result:
+                            lst.append(key)
+                        else:
+                            pass
 
-                for key in image_dict_keys:
-                    if key != key_result:
-                        lst.append(key)
-                    else:
-                        pass
+                    image_dict_keys = lst[:]
 
-                image_dict_keys = lst[:]
+                else:
+                    image_dict_keys = []
 
             else:
-
                 if len(key_result_list) == 1:
                     set_uvar("imageLibraryBackup", dump_json(image_dict))
 
@@ -83,14 +85,16 @@ def update_image(img_name: str, img_url: str) -> list[str]:
 
                     set_uvar("imageLibrary", dump_json(image_dict))
 
-                    return ["Success", f"{img_name} added to your image library!"]
+                    return ["Success", f"{img_name} updated in your image library!"]
 
                 elif len(key_result_list) > 1:
                     key_result_list.insert(0, "**Multiple images found:**")
                     return ["Error", "\n".join(key_result_list)]
 
+
                 else:
-                    return ["Error", "Image not found!"]
+                    return ["Error", f"Image not found!"]
+
     else:
         return ['Error', "Uvar `imageLibrary` does not exist!"]
 
@@ -110,11 +114,6 @@ def main(inputs: list[str]) -> list[str]:
 
         else:
             results = update_image(img_name, img_url)
-            if results[0] == "Success":
-                pass
-
-            else:
-                error.append(results[1])
 
         results = update_image(inputs[0], inputs[1])
 
