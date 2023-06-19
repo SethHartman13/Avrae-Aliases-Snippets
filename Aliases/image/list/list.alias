@@ -9,27 +9,22 @@ embed
 #  * permission of Seth Hartman
 #  *******************************************************
 
-def main():
-    
-    if uvar_exists("imageLibrary"):
-        image_dict = load_json(get_uvar("imageLibrary"))
 
-        title = "Your current image library"
-        caption = "\n".join(image_dict.keys())
-        img_url = ""
+if uvar_exists("imageLibrary"):
+    image_dict = load_json(get_uvar("imageLibrary"))
 
-    else:
-        title = "An error has occurred!"
-        caption = "Uvar `imageLibrary` does not exist!"
+    title = "Your current image library"
+    caption = "\n".join(image_dict.keys())
+    img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/list/canvas.png"
+
+else:
+    title = "An error has occurred!"
+    caption = "Uvar `imageLibrary` does not exist!"
+    img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png"
+
 
 </drac2>
 -title "{{title}}"
 -image "{{img_url}}"
 -f "{{caption}}"
--footer "!image add [image name] [image URL] | Updated 6/18/23 | ShadowsStride"
-
-
-
-
-
-
+-footer "!image list | Updated 6/18/23 | ShadowsStride"
