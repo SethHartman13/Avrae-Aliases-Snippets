@@ -15,7 +15,6 @@ def restore_image() -> list[str]:
 
     Return:
         ['status', 'status message']
-    
     """
 
     # Checks to see if the uvars exists
