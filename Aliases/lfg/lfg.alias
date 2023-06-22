@@ -3,9 +3,9 @@ embed
 # *******************************************************
 #  * Copyright (C) 2023 Seth Hartman - shadowsstride@gmail.com
 #  * 
-#  * This file is part of the Looking For Group Maker.
+#  * This file is part of the Looking For Group Helper.
 #  * 
-#  * Looking For Group Maker can not be copied and/or distributed without the express
+#  * Looking For Group Helper can not be copied and/or distributed without the express
 #  * permission of Seth Hartman
 #  *******************************************************
 
@@ -94,7 +94,7 @@ def get_classes(ch: character, subclass_bool: bool) -> str:
 
         # Check to see if subclass cvar has been created
         try:
-            subclass_dict = ch.cvars['subclass']
+            subclass_dict = load_json(ch.cvars['subclass'])
 
         # subclass svar has not been created
         except:
@@ -141,16 +141,16 @@ def get_classes(ch: character, subclass_bool: bool) -> str:
         for item in class_details:
             results.append(f"{item[0]} ({item[1]})")
 
-        temp_string = results.join("/") 
+        temp_string = "/".join(results) 
 
 
     # If it is multiclass
     if multiclass:
-        result_string = f"{temp_string}\n**Total levels:** {ch.levels.total_level}"
+        result_string = f"**Classes:** {temp_string}\n**Total levels:** {ch.levels.total_level}"
 
     # If it is not a multiclass
     else:
-        result_string = temp_string
+        result_string = f"**Class:** {temp_string}"
                 
     # Returns result
     return result_string
@@ -213,9 +213,9 @@ def get_player_name(ch: character, player_bool: bool):
 
     else:
         # Sometimes Avrae hates special characters when they are put together
-        ">" = right_point
-        "<" = left_point
-        "@" = at
+        right_point = ">" 
+        left_point = "<" 
+        at = "@"
 
         # Returns result string
         return f"{left_point}{at}{ch.owner}{right_point}"
@@ -252,7 +252,7 @@ def get_passives(ch:character, ins_bool: bool, inv_bool: bool, perc_bool: bool) 
         (str): Resultant string
     """
 
-    if not ins_bool or inv_bool or perc_bool:
+    if not ins_bool and inv_bool and perc_bool:
         return "None"
 
     else:
@@ -270,7 +270,7 @@ def get_passives(ch:character, ins_bool: bool, inv_bool: bool, perc_bool: bool) 
             # If the character does have the feats svar
             else:
                 feats = get('feats')
-                feats = str(feats)
+                feats = str(feats).lower()
 
                 split_string = feats.split('obs')
                 if len(split_string) > 1:
@@ -289,42 +289,49 @@ def get_passives(ch:character, ins_bool: bool, inv_bool: bool, perc_bool: bool) 
             # If perception is included
             if perc_bool:
                 if observant:
-                    results.append(f"Passive Perception: {10 + 5 + ch.skills['perception'].value} [observant]")
+                    results.append(f"**Passive Perception:** {10 + 5 + ch.skills['perception'].value} [observant]")
                     
                 else:
-                    results.append(f"Passive Perception: {10 + ch.skills['perception'].value}")
+                    results.append(f"**Passive Perception:** {10 + ch.skills['perception'].value}")
 
             # If insight is included
-            else:
+            if ins_bool:
                 if observant:
-                    results.append(f"Passive Insight: {10 + 5 + ch.skills['insight'].value} [observant]")
+                    results.append(f"**Passive Insight:** {10 + 5 + ch.skills['insight'].value} [observant]")
 
                 else:
-                    results.append(f"Passive Insight: {10 + ch.skills['insight'].value}")
+                    results.append(f"**Passive Insight:** {10 + ch.skills['insight'].value}")
 
-            # Adds note
-            result.append("*If you do not have 'observant' in your `feats` cvar, observant does not apply properly*")
+            if not observant:
+                if perc_bool or ins_bool:
+                    # Adds note
+                    # results.append("*If you do not have 'observant' in your `feats` cvar, observant does not apply properly*") 
+                    pass 
+                else:
+                    pass
+            else:
+                pass
 
         else:
             pass
 
         # If investigation is included
         if inv_bool:
-            results.append(f"Passive Investigation: {10 + ch.skills['investiagation'].value}")
+            results.append(f"**Passive Investigation:** {10 + ch.skills['investigation'].value}")
 
         else:
             pass
 
         # If the result list is not empty
         if len(results) != 0:
-            return "\n".join(results)
+            return "\n" + "\n".join(results) + "\n"
 
         # If for some reason the results list is empty, it will return nothing
         else:
             return "None"
     
 
-def get_spellbook(ch: character, spell_list_bool: bool) -> str:
+def get_spell_list(ch: character, spell_list_bool: bool) -> str:
     """
     Grab's a character's spell list
 
@@ -334,21 +341,24 @@ def get_spellbook(ch: character, spell_list_bool: bool) -> str:
     Return:
         (str) Resultant string
     """
+    if spell_list_bool:
+        # Creates spell_list list
+        spell_list = []
 
-    # Creates spell_list list
-    spell_list = []
+        for spell in ch.spellbook.spells:
+            spell_list.append(spell.name)
 
-    for spell in ch.spellbook.spells:
-        spell_list.append(spell.name)
+        initial_string = ", ".join(spell_list)
+        if len(spell_list) == 0:
+            final_string = "None"
 
-    initial_string = ", ".join(spell_list)
-    if len(spell_list) == 0:
-        final_string = "None"
+        else:
+            final_string = f"**Spell list:** {initial_string}"
 
+        return final_string
+    
     else:
-        final_string = f"**Spell list:** {initial_string}"
-
-    return final_string
+        return 'None'
 
 
 def get_spell_slot(ch: character, spell_slot_bool: bool) -> str:
@@ -368,18 +378,11 @@ def get_spell_slot(ch: character, spell_slot_bool: bool) -> str:
         spell_slot_list = []
 
         for i in range(1,10):
-            spell_slot = ch.spellbook.slots_str(i)
-            
-            slot_check = spell_slot.lower().split("found")
+            spell_slot_list.append(ch.spellbook.slots_str(i))
+      
+        temp_string = "\n".join([slot for slot in spell_slot_list if slot != "No spell slots."])
 
-            if len(slot_check) > 1:
-                spell_slot_list.append(spell_slot)
-            else:
-                break
-        
-        temp_string = "\n".join(spell_slot_list)
-
-        if len(spell_slot_list) > 0:
+        if temp_string != "":
             return f"**Spell Slots:**\n{temp_string}"
 
         else:
@@ -396,8 +399,8 @@ def main(input_string):
     Output:
         (list): List of outputs
     """
-    '&' = and_sym
-    '*' = astr_sym
+    and_sym = '&' 
+    astr_sym = '*'
 
     if input_string == f"{and_sym}{astr_sym}{and_sym}":
         caption_bool = False
@@ -413,12 +416,13 @@ def main(input_string):
     if svar_test == "None":
         subclass_bool = True
         thp_bool = True
+        img_bool = True
         player_bool = False
         ac_bool = False
         ins_bool = False
         inv_bool = False
         perc_bool = False
-        spellbook_bool = False
+        spell_list_bool = False
         spell_slot_bool = False
 
     else:
@@ -450,6 +454,19 @@ def main(input_string):
         except:
             thp_bool = True
 
+        # Sets up image boolean
+        try:
+            img_bool = svar['img']
+
+            if img_bool == 0:
+                img_bool = False
+            else:
+                img_bool = True
+
+        # Default behavior
+        except:
+            img_bool = True
+
         # Sets up player boolean
         try:
             player_bool = svar['player']
@@ -461,7 +478,7 @@ def main(input_string):
 
         # Default behavior
         except:
-            player_bool = True
+            player_bool = False
 
         # Sets up ac boolean
         try:
@@ -474,7 +491,7 @@ def main(input_string):
 
         # Default behavior
         except:
-            ac_bool = True
+            ac_bool = False
 
         # Sets up insight boolean
         try:
@@ -517,39 +534,39 @@ def main(input_string):
 
         # Sets up spellbook boolean
         try:
-            spellbook_bool = svar['spellbook']
+            spell_list_bool = svar['spell_list']
         
-            if spellbook_bool == 1:
-                spellbook_bool = True
+            if spell_list_bool == 1:
+                spell_list_bool = True
             else:
-                spellbook_bool = False
+                spell_list_bool = False
 
         # Default behavior
         except:
-            spellbook_bool = False
+            spell_list_bool = False
 
         # Sets up spellslot boolean
         try:
-            spellslot_bool = svar['spellslot']
+            spell_slot_bool = svar['spell_slot']
         
-            if spellslot_bool == 1:
-                spellslot_bool = True
+            if spell_slot_bool == 1:
+                spell_slot_bool = True
             else:
-                spellslot_bool = False
+                spell_slot_bool = False
 
         # Default behavior
         except:
-            spellslot_bool = False
+            spell_slot_bool = False
 
     if caption_bool:
-        caption = f"**Quest:** {input_string}"
+        caption = f"**Quest:** {input_string}\n"
     else:
-        caption = "**Quest:**"
+        caption = "**Quest:**\n"
 
 
     
     title = get_character_name(ch)
-    image_url = get_photo_url(ch, char_bool)
+    image_url = get_photo_url(ch, img_bool)
 
     result_list.append(caption)
     result_list.append(get_classes(ch, subclass_bool))
@@ -557,11 +574,11 @@ def main(input_string):
 
     # Runs all the optional functions and puts results in a list
     optional_list = []
-    optional_list.append(get_player_name(ch, player_bool))
     optional_list.append(get_ac(ch, ac_bool))
     optional_list.append(get_passives(ch, ins_bool, inv_bool, perc_bool))
-    optional_list.append(get_spellbook(ch, spell_list_bool))
+    optional_list.append(get_spell_list(ch, spell_list_bool))
     optional_list.append(get_spell_slot(ch, spell_slot_bool))
+    optional_list.append(get_player_name(ch, player_bool))
 
     # If the result was not "None", it will add the result to the result_list
     for result in optional_list:
@@ -574,7 +591,9 @@ def main(input_string):
     return [title, image_url, "\n".join(result_list)]
 
 
-output_list = main(&*&)
+input_list = &ARGS&
+
+output_list = main(" ".join(input_list))
 
 # Extracts outputs
 title = output_list[0]
@@ -587,4 +606,4 @@ left_arrow = "<"
 -title "{{title}}"
 -f "{{result_string}}"
 -thumb "{{image_url}}"
--footer "!lfg {{left_arrow}}phrase> | Updated 6/21/23 | ShadowsStride"
+-footer "!lfg {{left_arrow}}optional phrase> | Updated 6/21/23 | ShadowsStride"
