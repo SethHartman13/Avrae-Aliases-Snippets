@@ -1,0 +1,590 @@
+embed
+<drac2>
+# *******************************************************
+#  * Copyright (C) 2023 Seth Hartman - shadowsstride@gmail.com
+#  * 
+#  * This file is part of the Looking For Group Maker.
+#  * 
+#  * Looking For Group Maker can not be copied and/or distributed without the express
+#  * permission of Seth Hartman
+#  *******************************************************
+
+
+def search_key(query: str, key_list:list) -> str:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
+
+    # For each key in the key_list
+    for key in key_list:
+
+        # Sets up process to creater iterations
+        initial_iterations = []
+        iterations = []
+        lst = []
+        lst[:] = key.lower()
+
+        for i in range(len(key) + 1):
+            initial_iterations.append(lst[:i])
+
+
+        # So, what happens is it will create iterations like 'r' and 're'
+        # This removes the first two so that at least three letters are needed
+        initial_iterations.pop(0)
+        initial_iterations.pop(0)
+
+        # Puts all the iterations of the key in a list
+        for iteration in initial_iterations:
+            iterations.append("".join(iteration))
+
+        # If the query returns a match, it will return the key
+        if query.lower() in iterations:
+            return key
+
+        else:
+            pass
+
+    # If none of the queries return a match with the keys
+    return "None"
+
+
+# ------------------------------------------------------------------
+# Required
+
+def get_character_name(ch: character):
+    """
+    Grabs character name for the title of the embed.
+
+    Args:
+        ch (character): Character object
+
+    Return:
+        (str): Title for embed
+    """
+
+    return f"{ch.name} is looking for a quest!"
+
+
+# ------------------------------------------------------------------
+# Required/optional, enabled by default
+def get_classes(ch: character, subclass_bool: bool) -> str:
+    """
+    Grabs class information and (optional) subclass information
+    
+    Args:
+        ch (character): Character object
+        subclass_bool (bool): Whether subclass is included
+
+    Return:
+        result_string (str): Resultant string
+    """
+    # Variable setup
+    results = []
+    multiclass = False
+
+    # If subclass is involved in details
+    if subclass_bool:
+
+        # Check to see if subclass cvar has been created
+        try:
+            subclass_dict = ch.cvars['subclass']
+
+        # subclass svar has not been created
+        except:
+            subclass_bool = False
+
+    # if subclass is not involved in details
+    else:
+        subclass_bool = False
+
+    # Grabs all the class(es) and level(s)
+    class_details = []
+    for (player_cls, level) in ch.levels:
+        class_details.append([player_cls, level])
+
+    # Says whether or not it is a multiclass or not
+    if len(class_details) > 1:
+        multiclass = True            
+    else:
+        pass
+
+
+    # If subclass is involved in details
+    if subclass_bool:
+
+        # For each class/level set
+        for item in class_details:
+
+            # Search for class within subclass dict
+            result_key = search_key(item[0], subclass_dict.keys())
+
+            # If there is a subclass, creates class subclass (level) string
+            if result_key != "None":
+                results.append(f"{subclass_dict[result_key]} {item[0]} ({item[1]})")
+
+            # If there is not a subclass, creates class (level) string
+            else:
+                results.append(f"{item[0]} ({item[1]})")
+
+        # Joins results
+        temp_string = ("/").join(results)
+
+    # If subclass is not involved in details
+    else:
+        for item in class_details:
+            results.append(f"{item[0]} ({item[1]})")
+
+        temp_string = results.join("/") 
+
+
+    # If it is multiclass
+    if multiclass:
+        result_string = f"{temp_string}\n**Total levels:** {ch.levels.total_level}"
+
+    # If it is not a multiclass
+    else:
+        result_string = temp_string
+                
+    # Returns result
+    return result_string
+
+
+def get_hp_thp(ch:character, thp_bool: bool) -> str:
+    """
+    Grabs HP and (optional) Temp HP
+
+    Args:
+        ch (character): Character object
+        thp_pool(bool): Whether thp is included
+
+    Return:
+        (str): Resultant_string
+    """
+
+    # If thp is involved
+    if thp_bool:
+        return f"**HP:** {ch.hp_str()}"
+
+    # If thp is not involved
+    else:
+        return f"**HP:** {ch.hp}"
+
+
+# ------------------------------------------------------------------
+# Optional, enabled by default
+def get_photo_url(ch: character, char_bool: bool):
+    """
+    Grabs photo url to use for the thumbnail
+
+    Args:
+        ch (character): Character object
+
+    Return:
+        (str): String containing URL
+    """
+    if char_bool:
+        return ch.image
+    else:
+        return ""
+
+
+# ------------------------------------------------------------------
+# Optional, disabled by default
+def get_player_name(ch: character, player_bool: bool):
+    """
+    Grabs player ID and returns a string that contains a discord mention
+
+    Args:
+        ch (character): Character object
+
+    Return:
+        (str): Resultant string
+    """
+    if not player_bool:
+
+        return "None"
+
+    else:
+        # Sometimes Avrae hates special characters when they are put together
+        ">" = right_point
+        "<" = left_point
+        "@" = at
+
+        # Returns result string
+        return f"{left_point}{at}{ch.owner}{right_point}"
+
+
+def get_ac(ch: character, ac_bool: bool):
+    """
+    Grabs AC
+    
+    Args:
+        ch (character): Character object
+
+    Return:
+        (str): Resultant string
+    """
+    if not ac_bool:
+        return "None"
+
+    else:
+        return f"**AC:** {ch.ac}"
+
+
+def get_passives(ch:character, ins_bool: bool, inv_bool: bool, perc_bool: bool) -> str:
+    """
+    Grabs character's passives
+
+    Args:
+        ch (character): Character object
+        ins_bool (bool) = 0: If passive insight is included
+        inv_bool (bool) = 0: If passive investigation is included
+        perc_bool (bool) = 0: If passive perception is included 
+
+    Return:
+        (str): Resultant string
+    """
+
+    if not ins_bool or inv_bool or perc_bool:
+        return "None"
+
+    else:
+  
+        # Creates results list
+        results = []
+
+        # If it involved perception or insight
+        if ins_bool or perc_bool:
+
+            # If the character does not have the feats cvar
+            if get('feats') == "":
+                observant = False
+
+            # If the character does have the feats svar
+            else:
+                feats = get('feats')
+                feats = str(feats)
+
+                split_string = feats.split('obs')
+                if len(split_string) > 1:
+                    result_key = "Found"
+                else:
+                    result_key = "None"
+
+                # If it did not find the feat
+                if result_key == "None":
+                    observant = False
+
+                # If it found the feat
+                else:
+                    observant = True
+
+            # If perception is included
+            if perc_bool:
+                if observant:
+                    results.append(f"Passive Perception: {10 + 5 + ch.skills['perception'].value} [observant]")
+                    
+                else:
+                    results.append(f"Passive Perception: {10 + ch.skills['perception'].value}")
+
+            # If insight is included
+            else:
+                if observant:
+                    results.append(f"Passive Insight: {10 + 5 + ch.skills['insight'].value} [observant]")
+
+                else:
+                    results.append(f"Passive Insight: {10 + ch.skills['insight'].value}")
+
+            # Adds note
+            result.append("*If you do not have 'observant' in your `feats` cvar, observant does not apply properly*")
+
+        else:
+            pass
+
+        # If investigation is included
+        if inv_bool:
+            results.append(f"Passive Investigation: {10 + ch.skills['investiagation'].value}")
+
+        else:
+            pass
+
+        # If the result list is not empty
+        if len(results) != 0:
+            return "\n".join(results)
+
+        # If for some reason the results list is empty, it will return nothing
+        else:
+            return "None"
+    
+
+def get_spellbook(ch: character, spell_list_bool: bool) -> str:
+    """
+    Grab's a character's spell list
+
+    Args:
+        ch (character): Character object
+    
+    Return:
+        (str) Resultant string
+    """
+
+    # Creates spell_list list
+    spell_list = []
+
+    for spell in ch.spellbook.spells:
+        spell_list.append(spell.name)
+
+    initial_string = ", ".join(spell_list)
+    if len(spell_list) == 0:
+        final_string = "None"
+
+    else:
+        final_string = f"**Spell list:** {initial_string}"
+
+    return final_string
+
+
+def get_spell_slot(ch: character, spell_slot_bool: bool) -> str:
+    """
+    Grab's a character's spell slots
+
+    Args:
+        ch (character): Character object
+    
+    Return:
+        (str) String containing a character's spell slots
+    """
+    if not spell_slot_bool:
+        return "None"
+
+    else:
+        spell_slot_list = []
+
+        for i in range(1,10):
+            spell_slot = ch.spellbook.slots_str(i)
+            
+            slot_check = spell_slot.lower().split("found")
+
+            if len(slot_check) > 1:
+                spell_slot_list.append(spell_slot)
+            else:
+                break
+        
+        temp_string = "\n".join(spell_slot_list)
+
+        if len(spell_slot_list) > 0:
+            return f"**Spell Slots:**\n{temp_string}"
+
+        else:
+            return "None"
+
+
+def main(input_string):
+    """
+    Main program function
+
+    Args:
+        input_string (str): String given as input
+
+    Output:
+        (list): List of outputs
+    """
+    '&' = and_sym
+    '*' = astr_sym
+
+    if input_string == f"{and_sym}{astr_sym}{and_sym}":
+        caption_bool = False
+    else:
+        caption_bool = True
+
+    ch = character()
+    result_list = []
+
+    svar_test = get_svar("lfg_settings", default="None")
+
+    # Sets default behavior
+    if svar_test == "None":
+        subclass_bool = True
+        thp_bool = True
+        player_bool = False
+        ac_bool = False
+        ins_bool = False
+        inv_bool = False
+        perc_bool = False
+        spellbook_bool = False
+        spell_slot_bool = False
+
+    else:
+        svar = load_json(svar_test)
+        # Sets up subclass boolean
+        try:
+            # Tries to pull value from dictionary
+            subclass_bool = svar['subclass']
+
+            if subclass_bool == 0:
+                subclass_bool = False
+            else:
+                subclass_bool = True
+        
+        # Default behavior
+        except:
+            subclass_bool = True
+
+        # Sets up thp boolean
+        try:
+            thp_bool = svar['thp']
+
+            if thp_bool == 0:
+                thp_bool = False
+            else:
+                thp_bool = True
+
+        # Default behavior
+        except:
+            thp_bool = True
+
+        # Sets up player boolean
+        try:
+            player_bool = svar['player']
+
+            if player_bool == 1:
+                player_bool = True
+            else:
+                player_bool = False
+
+        # Default behavior
+        except:
+            player_bool = True
+
+        # Sets up ac boolean
+        try:
+            ac_bool = svar['ac']
+
+            if ac_bool == 1:
+                ac_bool = True
+            else:
+                ac_bool = False
+
+        # Default behavior
+        except:
+            ac_bool = True
+
+        # Sets up insight boolean
+        try:
+            ins_bool = svar['ins']
+
+            if ins_bool == 1:
+                ins_bool = True
+            else:
+                ins_bool = False
+
+        # Default behavior
+        except:
+            ins_bool = False
+
+        # Sets up investigation boolean
+        try:
+            inv_bool = svar['inv']
+
+            if inv_bool == 1:
+                inv_bool = True
+            else:
+                inv_bool = False
+
+        # Default behavior
+        except:
+            inv_bool = False
+
+        # Sets up perception boolean
+        try:
+            perc_bool = svar['perc']
+
+            if perc_bool == 1:
+                perc_bool = True
+            else:
+                perc_bool = False
+
+        # Default behavior
+        except:
+            perc_bool = False
+
+        # Sets up spellbook boolean
+        try:
+            spellbook_bool = svar['spellbook']
+        
+            if spellbook_bool == 1:
+                spellbook_bool = True
+            else:
+                spellbook_bool = False
+
+        # Default behavior
+        except:
+            spellbook_bool = False
+
+        # Sets up spellslot boolean
+        try:
+            spellslot_bool = svar['spellslot']
+        
+            if spellslot_bool == 1:
+                spellslot_bool = True
+            else:
+                spellslot_bool = False
+
+        # Default behavior
+        except:
+            spellslot_bool = False
+
+    if caption_bool:
+        caption = f"**Quest:** {input_string}"
+    else:
+        caption = "**Quest:**"
+
+
+    
+    title = get_character_name(ch)
+    image_url = get_photo_url(ch, char_bool)
+
+    result_list.append(caption)
+    result_list.append(get_classes(ch, subclass_bool))
+    result_list.append(get_hp_thp(ch, thp_bool))
+
+    # Runs all the optional functions and puts results in a list
+    optional_list = []
+    optional_list.append(get_player_name(ch, player_bool))
+    optional_list.append(get_ac(ch, ac_bool))
+    optional_list.append(get_passives(ch, ins_bool, inv_bool, perc_bool))
+    optional_list.append(get_spellbook(ch, spell_list_bool))
+    optional_list.append(get_spell_slot(ch, spell_slot_bool))
+
+    # If the result was not "None", it will add the result to the result_list
+    for result in optional_list:
+        if result != "None":
+            result_list.append(result)
+        else:
+            pass
+    
+
+    return [title, image_url, "\n".join(result_list)]
+
+
+output_list = main(&*&)
+
+# Extracts outputs
+title = output_list[0]
+image_url = output_list[1]
+result_string = output_list[2]
+
+left_arrow = "<"
+</drac2>
+
+-title "{{title}}"
+-f "{{result_string}}"
+-thumb "{{image_url}}"
+-footer "!lfg {{left_arrow}}phrase> | Updated 6/21/23 | ShadowsStride"
