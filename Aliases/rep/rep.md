@@ -19,7 +19,7 @@ In order to run this properly, you need to do the following:
 ### Organization Server Variable
 This server variable uses a json in order to work properly. It uses the "name" property to identify the name of the organization. And it uses numbers to identify reward thresholds. It also has a place to put an url for an icon for the organization, if not filled out, it defaults to the icon shown in the top right corner of this markdown file. Here is an example:
 ```json
-{"name": "Renown", "10":["+1 Spell Focus", "+1 Shield", "10x10 Plot of Land"], "15": ["+1 Armor"], "20": ["+2 Spell Focus","+2 Shield", "10x20 Plot of Land"], "25": ["+2 Armor"], "30": ["+3 Spell Focus", "+3 Shield", "20x20 Plot of Land"], "35": ["+3 Armor"], "imgurl": "www.someimage.png"}
+{"name": "Renown", "10":["10x10 Plot of Land"], "15": ["Jacket of Speed"], "20": ["10x20 Plot of Land"], "25": ["Jacket of Swiftness"], "30": ["20x20 Plot of Land"], "35": ["Jacket of Speedy Bois"], "imgurl": "www.someimage.png"}
 ```
 
 For each "threshold," you need to have the key be a string and the value to be a list of strings. i.e. the threshold is 10 and the items you can get at reputation level 10 is Jelly Beans and Cotton Candy:
@@ -59,20 +59,8 @@ You will need to run `!svar org_settings` to copy over the previous settings bef
 
 6/14/2023 - Updated copyright notice
 
-## Copyright Notice
+6/22/2023 - Copyright/License Update
 
-Copyright (C) Seth Hartman - All Rights Reserved.
+## License Notice
 
-THE CONTENTS OF THIS PROJECT ARE PROPRIETARY AND CONFIDENTIAL.
-UNAUTHORIZED COPYING, TRANSFERRING OR REPRODUCTION OF THE CONTENTS OF THIS PROJECT, VIA ANY MEDIUM IS STRICTLY PROHIBITED.
-
-The receipt or possession of the source code and/or any parts thereof does not convey or imply any right to use them
-for any purpose other than the purpose for which they were provided to you.
-
-The software is provided "AS IS", without warranty of any kind, express or implied, including but not limited to
-the warranties of merchantability, fitness for a particular purpose and non infringement.
-In no event shall the authors or copyright holders be liable for any claim, damages or other liability,
-whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software
-or the use or other dealings in the software.
-
-Abbreviations of the above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+This work includes material written by Seth Hartman (aka ShadowsStride) and is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode.
