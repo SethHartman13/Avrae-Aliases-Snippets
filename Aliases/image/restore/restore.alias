@@ -1,13 +1,10 @@
 embed
 <drac2>
 # *******************************************************
-#  * Copyright (C) 2023 Seth Hartman - shadowsstride@gmail.com
-#  * 
-#  * This file is part of the User Image Library Manager.
-#  * 
-#  * User Image Library Manager can not be copied and/or distributed without the express
-#  * permission of Seth Hartman
-#  *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International 
+# * License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
 
 def restore_image() -> list[str]:
     """
@@ -95,4 +92,4 @@ img_url = response_list[2]
 -title "{{title}}"
 -image "{{img_url}}"
 -f "{{caption}}"
--footer "!image remove [image name] | Updated 6/19/23 | ShadowsStride"
+-footer "!image remove [image name] | Updated 6/22/23 | ShadowsStride"
