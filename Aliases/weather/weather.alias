@@ -1,13 +1,15 @@
 embed
 <drac2>
 # *******************************************************
-#  * Copyright (C) 2023 Seth Hartman - shadowsstride@gmail.com
-#  * 
-#  * This file is part of the Weather Manager.
-#  * 
-#  * Weather Manager can not be copied and/or distributed without the express
-#  * permission of Seth Hartman
-#  *******************************************************
+# * This work includes material taken from the System Reference Document 5.1 
+# * (“SRD 5.1”) by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. 
+# * The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License 
+# * available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# * 
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International License 
+# * available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
 
 def roll_dice(dice_type:str, baseline: int = 0) -> list:
     """
@@ -65,7 +67,7 @@ def main(args: list) -> list:
     # Sets up error list and sets valid weather conditions
     error = []
     seasons = ['Fall', 'Spring', 'Summer', 'Winter', 'Autumn']
-    weather_water_conditions = ["fog/mist", "light", "heavy", "overcast", "clear"]
+    weather_water_conditions = ["mist", "fog/mist", "heavy fog", "light", "heavy", "overcast", "clear"]
     weather_wind_conditions = ["light wind", "heavy wind", "gentle breeze", "none"]
     
     # If there is at least 1 argument
@@ -212,7 +214,7 @@ def main(args: list) -> list:
                                     disadv = "Disadvantage on Wisdom (Perception) checks"
                                     
                                 # Fog/Mist, adds disasvantage note
-                                elif water_result.lower() == "fog/mist":
+                                elif water_result.lower() == "heavy fog":
                                     water_rate = 0
                                     disadv = "Disadvantage on sight-based Wisdom (Perception) checks"
 
