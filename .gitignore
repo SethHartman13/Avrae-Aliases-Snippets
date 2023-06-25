@@ -3,3 +3,5 @@
 Aliases/weather/*.json
 Aliases/lfg/lfg.md
 Aliases/lfg/lfg.alias
+Aliases/clock/python/*
+Aliases/clock/*.json

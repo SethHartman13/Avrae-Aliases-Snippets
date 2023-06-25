@@ -1,0 +1,140 @@
+embed
+<drac2>
+
+def search_key(query: str, key_list: list[str]) -> list[str]|str:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
+
+    # Creates list to store matches
+    results_keys = []
+
+    # For each key in the key_list
+    for key in key_list:
+
+        # Sets up process to creater iterations
+        initial_iterations = []
+        iterations = []
+        lst = []
+        lst[:] = key.lower()
+
+        for i in range(len(key) + 1):
+            initial_iterations.append(lst[:i])
+
+
+        # So, what happens is it will create iterations like 'r' and 're'
+        # This removes the first two so that at least three letters are needed
+        initial_iterations.pop(0)
+        initial_iterations.pop(0)
+
+
+        # Puts all the iterations of the key in a list
+        for iteration in initial_iterations:
+            iterations.append("".join(iteration))
+
+        # If the query returns a match, it will return the key
+        if query.lower() in iterations:
+
+            results_keys.append(key)
+
+        else:
+            pass
+
+    # If there are matches, return a list
+    if len(results_keys) != 0:
+        return results_keys
+
+    # If there are no matches, return a string
+    else:
+        return "None"
+
+def setup_time(name: str) -> list:
+
+    # Pulls and checks if uvar exists
+    clock_test = get_uvar("clock_dict", default="None")
+
+    # If the uvar exists
+    if clock_test != "None":
+        pass
+
+    # If the uvar does not exist
+    else:
+        set_uvar("clock_dict", "{}")
+        clock_test = dict()
+    
+    # Tries to convert the uvar to a dictionary
+    try:
+        clock_dict = load_json(clock_test)
+
+    except:
+        return ['Error', 'Problems loading dictionary']
+
+    key_result = search_key(name.lower(), clock_dict.keys())
+
+    if key_result == "None":
+        clock_dict[name] = [False, int(round(time(),0)), 0, 0]
+        set_uvar('clock_dict', dump_json(clock_dict))
+        return ['Success', f'{name} tracker successfully created']
+
+    elif len(key_result) == 1:
+        if key_result[0].lower() == name.lower():
+            return ['Error', 'That tracker already exists!']
+
+        else:
+            clock_dict[name] = [False, int(round(time(),0)), 0, 0]
+            set_uvar('clock_dict', dump_json(clock_dict))
+            return ['Success', f'{name} tracker successfully created']
+    
+    else:
+        for key in key_result:
+            if name.lower() == key.lower():
+                return ['Error', 'That tracker already exists!']
+
+            else:
+                pass
+        
+        clock_dict[name] = [False, int(round(time(),0)), 0, 0]
+        set_uvar('clock_dict', dump_json(clock_dict))
+        return ['Success', f'{name} tracker successfully created']
+   
+
+def get_player() -> str:
+
+    return ctx.author.display_name
+
+
+def main(input_list: list) -> list:
+    error = []
+
+    if len(input_list) == 0:
+        error.append("No tracker name given!")
+
+    else:
+        result_list = setup_time(input_list[0])
+
+    player_name = get_player()
+
+    if result_list[0] != "Error":
+        return [f"{player_name}, {result_list[1]}", ""]   
+
+    else:
+        return [f"{player_name} encountered an error", result_list[1]]
+
+
+output_list = main(&ARGS&)
+
+title = output_list[0]
+output_string = output_list[1]
+
+
+</drac2>
+-title "{{title}}"
+-f "{{output_string}}"
+-footer "!clock add [tracker name] | Updated 6/24/23 | ShadowsStride"

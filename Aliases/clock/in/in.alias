@@ -1,0 +1,218 @@
+embed
+
+<drac2>
+
+def search_key(query: str, key_list: list[str]) -> list[str]|str:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
+
+    # Creates list to store matches
+    results_keys = []
+
+    # For each key in the key_list
+    for key in key_list:
+
+        # Sets up process to creater iterations
+        initial_iterations = []
+        iterations = []
+        lst = []
+        lst[:] = key.lower()
+
+        for i in range(len(key) + 1):
+            initial_iterations.append(lst[:i])
+
+
+        # So, what happens is it will create iterations like 'r' and 're'
+        # This removes the first two so that at least three letters are needed
+        initial_iterations.pop(0)
+        initial_iterations.pop(0)
+
+
+        # Puts all the iterations of the key in a list
+        for iteration in initial_iterations:
+            iterations.append("".join(iteration))
+
+        # If the query returns a match, it will return the key
+        if query.lower() in iterations:
+
+            results_keys.append(key)
+
+        else:
+            pass
+
+    # If there are matches, return a list
+    if len(results_keys) != 0:
+        return results_keys
+
+    # If there are no matches, return a string
+    else:
+        return "None"
+
+def get_saved_time(name: str) -> list:
+
+    # Pulls and checks if uvar exists
+    clock_test = get_uvar("clock_dict", default="None")
+
+    # If the uvar exists
+    if clock_test != "None":
+        pass
+
+    # If the uvar does not exist
+    else:
+        set_uvar("clock_dict", "{}")
+        clock_test = dict()
+    
+    # Tries to convert the uvar to a dictionary
+    try:
+        clock_dict = load_json(clock_test)
+
+    except:
+        return ['Error', 'Problems loading dictionary']
+
+    # If no argument was passed (default behavior)
+    if name == "":
+
+        # Tries to pull the dm_time information 
+        try:
+            result_list = clock_dict['dm_time']
+
+            # If the tracker is already active
+            if result_list[0]:
+                return ['Error', 'You are already clocked in for DM time tracker']
+
+            # Return the result_list of dm_time
+            else:
+                return ["Success", result_list, 'dm_time']
+
+        except:
+            # Creates entry in dictionary
+            clock_dict['dm_time'] = [True, int(round(time(), 0)), 0, 0]
+
+            # Sets uvar 
+            set_uvar("clock_dict", dump_json(clock_dict))
+
+            # Return the result_list of dm_time
+            return ["Success", clock_dict['dm_time'], 'dm_time']
+
+    else:
+
+        key_result = search_key(name.lower(), clock_dict.keys())
+
+        # If it finds at least one key
+        if key_result != "None":
+
+            # If it only find one 
+            if len(key_result) == 1:
+                result_list = clock_dict[key_result[0]]
+                
+                # If the tracker is already active
+                if result_list[0]:
+                    return ['Error', f'You are already clocked in for `{key_result[0]}` tracker']
+
+                # Return the result_list of the tracker
+                else:
+                    return ["Success", result_list, key_result[0]]
+
+            # If it find multiple keys
+            else:
+                for key in key_result:
+                    if name.lower() == key.lower():
+                        result_list = clock_dict[key]
+
+                        # If the tracker is already active
+                        if result_list[0]:
+                            return ['Error', f'You are already clocked in for `{key}` tracker']
+
+                        # Return the result_list of the tracker
+                        else:
+                            return ["Success", result_list, key]
+
+                    else:
+                        pass
+
+                key_result.insert(0, "**Multiple trackers found:**")
+                return ["Error", "\n".join(key_result)]
+
+        # If it does not find a key
+        else:
+            return ['Error', "Tracker not found!\nPlease run `!clock create [tracker name]`"]
+
+def set_time_uvar(tracker_list: list, tracker_key: str):
+    clock_dict = load_json(get_uvar("time_dict"))
+
+    new_tracker_list = [True, int(round(time(), 0)), tracker_list[2], tracker_list[3] + 1]
+
+    clock_dict[tracker_key] = new_tracker_list
+
+    set_uvar("clock_dict", dump_json(clock_dict))
+    
+
+def get_player() -> str:
+
+    return ctx.author.display_name
+
+def calc_time(time:int) -> str:
+
+    # Converts time into hours
+    hours = time // 3600
+
+    minutes = (time % 3600) // 60
+
+    seconds = (time % 3600) % 60
+
+    return f"{hours} hour(s), {minutes} minute(s), {seconds} second(s)"
+
+
+def main(input_list: list) -> list:
+    error = []
+
+    if len(input_list) == 0:
+        result_list = get_saved_time("")
+        name = "DM Time"
+
+    else:
+        result_list = get_saved_time(input_list[0])
+        name = input_list[0]
+
+    player_name = get_player()
+
+    if result_list[0] != "Error":
+        
+        tracker_details = result_list[1]
+        tracker_key = result_list[2]
+        set_time_uvar(tracker_details, tracker_key)
+
+
+        title = f"{player_name} is clocking in for `{name}`!"
+        result_list = []
+        
+        result_list.append(f"**Current total time:** {calc_time(tracker_details[2])}")
+        result_list.append(f"**Current clock-ins:** {tracker_details[3] + 1}")
+        result_list.append(f"**Time since last clock-out:** {calc_time(int(round(time(),0)) - tracker_details[1])}")
+
+        return [title, "\n".join(result_list)]
+
+    else:
+        title = f"{player_name} encountered an error"
+
+        return [title, result_list[1]]
+
+output_list = main(&ARGS&)
+
+title = output_list[0]
+output_string = output_list[1]
+
+left_arrow = "<"
+
+</drac2>
+-title "{{title}}"
+-f "{{output_string}}"
+-footer "!clock in {{left_arrow}}tracker name> | Updated 6/24/23 | ShadowsStride"
