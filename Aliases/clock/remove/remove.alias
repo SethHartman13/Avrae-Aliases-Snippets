@@ -66,8 +66,7 @@ def setup_time(name: str) -> list:
 
     # If the uvar does not exist
     else:
-        set_uvar("clock_dict", "{}")
-        clock_test = dict()
+        return ['Error', "uvar not found!\nPlease run `!clock create [tracker name]`"]
     
     # Tries to convert the uvar to a dictionary
     try:
@@ -79,30 +78,32 @@ def setup_time(name: str) -> list:
     key_result = search_key(name.lower(), clock_dict.keys())
 
     if key_result == "None":
-        clock_dict[name] = [False, int(round(time(),0)), 0, 0]
-        set_uvar('clock_dict', dump_json(clock_dict))
-        return ['Success', f'{name} tracker successfully created']
+        return ['Error', "Tracker not found!\nPlease run `!clock create [tracker name]`"]
 
     elif len(key_result) == 1:
-        if key_result[0].lower() == name.lower():
-            return ['Error', 'That tracker already exists!']
+        set_uvar('clock_dict_backup', dump_json(clock_dict))
 
-        else:
-            clock_dict[name] = [False, int(round(time(),0)), 0, 0]
-            set_uvar('clock_dict', dump_json(clock_dict))
-            return ['Success', f'{name} tracker successfully created']
+        new_clock_dict = {key: val for key, val in clock_dict.items() if key != key_result[0]}
+        set_uvar('clock_dict', dump_json(new_clock_dict))
+
+        return ['Success', key_result[0]]
     
     else:
-        for key in key_result:
-            if name.lower() == key.lower():
-                return ['Error', 'That tracker already exists!']
+        for dict_key in key_result:
+            if name.lower() == dict_key.lower():
+                
+                set_uvar('clock_dict_backup', dump_json(clock_dict))
 
+                new_clock_dict = {key: val for key, val in clock_dict.items() if dict_key != key_result[0]}
+                set_uvar('clock_dict', dump_json(new_clock_dict))
+
+                return ['Success', dict_key]
+                
             else:
                 pass
         
-        clock_dict[name] = [False, int(round(time(),0)), 0, 0]
-        set_uvar('clock_dict', dump_json(clock_dict))
-        return ['Success', f'{name} tracker successfully created']
+        key_result.insert(0, "**Multiple trackers found:**")
+        return ["Error", "\n".join(key_result)]
    
 
 def get_player() -> str:
@@ -118,11 +119,12 @@ def main(input_list: list) -> list:
 
     else:
         result_list = setup_time(input_list[0])
+        name = result_list[1]
 
     player_name = get_player()
 
     if result_list[0] != "Error":
-        return [f"{player_name}, {result_list[1]}", ""]   
+        return [f"{player_name}, {name} tracker successfully removed", ""]   
 
     else:
         return [f"{player_name} encountered an error", result_list[1]]
@@ -137,4 +139,4 @@ output_string = output_list[1]
 </drac2>
 -title "{{title}}"
 -f "{{output_string}}"
--footer "!clock add [tracker name] | Updated 6/24/23 | ShadowsStride"
+-footer "!clock remove [tracker name] | Updated 6/24/23 | ShadowsStride"

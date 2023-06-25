@@ -1,0 +1,169 @@
+embed
+<drac2>
+
+def search_key(query: str, key_list: list[str]) -> list[str]|str:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
+
+    # Creates list to store matches
+    results_keys = []
+
+    # For each key in the key_list
+    for key in key_list:
+
+        # Sets up process to creater iterations
+        initial_iterations = []
+        iterations = []
+        lst = []
+        lst[:] = key.lower()
+
+        for i in range(len(key) + 1):
+            initial_iterations.append(lst[:i])
+
+
+        # So, what happens is it will create iterations like 'r' and 're'
+        # This removes the first two so that at least three letters are needed
+        initial_iterations.pop(0)
+        initial_iterations.pop(0)
+
+
+        # Puts all the iterations of the key in a list
+        for iteration in initial_iterations:
+            iterations.append("".join(iteration))
+
+        # If the query returns a match, it will return the key
+        if query.lower() in iterations:
+
+            results_keys.append(key)
+
+        else:
+            pass
+
+    # If there are matches, return a list
+    if len(results_keys) != 0:
+        return results_keys
+
+    # If there are no matches, return a string
+    else:
+        return "None"
+
+
+def calc_time(time:int) -> str:
+
+    # Converts time into hours
+    hours = time // 3600
+
+    minutes = (time % 3600) // 60
+
+    seconds = (time % 3600) % 60
+
+    return f"{hours} hour(s), {minutes} minute(s), {seconds} second(s)"
+
+
+def reset_time(name: str) -> list:
+
+    # Pulls and checks if uvar exists
+    clock_test = get_uvar("clock_dict", default="None")
+
+    # If the uvar exists
+    if clock_test != "None":
+        pass
+
+    # If the uvar does not exist
+    else:
+        return ['Error', "uvar not found!\nPlease run `!clock create [tracker name]`"]
+    
+    # Tries to convert the uvar to a dictionary
+    try:
+        clock_dict = load_json(clock_test)
+
+    except:
+        return ['Error', 'Problems loading dictionary']
+
+    key_result = search_key(name.lower(), clock_dict.keys())
+
+    if key_result == "None":
+        return ['Error', "Tracker not found!\nPlease run `!clock create [tracker name]`"]
+
+    elif len(key_result) == 1:
+        set_uvar('clock_dict_backup', dump_json(clock_dict))
+        time_check = clock_dict[key_result[0]]
+
+        clock_dict[key_result[0]] = [False, int(round(time(), 0)), 0, 0]
+        set_uvar('clock_dict', dump_json(clock_dict))
+
+        return ['Success', time_check, key_result[0]]
+    
+    else:
+        for dict_key in key_result:
+            if name.lower() == dict_key.lower():
+                set_uvar('clock_dict_backup', dump_json(clock_dict))
+                time_check = clock_dict[dict_key]
+
+                clock_dict[dict_key] = [False, int(round(time(), 0)), 0, 0]
+                set_uvar('clock_dict', dump_json(clock_dict))
+
+                return ['Success', time_check, dict_key]
+                
+            else:
+                pass
+        
+        key_result.insert(0, "**Multiple trackers found:**")
+        return ["Error", "\n".join(key_result)]
+   
+
+def get_player() -> str:
+
+    return ctx.author.display_name
+
+
+def main(input_list: list) -> list:
+    error = []
+
+    if len(input_list) == 0:
+        result_list = reset_time("dm_time")
+        name = "DM Time"
+
+    else:
+        result_list = reset_time(input_list[0])
+        name = input_list[0]
+
+    player_name = get_player()
+
+    if result_list[0] != "Error":
+        tracker_details = result_list[1]
+
+        end_result_list = []
+
+        end_result_list.append(f"**Final time:** {calc_time(tracker_details[2])}")
+        end_result_list.append(f"**Final clock-ins:** {tracker_details[3]}")
+
+        if len(input_list) == 0:
+            return [f"{player_name}, DM Time tracker successfully reset", "\n".join(end_result_list)]
+
+        else:
+            return [f"{player_name}, {result_list[2]} tracker successfully reset", "\n".join(end_result_list)]   
+
+    else:
+        return [f"{player_name} encountered an error", result_list[1]]
+
+
+output_list = main(&ARGS&)
+
+title = output_list[0]
+output_string = output_list[1]
+
+left_arrow = "<"
+
+</drac2>
+-title "{{title}}"
+-f "{{output_string}}"
+-footer "!clock reset {{left_arrow}}tracker name> | Updated 6/25/23 | ShadowsStride"
