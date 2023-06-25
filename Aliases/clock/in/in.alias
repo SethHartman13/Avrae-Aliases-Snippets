@@ -214,5 +214,6 @@ left_arrow = "<"
 
 </drac2>
 -title "{{title}}"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/clock/image.png"
 -f "{{output_string}}"
 -footer "!clock in {{left_arrow}}tracker name> | Updated 6/24/23 | ShadowsStride"
