@@ -1,0 +1,53 @@
+embed
+<drac2>
+
+
+def restore_time() -> list:
+
+    # Pulls and checks if uvar exists
+    clock_test = get_uvar("clock_dict", default="None")
+
+    # If the uvar exists
+    if clock_test != "None":
+        pass
+
+    # If the uvar does not exist
+    else:
+        return ['Error', "uvar not found!\nPlease run `!clock create [tracker name]`"]
+    
+    clock_test_backup = get_uvar('clock_dict_backup', default="None")
+
+    if clock_test_backup != "None":
+        set_uvar('clock_dict_backup', clock_test)
+        set_uvar('clock_dict', clock_test_backup)
+        return ["Success", 'Clock Tracker data restored']
+
+    else:
+        return ["Error", "No backup found"]
+       
+
+def get_player() -> str:
+
+    return ctx.author.display_name
+
+
+def main(input_list: list) -> list:
+
+    result_list = restore_time()
+
+    if result_list[0] != "Error":
+        return [f"{get_player()}, {result_list[1]}", ""]
+
+    else:
+        return [f"{get_player()} ran into an error", result_list[1]]
+
+output_list = main(&ARGS&)
+
+title = output_list[0]
+output_string = output_list[1]
+
+
+</drac2>
+-title "{{title}}"
+-f "{{output_string}}"
+-footer "!clock restore | Updated 6/25/23 | ShadowsStride"
