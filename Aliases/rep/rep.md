@@ -6,7 +6,9 @@ Reputation alias that handles reputation with organizations and groups.
 - Me (ShadowsStride)
 
 ## Current Plans:
-- None
+- Implement better dictionary key searcher
+    - Checks for multiple matches
+    - Sifts through multiple matches and checks for exact match
 
 ## Help:
 `!rep [organization] <#>`

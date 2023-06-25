@@ -5,7 +5,9 @@ Weather alias that handles weather with regions and locations.
 - Me (ShadowsStride)
 
 ## Current Plans:
-- None
+- Implement better dictionary key searcher
+    - Checks for multiple matches
+    - Sifts through multiple matches and checks for exact match
 
 ## Help:
 `!weath [season]`

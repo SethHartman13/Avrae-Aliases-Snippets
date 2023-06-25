@@ -6,6 +6,9 @@ Crime alias that handles court records for criminals.
 
 # Current Plans:
 - Potentially add additional images for the alias for variety.
+- Implement better dictionary key searcher
+    - Checks for multiple matches
+    - Sifts through multiple matches and checks for exact match
 
 ## Help:
 `!crime [player_name] [character_name]`

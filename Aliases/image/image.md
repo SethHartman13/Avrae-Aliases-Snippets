@@ -6,7 +6,8 @@ Image alias that handles storing and viewing user images.
 - Me (ShadowsStride)
 
 # Current Plans:
-- None
+- Implement better dictionary key searcher
+    - Sifts through multiple matches and checks for exact match
 
 ## Help:
 `!image [image name] [image url]`
