@@ -20,6 +20,8 @@ Subalias that lists out the rewards of the specified organization.
 
 6/22/2023 - Copyright/License Update
 
+6/26/2023 - Uses player nickname rather than character name
+
 ## License Notice
 
 This work includes material written by Seth Hartman (aka ShadowsStride) and is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode.
