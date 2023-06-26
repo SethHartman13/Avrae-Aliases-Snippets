@@ -5,21 +5,21 @@ embed
 def restore_time() -> list:
 
     # Pulls and checks if uvar exists
-    clock_test = get_uvar("clock_dict", default="None")
+    all_server_test = get_uvar("clock_dict", default="None")
 
     # If the uvar exists
-    if clock_test != "None":
+    if all_server_test != "None":
         pass
 
     # If the uvar does not exist
     else:
         return ['Error', "uvar not found!\nPlease run `!clock create [tracker name]`"]
     
-    clock_test_backup = get_uvar('clock_dict_backup', default="None")
+    all_server_test_backup = get_uvar('clock_dict_backup', default="None")
 
-    if clock_test_backup != "None":
-        set_uvar('clock_dict_backup', clock_test)
-        set_uvar('clock_dict', clock_test_backup)
+    if all_server_test_backup != "None":
+        set_uvar('clock_dict_backup', all_server_test)
+        set_uvar('clock_dict', all_server_test_backup)
         return ["Success", 'Clock Tracker data restored']
 
     else:
@@ -51,4 +51,4 @@ output_string = output_list[1]
 -title "{{title}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/clock/image.png"
 -f "{{output_string}}"
--footer "!clock restore | Updated 6/25/23 | ShadowsStride"
+-footer "!clock restore | Updated 6/26/23 | ShadowsStride"

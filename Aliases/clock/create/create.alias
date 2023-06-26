@@ -58,29 +58,41 @@ def search_key(query: str, key_list: list[str]) -> list[str]|str:
 def setup_time(name: str) -> list:
 
     # Pulls and checks if uvar exists
-    clock_test = get_uvar("clock_dict", default="None")
+    all_server_test = get_uvar("clock_dict", default="None")
 
     # If the uvar exists
-    if clock_test != "None":
+    if all_server_test != "None":
         pass
 
     # If the uvar does not exist
     else:
         set_uvar("clock_dict", "{}")
-        clock_test = dict()
+        all_server_test = dict()
     
     # Tries to convert the uvar to a dictionary
     try:
-        clock_dict = load_json(clock_test)
+        all_server_dict = load_json(all_server_test)
 
     except:
         return ['Error', 'Problems loading dictionary']
 
-    key_result = search_key(name.lower(), clock_dict.keys())
+    server_id = f"{ctx.guild.id}"
+
+    key_result = search_key(server_id, all_server_dict.keys())
+
+    if key_result != "None":
+        server_dict = all_server_dict[server_id]
+
+    else:
+        all_server_dict[server_id] = {"dm_time": [False, int(round(time(),0)), 0, 0]}
+        server_dict = all_server_dict[server_id]
+
+    key_result = search_key(name.lower(), server_dict.keys())
 
     if key_result == "None":
-        clock_dict[name] = [False, int(round(time(),0)), 0, 0]
-        set_uvar('clock_dict', dump_json(clock_dict))
+        server_dict[name] = [False, int(round(time(),0)), 0, 0]
+        all_server_dict[server_id] = server_dict
+        set_uvar('clock_dict', dump_json(all_server_dict))
         return ['Success', f'{name} tracker successfully created']
 
     elif len(key_result) == 1:
@@ -88,8 +100,9 @@ def setup_time(name: str) -> list:
             return ['Error', 'That tracker already exists!']
 
         else:
-            clock_dict[name] = [False, int(round(time(),0)), 0, 0]
-            set_uvar('clock_dict', dump_json(clock_dict))
+            server_dict[name] = [False, int(round(time(),0)), 0, 0]
+            all_server_dict[server_id] = server_dict
+            set_uvar('clock_dict', dump_json(all_server_dict))
             return ['Success', f'{name} tracker successfully created']
     
     else:
@@ -100,8 +113,9 @@ def setup_time(name: str) -> list:
             else:
                 pass
         
-        clock_dict[name] = [False, int(round(time(),0)), 0, 0]
-        set_uvar('clock_dict', dump_json(clock_dict))
+        server_dict[name] = [False, int(round(time(),0)), 0, 0]
+        all_server_dict[server_id] = server_dict
+        set_uvar('clock_dict', dump_json(all_server_dict))
         return ['Success', f'{name} tracker successfully created']
    
 

@@ -59,100 +59,97 @@ def search_key(query: str, key_list: list[str]) -> list[str]|str:
 def get_saved_time(name: str) -> list:
 
     # Pulls and checks if uvar exists
-    clock_test = get_uvar("clock_dict", default="None")
+    all_server_test = get_uvar("clock_dict", default="None")
 
     # If the uvar exists
-    if clock_test != "None":
+    if all_server_test != "None":
         pass
 
     # If the uvar does not exist
     else:
         set_uvar("clock_dict", "{}")
-        clock_test = dict()
+        all_server_test = dict()
     
     # Tries to convert the uvar to a dictionary
     try:
-        clock_dict = load_json(clock_test)
+        all_server_dict = load_json(all_server_test)
 
     except:
         return ['Error', 'Problems loading dictionary']
 
-    # If no argument was passed (default behavior)
-    if name == "":
+    server_id = f"{ctx.guild.id}"
 
-        # Tries to pull the dm_time information 
-        try:
-            result_list = clock_dict['dm_time']
+    key_result = search_key(server_id, all_server_dict.keys())
 
-            # If the tracker is already active
-            if result_list[0]:
-                return ['Error', 'You are already clocked in for DM time tracker']
-
-            # Return the result_list of dm_time
-            else:
-                return ["Success", result_list, 'dm_time']
-
-        except:
-            # Creates entry in dictionary
-            clock_dict['dm_time'] = [True, int(round(time(), 0)), 0, 0]
-
-            # Sets uvar 
-            set_uvar("clock_dict", dump_json(clock_dict))
-
-            # Return the result_list of dm_time
-            return ["Success", clock_dict['dm_time'], 'dm_time']
+    if key_result != "None":
+        server_dict = all_server_dict[server_id]
 
     else:
+        all_server_dict[server_id] = {"dm_time": [False, int(round(time(),0)), 0, 0]}
+        server_dict = all_server_dict[server_id]
 
-        key_result = search_key(name.lower(), clock_dict.keys())
 
-        # If it finds at least one key
-        if key_result != "None":
+    if name == "dm_time":
+        try:
+            server_dict['dm_time']
+        except:
+            server_dict['dm_time'] = [False, int(round(time(),0)), 0, 0]
+    else:
+        pass
 
-            # If it only find one 
-            if len(key_result) == 1:
-                result_list = clock_dict[key_result[0]]
-                
-                # If the tracker is already active
-                if result_list[0]:
-                    return ['Error', f'You are already clocked in for `{key_result[0]}` tracker']
+    key_result = search_key(name.lower(), server_dict.keys())
+    
+    # If it finds at least one key
+    if key_result != "None":
 
-                # Return the result_list of the tracker
-                else:
-                    return ["Success", result_list, key_result[0]]
+        # If it only find one 
+        if len(key_result) == 1:
+            result_list = server_dict[key_result[0]]
+            
+            # If the tracker is already active
+            if result_list[0]:
+                return ['Error', f'You are already clocked in for `{key_result[0]}` tracker']
 
-            # If it find multiple keys
+            # Return the result_list of the tracker
             else:
-                for key in key_result:
-                    if name.lower() == key.lower():
-                        result_list = clock_dict[key]
+                return ["Success", result_list, key_result[0]]
 
-                        # If the tracker is already active
-                        if result_list[0]:
-                            return ['Error', f'You are already clocked in for `{key}` tracker']
-
-                        # Return the result_list of the tracker
-                        else:
-                            return ["Success", result_list, key]
-
-                    else:
-                        pass
-
-                key_result.insert(0, "**Multiple trackers found:**")
-                return ["Error", "\n".join(key_result)]
-
-        # If it does not find a key
+        # If it find multiple keys
         else:
-            return ['Error', "Tracker not found!\nPlease run `!clock create [tracker name]`"]
+            for key in key_result:
+                if name.lower() == key.lower():
+                    result_list = server_dict[key]
+
+                    # If the tracker is already active
+                    if result_list[0]:
+                        return ['Error', f'You are already clocked in for `{key}` tracker']
+
+                    # Return the result_list of the tracker
+                    else:
+                        return ["Success", result_list, key]
+
+                else:
+                    pass
+
+            key_result.insert(0, "**Multiple trackers found:**")
+            return ["Error", "\n".join(key_result)]
+
+    # If it does not find a key
+    else:
+        return ['Error', "Tracker not found!\nPlease run `!clock create [tracker name]`"]
 
 def set_time_uvar(tracker_list: list, tracker_key: str):
-    clock_dict = load_json(get_uvar("time_dict"))
+    all_server_dict = load_json(get_uvar("clock_dict"))
+
+    server_dict = all_server_dict[f"{ctx.guild.id}"]
 
     new_tracker_list = [True, int(round(time(), 0)), tracker_list[2], tracker_list[3] + 1]
 
-    clock_dict[tracker_key] = new_tracker_list
+    server_dict[tracker_key] = new_tracker_list
 
-    set_uvar("clock_dict", dump_json(clock_dict))
+    all_server_dict[f"{ctx.guild.id}"] = server_dict
+
+    set_uvar("clock_dict", dump_json(all_server_dict))
     
 
 def get_player() -> str:
@@ -175,7 +172,7 @@ def main(input_list: list) -> list:
     error = []
 
     if len(input_list) == 0:
-        result_list = get_saved_time("")
+        result_list = get_saved_time('dm_time')
         name = "DM Time"
 
     else:

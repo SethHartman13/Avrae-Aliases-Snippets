@@ -59,10 +59,10 @@ def search_key(query: str, key_list: list[str]) -> list[str]|str:
 def get_saved_time(name: str) -> list:
 
     # Pulls and checks if uvar exists
-    all_server_test = get_uvar("clock_dict", default="None")
+    clock_test = get_uvar("clock_dict", default="None")
 
     # If the uvar exists
-    if all_server_test != "None":
+    if clock_test != "None":
         pass
 
     # If the uvar does not exist
@@ -71,60 +71,29 @@ def get_saved_time(name: str) -> list:
     
     # Tries to convert the uvar to a dictionary
     try:
-        all_server_dict = load_json(all_server_test)
+        clock_dict = load_json(clock_test)
 
     except:
         return ['Error', 'Problems loading dictionary']
 
-    server_id = f"{ctx.guild.id}"
-
-    key_result = search_key(server_id, all_server_dict.keys())
-
-    if key_result != "None":
-        server_dict = all_server_dict[server_id]
-
-    else:
-        return ['Error', "Server dictionary within `clock_dict` \nPlease run `!clock create [tracker name]` or `!clock in`"]
-
-    if name == "dm_time":
-        try:
-            server_dict['dm_time']
-        except:
-            return ['Error', '`dm_time` does not exist, please run `!clock in`']
-    else:
-        pass
-
-    key_result = search_key(name.lower(), server_dict.keys())
     
+        key_result = search_key(name.lower(), clock_dict.keys())
+
     # If it finds at least one key
     if key_result != "None":
 
         # If it only find one 
         if len(key_result) == 1:
-            result_list = server_dict[key_result[0]]
-            
-            # If the tracker is already active
-            if not result_list[0]:
-                return ['Error', f'You are already clocked out for `{key_result[0]}` tracker']
-
-            # Return the result_list of the tracker
-            else:
-                return ["Success", result_list, key_result[0]]
+            result_list = clock_dict[key_result[0]]
+            return ["Success", result_list, key_result[0]]
 
         # If it find multiple keys
         else:
             for key in key_result:
                 if name.lower() == key.lower():
-                    result_list = server_dict[key]
-
-                    # If the tracker is already active
-                    if not result_list[0]:
-                        return ['Error', f'You are already clocked out for `{key}` tracker']
-
-                    # Return the result_list of the tracker
-                    else:
-                        return ["Success", result_list, key]
-
+                    result_list = clock_dict[key]
+                    return ["Success", result_list, key]
+                
                 else:
                     pass
 
@@ -134,26 +103,12 @@ def get_saved_time(name: str) -> list:
     # If it does not find a key
     else:
         return ['Error', "Tracker not found!\nPlease run `!clock create [tracker name]`"]
-
-
-def set_time_uvar(tracker_list: list, tracker_key: str):
-    all_server_dict = load_json(get_uvar('clock_dict'))
-
-
-    server_dict = all_server_dict[f"{ctx.guild.id}"]
-
-    new_tracker_list = [False, int(round(time(), 0)), tracker_list[2] + int(round(time(),0)) - tracker_list[1], tracker_list[3]]
-
-    server_dict[tracker_key] = new_tracker_list
-
-    all_server_dict[f"{ctx.guild.id}"] = server_dict
-
-    set_uvar("clock_dict", dump_json(all_server_dict))
     
 
 def get_player() -> str:
 
     return ctx.author.display_name
+
 
 def calc_time(time:int) -> str:
 
@@ -171,7 +126,7 @@ def main(input_list: list) -> list:
     error = []
 
     if len(input_list) == 0:
-        result_list = get_saved_time("dm_time")
+        result_list = get_saved_time('dm_time')
         name = "DM Time"
 
     else:
@@ -186,13 +141,12 @@ def main(input_list: list) -> list:
         tracker_key = result_list[2]
         set_time_uvar(tracker_details, tracker_key)
 
-
-        title = f"{player_name} is clocking out for `{name}`!"
+        title = f"{player_name} is checking the log for `{name}`!"
         result_list = []
         
-        result_list.append(f"**Current total time:** {calc_time(tracker_details[2] + int(round(time(),0)) - tracker_details[1])}")
+        result_list.append(f"**Current total time:** {calc_time(tracker_details[2])}")
         result_list.append(f"**Current clock-ins:** {tracker_details[3]}")
-        result_list.append(f"**Time since clock-in:** {calc_time(int(round(time(),0)) - tracker_details[1])}")
+        result_list.append(f"**Time since clock-in/out:** {calc_time(int(round(time(),0)) - tracker_details[1])}")
 
         return [title, "\n".join(result_list)]
 
@@ -212,4 +166,4 @@ left_arrow = "<"
 -title "{{title}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/clock/image.png"
 -f "{{output_string}}"
--footer "!clock out {{left_arrow}}tracker name> | Updated 6/25/23 | ShadowsStride"
+-footer "!clock log {{left_arrow}}tracker name> | Updated 6/25/23 | ShadowsStride"

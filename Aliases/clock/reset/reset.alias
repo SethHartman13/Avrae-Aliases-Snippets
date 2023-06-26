@@ -71,10 +71,10 @@ def calc_time(time:int) -> str:
 def reset_time(name: str) -> list:
 
     # Pulls and checks if uvar exists
-    clock_test = get_uvar("clock_dict", default="None")
+    all_server_test = get_uvar("clock_dict", default="None")
 
     # If the uvar exists
-    if clock_test != "None":
+    if all_server_test != "None":
         pass
 
     # If the uvar does not exist
@@ -83,33 +83,45 @@ def reset_time(name: str) -> list:
     
     # Tries to convert the uvar to a dictionary
     try:
-        clock_dict = load_json(clock_test)
+        all_server_dict = load_json(all_server_test)
 
     except:
         return ['Error', 'Problems loading dictionary']
 
-    key_result = search_key(name.lower(), clock_dict.keys())
+    server_id = f"{ctx.guild.id}"
+
+    key_result = search_key(server_id, all_server_dict.keys())
+
+    if key_result != "None":
+        server_dict = all_server_dict[server_id]
+
+    else:
+        return ['Error', "Server dictionary within `clock_dict` \nPlease run `!clock create [tracker name]` or `!clock in`"]
+
+    key_result = search_key(name, server_dict.keys())
 
     if key_result == "None":
         return ['Error', "Tracker not found!\nPlease run `!clock create [tracker name]`"]
 
     elif len(key_result) == 1:
-        set_uvar('clock_dict_backup', dump_json(clock_dict))
-        time_check = clock_dict[key_result[0]]
+        set_uvar('clock_dict_backup', dump_json(all_server_dict))
+        time_check = server_dict[key_result[0]]
 
-        clock_dict[key_result[0]] = [False, int(round(time(), 0)), 0, 0]
-        set_uvar('clock_dict', dump_json(clock_dict))
+        server_dict[key_result[0]] = [False, int(round(time(), 0)), 0, 0]
+        all_server_dict[server_id] = server_dict
+        set_uvar('clock_dict', dump_json(all_server_dict))
 
         return ['Success', time_check, key_result[0]]
     
     else:
         for dict_key in key_result:
             if name.lower() == dict_key.lower():
-                set_uvar('clock_dict_backup', dump_json(clock_dict))
-                time_check = clock_dict[dict_key]
+                set_uvar('clock_dict_backup', dump_json(all_server_dict))
+                time_check = server_dict[dict_key]
 
-                clock_dict[dict_key] = [False, int(round(time(), 0)), 0, 0]
-                set_uvar('clock_dict', dump_json(clock_dict))
+                server_dict[dict_key] = [False, int(round(time(), 0)), 0, 0]
+                all_server_dict[server_id] = server_dict
+                set_uvar('clock_dict', dump_json(all_server_dict_dict))
 
                 return ['Success', time_check, dict_key]
                 
