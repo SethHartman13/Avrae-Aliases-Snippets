@@ -6,62 +6,70 @@ embed
 # * License available at https://creativecommons.org/licenses/by/4.0/legalcode.
 # *******************************************************
 
+
+def get_organizations() -> list[str]:
+    organization_svar_test = get_svar("org_settings", default="None")
+
+    if organization_svar_test != "None":
+        organization_svar_dict = load_json(organization_svar_test)
+
+    else:
+        return ['Error', 'svar `org_list` does not exist!']
+
+    
+    org_dictionary_names = []
+    for value in organization_svar_dict.values():
+        org_dictionary_names.append(value)
+
+    if len(org_dictionary_names) > 0:
+
+        org_names = []
+
+        for org_dictionary in org_dictionary_names:
+            try:
+                dictionary_test = get_svar(org_dictionary, default="None")
+
+                if dictionary_test != "None":
+                    dictionary = load_json(dictionary_test)
+
+                    org_names.append(dictionary['name'])
+
+                else:
+                    pass
+
+            except:
+                pass
+
+        if len(org_names) > 0:
+            return ['Success', "\n".join(org_names)]
+
+        else:
+            return ['Error', 'There were problems loading organization names']
+
+    else:
+        return ['Success', 'None']
+
+
 def main() -> list:
 
-    # Grabs cvar
-    ch=character()
+    # Grabs organization names
+    results = get_organizations()
 
-    # Grabs the organization dictionary
-    organization_dictionary = load_json(get_svar("org_settings"))
-    organization_list = []
-    for value in organization_dictionary.values():
-        organization_list.append(value)
+    if results[0] != "Error":
+        return [f'{ctx.author.display_name} checks for known organizations', results[1]]
 
-    # If the svar is empty
-    if len(organization_list) == 0 or organization_list == "0":
-        rep_input = "Error"
-        error.append("svar org_list does not exist!")
-
-    # If the svar is not empty
     else:
-        org_dictionaries = []
-        try:
-            for org in organization_list:
-                org_dictionaries.append(load_json(get_svar(org)))
-                
+        return [f'{ctx.author.display_name} has encountered an error', results[1]]
 
-            org_names = []
-
-            for org_dict in org_dictionaries:
-
-                # Verifies that the dictionary has the name property
-                try:
-                    org_names.append(f"**{org_dict['name']}**")
-                except:
-                    error.append(f"Problem with dictionary {org_dict} with name")
-        except:
-            rep_input = "Error"
-            error.append("svar org_list does not exist!")
-            
-        title = f"{name} checks all known organizations"
-        orgstring = "/n".join(org_names)
-
-
-    # Handles outsputs
-    output_list = []
-    output_list.append(title)
-    output_list.append(orgstring)
-
-    return output_list
 
 # Main function
 output = main()
 
 title = output[0]
-orgstring = output[1]
+result_string = output[1]
 </drac2>
 
 -title "{{title}}"
--f "{{orgstring}}"
+-f "{{result_string}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
--footer "!rep list | Updated 6/22/23 | ShadowsStride"
+-footer "!rep list | Updated 6/27/23 | ShadowsStride"
