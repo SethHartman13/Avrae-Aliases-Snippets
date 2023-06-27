@@ -7,9 +7,110 @@ embed
 # *******************************************************
 
 
-def main(inputs:list[str]) -> list[str]:
+def search_key(query: str, key_list: list[str]) -> list[str]|str:
     """
-    Main program function.
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
+
+    # Creates list to store matches
+    results_keys = []
+
+    # For each key in the key_list
+    for key in key_list:
+
+        # Sets up process to creater iterations
+        initial_iterations = []
+        iterations = []
+        lst = []
+        lst[:] = key.lower()
+
+        for i in range(len(key) + 1):
+            initial_iterations.append(lst[:i])
+
+
+        # So, what happens is it will create iterations like 'r' and 're'
+        # This removes the first two so that at least three letters are needed
+        initial_iterations.pop(0)
+        initial_iterations.pop(0)
+
+
+        # Puts all the iterations of the key in a list
+        for iteration in initial_iterations:
+            iterations.append("".join(iteration))
+
+        # If the query returns a match, it will return the key
+        if query.lower() in iterations:
+
+            results_keys.append(key)
+
+        else:
+            pass
+
+    # If there are matches, return a list
+    if len(results_keys) != 0:
+        return results_keys
+
+    # If there are no matches, return a string
+    else:
+        return "None"
+
+
+def get_rewards(organization_dict_name: str) -> list[str]:
+    rewards_test = get_svar(organization_dict_name, default="None")
+
+    if rewards_test != "None":
+        rewards_dict = load_json(rewards_test)
+
+        try:
+            org_name = rewards_dict['name']
+        
+        except:
+            return ['Error', f'Reputation rewards svar `{organization_dict_name}` is missing the organization name!']
+
+        try:
+            img_url = rewards_dict['imgurl']
+            
+        except:
+            img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
+
+        rewards_list = []
+        rewards_list.append("**Rewards:**")
+        rewards_list.append("")
+        # Grabs reward values
+        for key in rewards_dict.keys():
+            try:
+                int(key)
+
+                rewards_list.append(f"**{key} Points:**")
+                for reward in rewards_dict[key]:
+                    rewards_list.append(reward)
+
+                rewards_list.append("")
+
+            except:
+                pass
+
+        if len(rewards_list) > 0:
+            return ['Success', '\n'.join(rewards_list), img_url, org_name]
+
+        else:
+            return ['Success', 'None', img_url, org_name]
+
+    else:
+        return ['Error', f'Reputation rewards svar `{organization_dict_name}` does not exist!']
+
+
+
+def get_org_rewards_dict(rep_input: str) -> list[str]:
+    """
+    get_org_rewards_dict program function.
 
     Args:
         inputs (list[str]): Inputs passed
@@ -18,177 +119,71 @@ def main(inputs:list[str]) -> list[str]:
         (list[str]): Outputs title, result string and img_url
     """
 
-    # Creates error list
-    error = []
+    # Loads the dictionary that contains the svar names
+    organization_svar_test = get_svar("org_settings", default="None")
 
-    # Checks to see if it has the valid number of inputs
-    if len(inputs) == 1:
+    if organization_svar_test != "None":
+        organization_svar_dict = load_json(organization_svar_test)
 
-        # Lowercases input
-        rep_input = inputs[0].lower()
-
-        # Starts rewards list
-        rewards = ["**Rewards:**"]
-
-
-    # If it does not have a valid number of inputs
     else:
-        rep_input = "Error"
-        error.append("Expected 1 argument")
+        return ['Error', 'svar `org_list` does not exist!']
 
-    # Grabs the organization dictionary
-    organization_dictionary = load_json(get_svar("org_settings"))
-    organization_list = []
-    for value in organization_dictionary.values():
-        organization_list.append(value)
+    
+    key_result = search_key(str(rep_input), organization_svar_dict.values())
 
-    # If the svar is empty
-    if len(organization_list) == 0 or organization_list == "0":
-        rep_input = "Error"
-        error.append("svar org_list does not exist!")
+    # If there is at least 1 result
+    if key_result != "None":
 
-    # If the svar is not empty
-    else:
-        org_dictionaries = []
-        try:
-            for org in organization_list:
-                org_dictionaries.append(load_json(get_svar(org)))
-                
+        # If there is only 1 result
+        if len(key_result) == 1:
+            return ['Success', key_result[0]]
 
-            org_names = []
-
-            for org_dict in org_dictionaries:
-
-                # Verifies that the dictionary has the name property
-                try:
-                    org_names.append(org_dict["name"])
-                except:
-                    error.append(f"Problem with dictionary {org_dict} with name")
-        except:
-            rep_input = "Error"
-            error.append("svar org_list does not exist!")
-            
-    # If there have been no errors so far
-    if len(error) == 0:
-
-        # Creates boolean
-        repfound = 0
-
-        # For each organization, it will create iterations, then compare input against them
-        for org_name in org_names:
-
-            # Makes it so that the first organization found first is selected
-            if repfound == 0:
-
-                # Creates all the valid iterations
-                initial_org_iterations = []
-                org_iterations = []
-                lst = []
-                lst[:] = org_name.lower()
-
-
-                for i in range(len(org_name) + 1):
-                    initial_org_iterations.append(lst[:i])
-
-                # So, what happens is it will create iterations like 'r' and 're'
-                # This removes the first two so that at least three letters are needed
-                initial_org_iterations.pop(0)
-                initial_org_iterations.pop(0)
-
-                # Puts the iterations into a single list.
-                for iteration in initial_org_iterations:
-                    org_iterations.append("".join(iteration))
-
-                # If it does find an organization
-                if rep_input in org_iterations:
-                    rep_input = org_name
-                    repfound = 1
-
-                    # Pulls the dictionary and sets it as the dictionary to pull form
-                    for dictionary in org_dictionaries:
-                        if rep_input == dictionary["name"]:
-                            global_dictionary = dictionary
-                        else:
-                            pass
+        else:
+            for key in key_result:
+                if name.lower() == key.lower():
+                    return ["Success", key_result[key]]
 
                 else:
                     pass
 
-            else:
+            if org_dict_name != "":
                 pass
-        
-        # If it does not find an organization
-        if repfound == 0:
-            error.append("Organization not found")
-            rep_input = "Error"
 
-        else:
-            pass
+            else:
+                return ['Error', 'Organization not found!']
 
     else:
-        pass
+        return ['Error', 'Organization not found!']
 
-    if len(error) == 0:
-        org_name = global_dictionary["name"]
 
-        # Finds keys that are supposed to be integers
-        int_keys = []
+def main(input_list: list[str]) -> list[str]:
 
-        for key in global_dictionary.keys():
+    # Checks to see if it has the valid number of inputs
+    if len(input_list) >= 1:
 
-            try:
-                int(key)
-            except "ValueError":
-                pass
-            else:
-                int_keys.append(key)
+        # Starts rewards list
+        results = get_org_rewards_dict(input_list[0].lower())
 
-        thresholds = []
+    # If it does not have a valid number of inputs
+    else:
+        return [f'{ctx.author.display_name} has encountered an error', 'Expected 1 argument', 'https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png']
 
-        # Pulls each key and puts them in the thresholds
-        for key in int_keys:
-            thresholds.append(key)
 
-        # Prints out rewards
-        if len(thresholds) > 0:
-            for threshold in thresholds:
-                rewards.append(f"**{threshold} Points:**")
-                for item in global_dictionary[threshold]:
-                    rewards.append(item)
-                rewards.append("")
+    if results[0] != "Error":
 
-        else:
-            rewards.append("None")
+        results2 = get_rewards(results[1])
 
-        # Join together all the rewards into a string
-        rewardstring = "\n".join(rewards)
+    else:
+        return [f'{ctx.author.display_name} has encountered an error', results[1], 'https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png']
+
+
+    if results2[0] != 'Error':
+        return [f'{ctx.author.display_name} views the rewards for {results2[3]}', results2[1], results2[2]]
+
+    else:
+        return [f'{ctx.author.display_name} has encountered an error', results2[1], 'https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png']
     
-    else:
-        pass
-
-    if len(error) == 0:
-        title = f"{ctx.author.display_name} checks the rewards of {org_name}"
-
-        try:
-            thumbnail = global_dictionary["imgurl"]
-        except:
-            thumbnail = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
-
-    # If there was an error, it writes out the errors
-    else:
-        title = f"{ctx.author.display_name} had following error(s) occur:"
-        rewardstring = ", ".join(error)
-        thumbnail = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
-
-    # Handles outsputs
-    output_list = []
-    output_list.append(title)
-    output_list.append(rewardstring)
-    output_list.append(thumbnail)
-
-    return output_list
-
-# Main function
+# get_org_rewards_dict function
 output = main(&ARGS&)
 
 title = output[0]

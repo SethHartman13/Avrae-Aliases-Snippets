@@ -20,7 +20,7 @@ Subalias that lists out the rewards of the specified organization.
 
 6/22/2023 - Copyright/License Update
 
-6/26/2023 - Uses player nickname rather than character name
+6/26/2023 - Uses player nickname rather than character name. Also implemented improved searching algorithm.
 
 ## License Notice
 
