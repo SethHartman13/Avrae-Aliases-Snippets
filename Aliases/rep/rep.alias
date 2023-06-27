@@ -155,9 +155,8 @@ def get_rewards(organization_dict_name: str, ch: character, cc_num: int) -> list
         except:
             img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
 
-        rewards_list = []
-        rewards_list.append("**Current Redemption List:**")
-        rewards_list.append("")
+        rewards_list = ["**Current Redemption List:**", ""]
+
         # Grabs reward values
         for key in rewards_dict.keys():
             try:
@@ -175,11 +174,13 @@ def get_rewards(organization_dict_name: str, ch: character, cc_num: int) -> list
             except:
                 pass
 
-        if len(rewards_list) > 0:
-            return ['Success', '\n'.join(rewards_list), img_url, org_name, currentcc]
+        if len(rewards_list) > 2:
+            pass
 
         else:
-            return ['Success', 'None', img_url, org_name, currentcc]
+            rewards_list = ["**Current Redemption List:**", "None", ""]
+
+        return ['Success', '\n'.join(rewards_list), img_url, org_name, currentcc]
 
     else:
         return ['Error', f'Reputation rewards svar `{organization_dict_name}` does not exist!']
