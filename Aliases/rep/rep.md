@@ -63,6 +63,8 @@ You will need to run `!svar org_settings` to copy over the previous settings bef
 
 6/22/2023 - Copyright/License Update
 
+6/27/2023 - Improved dictionary algorithm and UI update
+
 ## License Notice
 
 This work includes material written by Seth Hartman (aka ShadowsStride) and is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode.
