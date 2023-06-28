@@ -5,9 +5,7 @@ Weather alias that handles weather with regions and locations.
 - Me (ShadowsStride)
 
 ## Current Plans:
-- Implement better dictionary key searcher
-    - Checks for multiple matches
-    - Sifts through multiple matches and checks for exact match
+- None
 
 ## Help:
 `!weath [season]`
@@ -97,6 +95,8 @@ You will need to run `!svar weather_location_list` to copy over the previous set
 6/14/2023 - Copyright notice updated
 
 6/23/2023 - Copyright/License Update and changing of valid water weather types
+
+6/27/2023 - Optimization of dictionary searching code. UI update. Removal of wind/water weather validation, any weather types that do not fit the ones listed in [Location Server Variable](#location-server-variable).
 
 ## License Notice
 
