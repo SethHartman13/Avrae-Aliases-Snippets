@@ -146,11 +146,7 @@ def get_org_rewards_dict(rep_input: str) -> list[str]:
                 else:
                     pass
 
-            if org_dict_name != "":
-                pass
-
-            else:
-                return ['Error', 'Organization not found!']
+            return ['Error', 'Organization not found!']
 
     else:
         return ['Error', 'Organization not found!']
