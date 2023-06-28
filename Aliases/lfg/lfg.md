@@ -7,10 +7,6 @@ LFG Alias that allows players to look for a group to do a quest.
 
 ## Current Plans
 - Allow advantage to be displayed in passives (still needing to verify if possible)
-- Currently in the process to obtain the license to refer to the Observant feat
-- Implement better dictionary key searcher
-    - Checks for multiple matches
-    - Sifts through multiple matches and checks for exact match
 
 ## Settings Server Variable
 
