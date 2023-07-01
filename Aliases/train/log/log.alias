@@ -1,0 +1,44 @@
+embed
+<drac2>
+
+def main(ch=character()):
+
+    if ch.cc_exists("Training"):
+        desc_dict = load_json(ch.cc('Training').desc)
+
+         prof_name = desc_dict['prof']
+
+        prof_name_list_temp = prof_name.split(" ")
+        prof_name_list = []
+
+
+        for prof_name in prof_name_list_temp:
+            prof_name_list.append(prof_name.capitalize())
+
+        prof_name = " ".join(prof_name_list)
+
+        result_string = [ch.cc_str('Training')]
+        result_string.append(f"<t:{time_last + time_cooldown}:f>")
+        result_string.append(f"{ch.cc('Training').value}/{ch.cc('Training').max}")
+
+        return [f'{name} ({ctz.author}) is checking their progress with {prof_name}(s)', "\n".join(result_string)]
+
+    else:
+        return [f'{ctx.author.display_name} has encountered an error', '`Training` CC does not exist']
+
+output_list = main()
+</drac2>
+
+-
+
+
+
+
+
+
+
+
+
+
+
+
