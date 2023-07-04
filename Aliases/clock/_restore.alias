@@ -1,0 +1,66 @@
+embed
+<drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International 
+# * License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
+
+
+def restore_time() -> list[str]:
+    """
+    Restores clock uvar from backup
+    
+    Return:
+        (list[str]): Result
+    """
+
+    # Pulls and checks if clock_dict uvar exists
+    all_server_test = get_uvar("clock_dict", default="None")
+
+    # If the uvar exists
+    if all_server_test != "None":
+
+        # Pulls and checks if clock_dict_backup dict exists.
+        all_server_test_backup = get_uvar('clock_dict_backup', default="None")
+
+        # If the uvar exists
+        if all_server_test_backup != "None":
+
+            # Puts the clock_dict_backup into clock_dict
+            set_uvar('clock_dict_backup', all_server_test)
+
+            # Puts the clock_dict into clock_dict_backup
+            set_uvar('clock_dict', all_server_test_backup)
+
+            return ["Success", 'Clock tracker data restored']
+
+        # If the uvar does not exist
+        else:
+            return ["Error", "No backup found"]
+
+    # If the uvar does not exist
+    else:
+        return ['Error', "uvar not found!\nPlease run `!clock create [tracker name]`"]
+    
+
+def main(input_list: list) -> list:
+
+    result_list = restore_time()
+
+    if result_list[0] != "Error":
+        return [f"{ctx.author.display_name}: {result_list[1]}", ""]
+
+    else:
+        return [f"{ctx.author.display_name} ran into an error", result_list[1]]
+
+
+# Runs main program
+output_list = main(&ARGS&)
+
+
+</drac2>
+-title "{{output_list[0]}}"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/clock/image.png"
+-f "{{output_list[1]}}"
+-footer "!clock restore | Updated 7/3/23 | ShadowsStride"
