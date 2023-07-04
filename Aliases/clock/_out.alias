@@ -1,6 +1,11 @@
 embed
-
 <drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International 
+# * License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
+
 
 def search_key(query: str, key_list: list[str]) -> list[str]|str:
     """
@@ -56,7 +61,16 @@ def search_key(query: str, key_list: list[str]) -> list[str]|str:
     else:
         return "None"
 
-def get_saved_time(name: str) -> list:
+def get_saved_time(name: str) -> list[str]:
+    """
+    Function that handles getting the time (and making sure things exist).
+
+    Args:
+        name (str): Name of tracker
+
+    Return:
+        (list[str]): Results
+    """
 
     # Pulls and checks if uvar exists
     all_server_test = get_uvar("clock_dict", default="None")
@@ -76,17 +90,24 @@ def get_saved_time(name: str) -> list:
     except:
         return ['Error', 'Problems loading dictionary']
 
+    # Grabs the server id
     server_id = f"{ctx.guild.id}"
 
+    # Checks to see if the server id is in the uvar
     key_result = search_key(server_id, all_server_dict.keys())
 
+    # If the server id exists in the uvar, pulls dictionary of all trackers made within the server. 
     if key_result != "None":
         server_dict = all_server_dict[server_id]
 
+    # If the server id does not exist, throws an error
     else:
-        return ['Error', "Server dictionary within `clock_dict` \nPlease run `!clock create [tracker name]` or `!clock in`"]
+        return ['Error', "Server dictionary within `clock_dict`\nPlease run `!clock create [tracker name]` or `!clock in`"]
 
+    # If it is trying to get the dm_tracker
     if name == "dm_time":
+
+        # Tries to see if the dm_time tracker exists, special error for this specifically
         try:
             server_dict['dm_time']
         except:
@@ -94,6 +115,7 @@ def get_saved_time(name: str) -> list:
     else:
         pass
 
+    # Checks to see if the tracker requested exists.
     key_result = search_key(name.lower(), server_dict.keys())
     
     # If it finds at least one key
@@ -129,6 +151,7 @@ def get_saved_time(name: str) -> list:
                     pass
 
             key_result.insert(0, "**Multiple trackers found:**")
+
             return ["Error", "\n".join(key_result)]
 
     # If it does not find a key
@@ -136,80 +159,99 @@ def get_saved_time(name: str) -> list:
         return ['Error', "Tracker not found!\nPlease run `!clock create [tracker name]`"]
 
 
-def set_time_uvar(tracker_list: list, tracker_key: str):
+def set_time_uvar(tracker_list: list, tracker_key: str) -> None:
+    """
+    Updates time uvar.
+
+    Args:
+        tracker_list(list): time uvar contents
+        tracker_key (str): Key used for dictionary    
+    """
+
+    # GRabs all_server_dict
     all_server_dict = load_json(get_uvar('clock_dict'))
 
-
+    # Pulls up the dict for the server
     server_dict = all_server_dict[f"{ctx.guild.id}"]
 
+    # Provides an updated tracker list
     new_tracker_list = [False, int(round(time(), 0)), tracker_list[2] + int(round(time(),0)) - tracker_list[1], tracker_list[3]]
-
     server_dict[tracker_key] = new_tracker_list
 
+    # Update uvar
     all_server_dict[f"{ctx.guild.id}"] = server_dict
-
     set_uvar("clock_dict", dump_json(all_server_dict))
     
 
-def get_player() -> str:
-
-    return ctx.author.display_name
-
 def calc_time(time:int) -> str:
+    """
+    Converts seconds into hours, minutes, seconds.
+    
+    Args:
+        time(int): Time in seconds
 
-    # Converts time into hours
+    Return:
+        (str): Result
+    """
+
+    # Converts time into hours, minutes, seconds
     hours = time // 3600
-
     minutes = (time % 3600) // 60
-
     seconds = (time % 3600) % 60
 
     return f"{hours} hour(s), {minutes} minute(s), {seconds} second(s)"
 
 
 def main(input_list: list) -> list:
-    error = []
+    """
+    Main program function.
+    
+    Args:
+        input_list(list[str]): List of inputs
+    
+    Output:
+        (list[str]): Result
+    """
 
+    # If the length of inputs is 0, will automatically choose the dm timer
     if len(input_list) == 0:
         result_list = get_saved_time("dm_time")
         name = "DM Time"
 
+    # Grabs first input
     else:
         result_list = get_saved_time(input_list[0])
         name = input_list[0]
 
-    player_name = get_player()
-
+    # If there was no error
     if result_list[0] != "Error":
         
+        # Grabs tracker details
         tracker_details = result_list[1]
         tracker_key = result_list[2]
+
+        # Updates the time
         set_time_uvar(tracker_details, tracker_key)
 
-
-        title = f"{player_name} is clocking out for `{name}`!"
+        # Tracker details
         result_list = []
-        
         result_list.append(f"**Current total time:** {calc_time(tracker_details[2] + int(round(time(),0)) - tracker_details[1])}")
         result_list.append(f"**Current clock-ins:** {tracker_details[3]}")
         result_list.append(f"**Time since clock-in:** {calc_time(int(round(time(),0)) - tracker_details[1])}")
 
-        return [title, "\n".join(result_list)]
+        return [f"{ctx.author.display_name}: {name} tracker has been stopped", "\n".join(result_list)]
 
+    # If there was an error
     else:
-        title = f"{player_name} encountered an error"
+        return [f"{ctx.author.display_name} encountered an error", result_list[1]]
 
-        return [title, result_list[1]]
 
 output_list = main(&ARGS&)
-
-title = output_list[0]
-output_string = output_list[1]
-
 left_arrow = "<"
 
+
 </drac2>
--title "{{title}}"
+-title "{{output_list[0]}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/clock/image.png"
--f "{{output_string}}"
--footer "!clock out {{left_arrow}}tracker name> | Updated 6/25/23 | ShadowsStride"
+-f "{{output_list[1]}}"
+-footer "!clock out {{left_arrow}}tracker name> | Updated 7/3/23 | ShadowsStride"
