@@ -1,0 +1,42 @@
+embed
+<drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride) 
+# * and is licensed under the Creative Commons Attribution 4.0 International 
+# * License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# ********************************************************
+
+# Header
+result_string = []
+result_string.append("Sounds like you need someone to provide the help action. Here is a list of the subaliases used for this library.\n**Note:** Unless specified as global, commands only work for trackers that were made on this server.")
+result_string.append("")
+
+# Help
+result_string.append("`!clock`: This alias")
+result_string.append("`!clock help`: Displays a message similar to this.")
+result_string.append("")
+
+# Create/remove
+result_string.append("`!clock create [tracker name]`: Creates a tracker")
+result_string.append("`!clock remove [tracker name]`: Removes a tracker")
+result_string.append("")
+
+# In/out
+result_string.append("`!clock in <tracker name>`: Clocks into a tracker, uses DM Time by default")
+result_string.append("`!clock out <tracker name>`: Clocks out of a tracker, uses DM Time by default")
+result_string.append("")
+
+# List/log
+result_string.append("`!clock list`: Lists out names of trackers")
+result_string.append("`!clock log <tracker name>`: Shows time on tracker, uses DM Time by default")
+result_string.append("")
+
+# Reset/restore
+result_string.append("`!clock reset <tracker name>`: Resets time on tracker, uses DM Time be default")
+result_string.append("`!clock restore`: Restores the tracker dictionary from when you last ran `!clock remove`, `!clock reset`, or `!clock restore` (global)")
+</drac2>
+
+-title "{{f"{ctx.author.display_name} needs help!"}}"
+-f "{{"\n".join(result_string)}}"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/clock/image.png"
+-footer "!clock help | Updated 7/4/23 | ShadowsStride"
