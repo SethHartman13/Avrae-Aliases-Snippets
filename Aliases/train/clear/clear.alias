@@ -1,0 +1,46 @@
+embed
+<drac2>
+
+
+def main(ch = character()) -> list[str]:
+
+    if ch.cc_exists('Training'):
+        cc_detail_dict = dict()
+
+        cc_detail_dict['maxVal'] = str(ch.cc('Training').max)
+        cc_detail_dict['dispType'] = ch.cc('Training').display_type
+        cc_detail_dict['title'] = ch.cc('Training').title
+        cc_detail_dict['desc'] = ch.cc('Training').desc
+        cc_detail_dict['initial_value'] = ch.cc('Training').value
+
+        ch.set_cvar("training_cc_backup", dump_json(cc_detail_dict))
+
+        desc_dict = load_json(ch.cc('Training').desc)
+
+        prof_name = desc_dict['prof']
+
+        prof_name_list_temp = prof_name.split(" ")
+        prof_name_list = []
+
+
+        for prof_name in prof_name_list_temp:
+            prof_name_list.append(prof_name.capitalize())
+
+        prof_name = " ".join(prof_name_list)
+
+
+        ch.delete_cc("Training")
+        return [f"{name} ({ctx.author.display_name}) clears their {prof_name} training progress", f'Run `!train restore` to restore your CC if this was an accident']
+
+    else:
+        return [f"{ctx.author.display_name} has encoutnered an error", "Training CC does not exist"]
+
+
+output_list = main()
+
+
+</drac2>
+-title "{{output_list[0]}}"
+-f "{{output_list[1]}}"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/train/image.png"
+-footer "!train clear | Updated 7/1/2023 | ShadowsStride"

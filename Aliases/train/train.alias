@@ -85,6 +85,20 @@ def grab_tool_weapon_lang_skill() -> dict:
     else:
         list_dicts.append(load_json(get_gvar('7b5154d2-85bf-4581-91e9-46295c5581e6')))
 
+    instrument_test = get_svar('instrument_dict', default="None")
+    if instrument_test != 'None':
+        list_dicts.append(load_json(instrument_test))
+
+    else:
+        list_dicts.append(load_json(get_gvar('1c11be1f-d1c0-46b1-80cb-5a1ae5efafc8')))
+
+    game_test = get_svar('gaming_dict', default="None")
+    if game_test != 'None':
+        list_dicts.append(load_json(game_test))
+
+    else:
+        list_dicts.append(load_json(get_gvar('1ff63486-fd0e-44fd-aa20-72165a92a840')))
+
     # skill_test = get_svar('skill_dict', default="None")
     # if skill_test != 'None':
     #   list_dicts.append(load_json(skill_test))
@@ -160,7 +174,7 @@ def find_highest_stat(stat_list: list, ch = character()) -> int:
 def setup_training_cc(target: str, ch = character()) -> list[str]:
 
     if ch.cc_exists("Training"):
-        return ['Error', 'There is already a tracker in progress, please run `!train stop` in order to make a new one']
+        return ['Error', 'There is already a tracker in progress, please run `!train clear` in order to make a new one']
 
     else:
         full_dict = grab_tool_weapon_lang_skill()
@@ -316,7 +330,12 @@ def run_training_session(ch = character(), adv: int = 0, bonus: str = "None", ig
 
         ch.cc("Training").mod(mod_num)
 
-        desc_dict['time'] = current_time
+        if not ignore_time:
+            desc_dict['time'] = current_time
+            desc_dict['bypass'] = False
+
+        else:
+            desc_dict['bypass'] = True
 
         ch.edit_cc("Training", minVal="0", maxVal=str(max_ - ability_mod), desc=dump_json(desc_dict))
     
@@ -372,6 +391,21 @@ def main(input_list: list[str] = [], ch=character()):
 
     if results[0] != "Error":
 
+        settings_test = get_svar('training_settings', default="None")
+
+        if settings_test != "None":
+            settings_dict = load_json(settings_test)
+
+            try:
+                time_cooldown = settings_dict['time_cooldown']
+
+            except:
+                time_cooldown = 561600
+        
+        else:
+            time_cooldown = 561600
+
+
         desc_dict = load_json(ch.cc('Training').desc)
 
         prof_name = desc_dict['prof']
@@ -388,10 +422,19 @@ def main(input_list: list[str] = [], ch=character()):
         result_string = [f"{str(results[1])}"]
         result_string.append(ch.cc_str('Training'))
         result_string.append(f"{ch.cc('Training').value}/{ch.cc('Training').max}  (+{results[2]})")
+        result_string.append(f"Next training session: <t:{desc_dict['time'] + time_cooldown}:f>")
 
         if ch.cc('Training').value == ch.cc('Training').max:
             result_string.append(f"You have finished your training for {prof_name}! Run `!train clear` and come again next time!")
 
+        else:
+            pass
+
+        if desc_dict['bypass']:
+            result_string.append('**`Cooldown timer bypassed`**')
+        
+        else:
+            pass
 
         return [f'{name} ({ctx.author.display_name}) Training Session: {prof_name}', '\n'.join(result_string)]
 
@@ -407,4 +450,5 @@ left_arrow = "<"
 </drac2>
 -title "{{output_list[0]}}"
 -f "{{output_list[1]}}"
--footer "!train {{left_arrow}}name> | Updated 6/30/2023 | ShadowsStride"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/train/image.png"
+-footer "!train {{left_arrow}}prof_name> | Updated 7/2/2023 | ShadowsStride"

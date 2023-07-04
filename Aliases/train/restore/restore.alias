@@ -1,0 +1,40 @@
+embed
+<drac2>
+
+    def main(ch = character()) -> list[str]:
+
+        cc_detail_test = ch.get_cvar("training_cc_backup", default="None")
+
+        if cc_detail_test != "None":
+            cc_detail_dict = load_json(cc_detail_test)
+
+            ch.create_cc(name="Training", minVal="0", maxVal=cc_detail_dict['maxVal'], reset=None, dispType=cc_detail_dict['dispType'], reset_to="0", title=cc_detail_dict['title'], desc=cc_detail_dict['desc'], initial_value=cc_detail_dict['initial_value'])
+
+            desc_dict = load_json(ch.cc('Training').desc)
+
+            prof_name = desc_dict['prof']
+
+            prof_name_list_temp = prof_name.split(" ")
+            prof_name_list = []
+
+
+            for prof_name in prof_name_list_temp:
+                prof_name_list.append(prof_name.capitalize())
+
+            prof_name = " ".join(prof_name_list)
+
+            return [f"{name} ({ctx.author.display_name}) has restored their {prof_name} training tracker", ""]
+
+
+        else:
+            return [f'{ctx.author.display_name} has encountered an error', 'No backup found!']
+
+
+output_list = main()
+
+
+</drac2>
+-title "{{output_list[0]}}"
+-f '{{output_list[1]}}'
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/train/image.png"
+-footer "!train restore | Updated 7/1/2023 | ShadowsStride"
