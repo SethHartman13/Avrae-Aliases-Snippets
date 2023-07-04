@@ -203,10 +203,10 @@ def main(input_list: list[str]) -> list[str]:
         result_list.append(f"**Current clock-ins:** {tracker_details[3]}")
         result_list.append(f"**Time since clock-{status}:** {calc_time(int(round(time(),0)) - tracker_details[1])}")
 
-        return [f"{ctx.player.display_name}: {name} log", "\n".join(result_list)]
+        return [f"{ctx.author.display_name}: {name} log", "\n".join(result_list)]
 
     else:
-        return [f"{ctx.player.display_name} encountered an error", result_list[1]]
+        return [f"{ctx.author.display_name} encountered an error", result_list[1]]
 
 
 # Runs main program
