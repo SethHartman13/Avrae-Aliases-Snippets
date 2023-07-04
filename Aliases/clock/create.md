@@ -1,4 +1,4 @@
-<h1>In Subalias<img align="right" src="image.png" width="100px"></h1>
+<h1>Create Subalias<img align="right" src="image.png" width="100px"></h1>
 
 Subalias that creates a tracker on a server.
 
