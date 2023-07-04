@@ -1,5 +1,11 @@
 embed
 <drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International 
+# * License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
+
 
 def search_key(query: str, key_list: list[str]) -> list[str]|str:
     """
@@ -56,19 +62,16 @@ def search_key(query: str, key_list: list[str]) -> list[str]|str:
         return "None"
 
 
-def calc_time(time:int) -> str:
+def reset_time(name: str) -> list[str]:
+    """
+    Resets the tracker
 
-    # Converts time into hours
-    hours = time // 3600
+    Args:
+        name(str): Name of the tracker
 
-    minutes = (time % 3600) // 60
-
-    seconds = (time % 3600) % 60
-
-    return f"{hours} hour(s), {minutes} minute(s), {seconds} second(s)"
-
-
-def reset_time(name: str) -> list:
+    Return:
+        list[str]: Result
+    """
 
     # Pulls and checks if uvar exists
     all_server_test = get_uvar("clock_dict", default="None")
@@ -88,37 +91,53 @@ def reset_time(name: str) -> list:
     except:
         return ['Error', 'Problems loading dictionary']
 
+    # Grabs the server id
     server_id = f"{ctx.guild.id}"
 
+    # Checks to see if the server id is in the uvar
     key_result = search_key(server_id, all_server_dict.keys())
 
+    # If the server id exists in the uvar, pulls dictionary of all trackers made within the server.
     if key_result != "None":
         server_dict = all_server_dict[server_id]
 
+    # If the server id does not exist, throws an error
     else:
         return ['Error', "Server dictionary within `clock_dict` \nPlease run `!clock create [tracker name]` or `!clock in`"]
 
+    # Checks to see if the tracker requested exists.
     key_result = search_key(name, server_dict.keys())
 
+    # If it doesn't find the tracker specified
     if key_result == "None":
         return ['Error', "Tracker not found!\nPlease run `!clock create [tracker name]`"]
 
+    # If it finds only one key
     elif len(key_result) == 1:
+
+        # Create backup uvar
         set_uvar('clock_dict_backup', dump_json(all_server_dict))
         time_check = server_dict[key_result[0]]
 
+        # Reset values for the tracker
         server_dict[key_result[0]] = [False, int(round(time(), 0)), 0, 0]
         all_server_dict[server_id] = server_dict
         set_uvar('clock_dict', dump_json(all_server_dict))
 
         return ['Success', time_check, key_result[0]]
-    
+
+    # If it finds more than one result
     else:
         for dict_key in key_result:
+
+            # If it finds the exact value
             if name.lower() == dict_key.lower():
+
+                # Create backup uvar
                 set_uvar('clock_dict_backup', dump_json(all_server_dict))
                 time_check = server_dict[dict_key]
 
+                # Reset values for the tracker
                 server_dict[dict_key] = [False, int(round(time(), 0)), 0, 0]
                 all_server_dict[server_id] = server_dict
                 set_uvar('clock_dict', dump_json(all_server_dict_dict))
@@ -129,54 +148,72 @@ def reset_time(name: str) -> list:
                 pass
         
         key_result.insert(0, "**Multiple trackers found:**")
+
         return ["Error", "\n".join(key_result)]
+
+
+def calc_time(time:int) -> str:
+    """
+    Converts seconds into hours, minutes, seconds.
+    
+    Args:
+        time(int): Time in seconds
+
+    Return:
+        (str): Result
+    """
+
+    # Converts time into hours, minutes, seconds
+    hours = time // 3600
+    minutes = (time % 3600) // 60
+    seconds = (time % 3600) % 60
+
+    return f"{hours} hour(s), {minutes} minute(s), {seconds} second(s)"
    
 
-def get_player() -> str:
+def main(input_list: list[str]) -> list[str]:
+    """
+    Main program function.
+    
+    Args:
+        input_list(list[str]): List of inputs
+    
+    Output:
+        (list[str]): Result
+    """
 
-    return ctx.author.display_name
-
-
-def main(input_list: list) -> list:
-    error = []
-
+    # If the length of inputs is 0, will automatically choose the dm timer
     if len(input_list) == 0:
         result_list = reset_time("dm_time")
-        name = "DM Time"
+        input_list.append("DM Time")
 
+    # Grabs first input
     else:
         result_list = reset_time(input_list[0])
-        name = input_list[0]
 
-    player_name = get_player()
-
+    # If there was no error
     if result_list[0] != "Error":
         tracker_details = result_list[1]
 
+        # Tracker details
         end_result_list = []
-
         end_result_list.append(f"**Final time:** {calc_time(tracker_details[2])}")
         end_result_list.append(f"**Final clock-ins:** {tracker_details[3]}")
 
-        if len(input_list) == 0:
-            return [f"{player_name}, DM Time tracker successfully reset", "\n".join(end_result_list)]
+        return [f"{ctx.author.display_name}: {input_list[0]} tracker has been reset", "\n".join(end_result_list)]   
 
-        else:
-            return [f"{player_name}, {result_list[2]} tracker successfully reset", "\n".join(end_result_list)]   
-
+    # If there was an error
     else:
-        return [f"{player_name} encountered an error", result_list[1]]
+        return [f"{ctx.author.display_name} encountered an error", result_list[1]]
 
 
+# Runs main program
 output_list = main(&ARGS&)
-
-title = output_list[0]
-output_string = output_list[1]
-
 left_arrow = "<"
 
+
 </drac2>
--title "{{title}}"
+-title "{{output_list[0]}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/clock/image.png"
--f "{{output_string}}"
--footer "!clock reset {{left_arrow}}tracker name> | Updated 6/25/23 | ShadowsStride"
+-f "{{output_list[1]}}"
+-footer "!clock reset {{left_arrow}}tracker name> | Updated 7/3/23 | ShadowsStride"
