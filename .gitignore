@@ -1,8 +1,7 @@
 /.vscode
-/testcode
-Aliases/weather/*.json
+Aliases/weather/jsons/*.json
 Aliases/lfg/lfg.md
 Aliases/lfg/lfg.alias
-Aliases/clock/python/*
 Aliases/clock/*.json
-Aliases/train/*.json
+Aliases/train/jsons/*.json
+/templates
