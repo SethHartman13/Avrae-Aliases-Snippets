@@ -1,5 +1,11 @@
 embed
 <drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International 
+# * License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
+
 
 def search_key(query: str, key_list: list[str]) -> list[str]|str:
     """
@@ -55,7 +61,16 @@ def search_key(query: str, key_list: list[str]) -> list[str]|str:
     else:
         return "None"
 
-def setup_time(name: str) -> list:
+def setup_time(name: str) -> list[str]:
+    """
+    Function to handle the creation of a tracker.
+    
+    Args:
+        name (str): Name of the counter
+    
+    Return:
+        (list[str]): Results
+    """
 
     # Pulls and checks if uvar exists
     all_server_test = get_uvar("clock_dict", default="None")
@@ -76,80 +91,94 @@ def setup_time(name: str) -> list:
     except:
         return ['Error', 'Problems loading dictionary']
 
+    # Grabs the server id
     server_id = f"{ctx.guild.id}"
 
+    # Checks to see if the server id is in the uvar.
     key_result = search_key(server_id, all_server_dict.keys())
 
+    # If the server id exists in the uvar, pulls dictionary of all trackers made within the server.
     if key_result != "None":
         server_dict = all_server_dict[server_id]
 
+    # If the server id does not exist, creates an entry for the server and a dm_time entry
     else:
         all_server_dict[server_id] = {"dm_time": [False, int(round(time(),0)), 0, 0]}
         server_dict = all_server_dict[server_id]
 
+    # Checks to see if the tracker requested exists.
     key_result = search_key(name.lower(), server_dict.keys())
 
+    # If the tracker does not exist
     if key_result == "None":
+
+        # Create dictionary with name as key, list as values
         server_dict[name] = [False, int(round(time(),0)), 0, 0]
+
+        # Update uvar
         all_server_dict[server_id] = server_dict
         set_uvar('clock_dict', dump_json(all_server_dict))
-        return ['Success', f'{name} tracker successfully created']
 
+        return ['Success', f"'{name}' tracker successfully created"]
+
+    # If the tracker exists
     elif len(key_result) == 1:
-        if key_result[0].lower() == name.lower():
-            return ['Error', 'That tracker already exists!']
-
-        else:
-            server_dict[name] = [False, int(round(time(),0)), 0, 0]
-            all_server_dict[server_id] = server_dict
-            set_uvar('clock_dict', dump_json(all_server_dict))
-            return ['Success', f'{name} tracker successfully created']
+        return ['Error', 'That tracker already exists!']
     
+    # Checks to see if an exact match is reached
     else:
         for key in key_result:
+
+            # If it is an exact match
             if name.lower() == key.lower():
                 return ['Error', 'That tracker already exists!']
 
             else:
                 pass
         
+        # Create dictionary with name as key, list as values
         server_dict[name] = [False, int(round(time(),0)), 0, 0]
+
+        # Update uvar
         all_server_dict[server_id] = server_dict
         set_uvar('clock_dict', dump_json(all_server_dict))
+
         return ['Success', f'{name} tracker successfully created']
    
 
-def get_player() -> str:
+def main(input_list: list[str]) -> list[str]:
+    """
+    Main program function
+    
+    Args:
+        input_list(list[str]): List of inputs
+    
+    Output:
+        (list[str]): Result
+    """
 
-    return ctx.author.display_name
-
-
-def main(input_list: list) -> list:
-    error = []
-
+    # If there are no inputs
     if len(input_list) == 0:
-        error.append("No tracker name given!")
+        return [f"{ctx.author.display_name} encountered an error", "No tracker name given!"]
 
     else:
         result_list = setup_time(input_list[0])
 
-    player_name = get_player()
-
+    # If there was no error
     if result_list[0] != "Error":
-        return [f"{player_name}, {result_list[1]}", ""]   
+        return [f"{ctx.author.display_name}: {result_list[1]} tracker created", ""]   
 
+    # If there was an error
     else:
-        return [f"{player_name} encountered an error", result_list[1]]
+        return [f"{ctx.author.display_name} encountered an error", result_list[1]]
 
 
+# Runs main program
 output_list = main(&ARGS&)
-
-title = output_list[0]
-output_string = output_list[1]
 
 
 </drac2>
--title "{{title}}"
+-title "{{output_list[0]}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/clock/image.png"
--f "{{output_string}}"
--footer "!clock create [tracker name] | Updated 6/25/23 | ShadowsStride"
+-f "{{output_list[1]}}"
+-footer "!clock create [tracker name] | Updated 7/3/23 | ShadowsStride"
