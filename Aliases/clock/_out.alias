@@ -168,7 +168,7 @@ def set_time_uvar(tracker_list: list, tracker_key: str) -> None:
         tracker_key (str): Key used for dictionary    
     """
 
-    # GRabs all_server_dict
+    # Grabs all_server_dict
     all_server_dict = load_json(get_uvar('clock_dict'))
 
     # Pulls up the dict for the server
