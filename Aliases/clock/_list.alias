@@ -1,0 +1,149 @@
+embed
+<drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International 
+# * License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
+
+
+def search_key(query: str, key_list: list[str]) -> list[str]|str:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
+
+    # Creates list to store matches
+    results_keys = []
+
+    # For each key in the key_list
+    for key in key_list:
+
+        # Sets up process to creater iterations
+        initial_iterations = []
+        iterations = []
+        lst = []
+        lst[:] = key.lower()
+
+        for i in range(len(key) + 1):
+            initial_iterations.append(lst[:i])
+
+
+        # So, what happens is it will create iterations like 'r' and 're'
+        # This removes the first two so that at least three letters are needed
+        initial_iterations.pop(0)
+        initial_iterations.pop(0)
+
+
+        # Puts all the iterations of the key in a list
+        for iteration in initial_iterations:
+            iterations.append("".join(iteration))
+
+        # If the query returns a match, it will return the key
+        if query.lower() in iterations:
+
+            results_keys.append(key)
+
+        else:
+            pass
+
+    # If there are matches, return a list
+    if len(results_keys) != 0:
+        return results_keys
+
+    # If there are no matches, return a string
+    else:
+        return "None"
+
+
+def get_trackers() -> list[str]:
+    """
+    Gets the list of trackers for a player.
+
+    Return:
+        (list[str]): Result
+    """
+
+    # Pulls and checks if uvar exists
+    all_server_test = get_uvar("clock_dict", default="None")
+
+    # If the uvar exists
+    if all_server_test != "None":
+        pass
+
+    # If the uvar does not exist
+    else:
+        return ['Error', 'uvar `clock_dict` does not exist']
+    
+    # Tries to convert the uvar to a dictionary
+    try:
+        all_server_dict = load_json(all_server_test)
+
+    except:
+        return ['Error', 'Problems loading dictionary']
+
+    # Grabs the server id
+    server_id = f"{ctx.guild.id}"
+
+    # Checks to see if the server id is in the uvar
+    key_result = search_key(server_id, all_server_dict.keys())
+
+    if key_result[0] != "None":
+        server_dict = all_server_dict[key_result[0]]
+
+        key_list = []
+
+        # Pulls names of every tracker
+        for key in server_dict.keys():
+            key_list.append(key)
+
+        # If the list is length of 0, it will list "None"
+        if len(key_list) == 0:
+            key_list.append("None")
+        
+        else:
+            pass
+
+        return ['Success', "\n".join(key_list)]
+
+    else:
+        ['Success', 'None']
+
+    
+def main(input_list: list) -> list:
+    """
+    Main program function.
+    
+    Args:
+        input_list(list[str]): List of inputs
+    
+    Output:
+        (list[str]): Result
+    """
+
+    # Grabs tracker names, if any.
+    result_list = get_trackers()
+
+    # If there was no error
+    if result_list[0] != "Error":
+        return [f"{ctx.author.display_name}: Current time trackers", result_list[1]]
+
+    # If there was an error
+    else:
+        return [f"{ctx.author.display_name} encountered an error", result_list[1]]
+
+
+output_list = main(&ARGS&)
+
+
+</drac2>
+-title "{{output_list[0]}}"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/clock/image.png"
+-f "{{output_list[1]}}"
+-footer "!clock list | Updated 7/3/23 | ShadowsStride"
