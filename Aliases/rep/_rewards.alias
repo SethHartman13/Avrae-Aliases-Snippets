@@ -179,16 +179,13 @@ def main(input_list: list[str]) -> list[str]:
     else:
         return [f'{ctx.author.display_name} has encountered an error', results2[1], 'https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png']
     
+
 # get_org_rewards_dict function
 output = main(&ARGS&)
 
-title = output[0]
-rewardstring = output[1]
-thumbnail = output[2]
 
 </drac2>
-
--title "{{title}}"
--f "{{rewardstring}}"
--thumb "{{thumbnail}}"
+-title "{{output[0]}}"
+-f "{{output[1]}}"
+-thumb "{{output[2]}}"
 -footer "!rep rewards [organization] | Updated 6/26/23 | ShadowsStride"

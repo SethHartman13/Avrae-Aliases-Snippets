@@ -1,0 +1,27 @@
+embed
+<drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International 
+# * License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
+
+# Header
+result_string = []
+result_string.append("Sounds like you need someone to provide the help action. Here is a list of the subaliases used for this library.")
+result_string.append("")
+
+result_string.append("`!rep help`: This subalias")
+result_string.append("")
+
+result_string.append("`!rep [organization] <#>`: Allows players to add and subtract reputation, if no number is given it shows what their reputation is at")
+result_string.append("`!rep rewards [organization]`: Checks the rewards of a organization")
+result_string.append("`!rep list`: Lists all known organizations")
+result_string.append("")
+
+
+</drac2>
+-title "{{f"{ctx.author.display_name} needs help!"}}"
+-f "{{"\n".join(result_string)}}"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
+-footer "!rep help | Updated 6/22/23 | ShadowsStride"

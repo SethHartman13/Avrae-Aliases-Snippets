@@ -65,11 +65,9 @@ def main() -> list:
 # Main function
 output = main()
 
-title = output[0]
-result_string = output[1]
-</drac2>
 
--title "{{title}}"
--f "{{result_string}}"
+</drac2>
+-title "{{output[0]}}"
+-f "{{output[1]}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
--footer "!rep list | Updated 6/27/23 | ShadowsStride"
+-footer "!rep list | Updated 7/5/23 | ShadowsStride"

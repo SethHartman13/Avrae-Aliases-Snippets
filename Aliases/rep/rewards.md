@@ -1,4 +1,4 @@
-<h1>Rewards Subalias<img align="right" src="../image.png" width="100px"></h1>
+<h1>Rewards Subalias<img align="right" src="image.png" width="100px"></h1>
 
 Subalias that lists out the rewards of the specified organization.
 
@@ -22,6 +22,4 @@ Subalias that lists out the rewards of the specified organization.
 
 6/26/2023 - Uses player nickname rather than character name. Also implemented improved searching algorithm.
 
-## License Notice
-
-This work includes material written by Seth Hartman (aka ShadowsStride) and is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+7/5/2023 - Subalias rewrite

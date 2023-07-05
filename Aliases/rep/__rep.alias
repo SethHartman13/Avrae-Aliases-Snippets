@@ -232,15 +232,11 @@ def main(input_list: list[str]) -> list[str]:
 
 # Main function
 output = main(&ARGS&)
-
-title = output[0]
-result_string = output[1]
-thumbnail = output[2]
 left_arrow = "<"
 
 
 </drac2>
--title "{{title}}"
--f "{{result_string}}"
--thumb "{{thumbnail}}"
--footer "!rep [organization] {{left_arrow}}#> | Updated 6/27/23 | ShadowsStride"
+-title "{{output[0]}}"
+-f "{{output[1]}}"
+-thumb "{{output[2]}}"
+-footer "!rep [organization] {{left_arrow}}#> | Updated 7/5/23 | ShadowsStride"
