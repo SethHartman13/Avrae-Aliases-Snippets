@@ -1,0 +1,46 @@
+embed
+<drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International 
+# * License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
+
+def main() -> list[str]:
+    """
+    Main program function.
+
+    Return:
+        (list[str]): Result
+    """
+    image_test = get_uvar("imageLibrary", default="None")
+
+    if image_test != "None":
+        image_dict = load_json(image_test)
+
+    else:
+        return [f"{ctx.author.display_name} has encountered an error", "Uvar `imageLibrary` does not exist!"]
+
+    if len(image_dict.keys()) != 0:
+
+        # Chooses a random image to display
+        choices = [key for key in image_dict.keys()]
+        img_url_choice = randchoice(choices)
+        choices.append("")
+        choices.append(f"**Random image from library: {img_url_choice}**")
+
+        return [f"{ctx.author.display_name}'s Image Library", "\n".join(choices), image_dict[img_url_choice]]
+
+    else:
+        return [f"{ctx.author.display_name}'s Image Library", "None", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/list/canvas.png"]
+
+
+# Call main program
+output_list = main()
+
+
+</drac2>
+-title "{{output_list[0]}}"
+-f "{{output_list[1]}}"
+-image "{{output_list[2]}}"
+-footer "!image list | Updated 7/5/23 | ShadowsStride"
