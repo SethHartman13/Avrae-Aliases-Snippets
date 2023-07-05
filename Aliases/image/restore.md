@@ -1,4 +1,4 @@
-<h1>Image Alias<img align="right" src="restore.png" width="100px"></h1>
+<h1>Restore Subalias<img align="right" src="restore.png" width="100px"></h1>
 
 Subalias that handles restoring images from user's backup library.
 

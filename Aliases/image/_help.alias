@@ -7,22 +7,14 @@ embed
 # *******************************************************
 
 
-string_list = []
+result_string = []
+result_string.append("Sounds like you need someone to provide the help action. Here is a list of the subaliases used for this library.")
+result_string.append("")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Help
+result_string.append("`!crime help`: This subalias")
+result_string.append("`!crime list`: Lists out criminals, organized by player")
+result_string.append("")
 
 
 

@@ -1,4 +1,4 @@
-<h1>Image Alias<img align="right" src="rubble.png" width="100px"></h1>
+<h1>Remove subalias<img align="right" src="rubble.png" width="100px"></h1>
 
 Subalias that handles removing images from user's library.
 

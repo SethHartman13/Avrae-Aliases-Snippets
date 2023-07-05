@@ -1,4 +1,4 @@
-<h1>Image Alias<img align="right" src="canvas.png" width="100px"></h1>
+<h1>Add subalias<img align="right" src="canvas.png" width="100px"></h1>
 
 Subalias that handles adding images to the user's library
 
