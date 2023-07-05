@@ -97,7 +97,7 @@ def remove_image(img_name: str) -> list[str]:
             # Sets uvar to new dictionary
             set_uvar("imageLibrary", dump_json(new_image_dict))
 
-            return ["Success", f"{ctx.player.display_name}: {img_name} has been removed from your image library"]
+            return ["Success", f"{ctx.author.display_name}: {img_name} has been removed from your image library"]
 
         else:
             for dict_key in key_result:
@@ -115,14 +115,14 @@ def remove_image(img_name: str) -> list[str]:
                     # Sets uvar to new dictionary
                     set_uvar("imageLibrary", dump_json(new_image_dict))
 
-                    return ["Success", f"{ctx.player.display_name}: {img_name} has been removed from your image library"]
+                    return ["Success", f"{ctx.author.display_name}: {img_name} has been removed from your image library"]
 
             key_result.insert(0, "**Multiple images found:**")
 
             return ["Error", "\n".join(key_result)]
 
 
-def main(inputs: list[str]) -> list[str]:
+def main(input_list: list[str]) -> list[str]:
     """
     Main program function
 
@@ -134,8 +134,8 @@ def main(inputs: list[str]) -> list[str]:
     """
 
     # If there is at least one input, though it ignores additional inputs other than the first
-    if len(inputs) >= 1:
-        result_list = remove_image(input_list[1])
+    if len(input_list) > 0:
+        result_list = remove_image(input_list[0])
 
     else:
         return [f"{ctx.author.display_name} has encountered an error", "Expected one argument", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png"]
