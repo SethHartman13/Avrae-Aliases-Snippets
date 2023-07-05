@@ -7,16 +7,28 @@ embed
 # *******************************************************
 
 
-# Grabs cvar
-ch = character()
+string_list = []
 
-# Sets up output
-title = f"{name} needs help!"
-string = f"Please run `!help image` instead"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </drac2>
--title "{{title}}"
--f "{{string}}"
--thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/list/canvas.png"
--footer "!help image | Updated 6/22/23 | ShadowsStride"
+-title "{{f"{ctx.author.display_name} needs help!"}}"
+-f {{string_list}}
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/canvas.png"
+-footer "!help image | Updated 7/5/23 | ShadowsStride"
