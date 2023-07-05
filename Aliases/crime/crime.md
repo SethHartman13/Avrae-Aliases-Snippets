@@ -6,9 +6,6 @@ Crime alias that handles court records for criminals.
 
 # Current Plans:
 - Potentially add additional images for the alias for variety.
-- Implement better dictionary key searcher
-    - Checks for multiple matches
-    - Sifts through multiple matches and checks for exact match
 
 ## Help:
 `!crime [player_name] [character_name]`
@@ -63,8 +60,4 @@ You will need to run `!svar crime_dict` to copy over the previous settings befor
 
 6/22/2023 - Copyright/License Update
 
-## License Notice
-
-This work includes material taken from the System Reference Document 5.1 (“SRD 5.1”) by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode.
-
-This work includes material written by Seth Hartman (aka ShadowsStride) and is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+7/4/2023 - Alias rewrite
