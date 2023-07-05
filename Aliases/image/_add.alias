@@ -1,0 +1,161 @@
+embed
+<drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International 
+# * License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
+
+
+def search_key(query: str, key_list: list[str]) -> list[str]|str:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
+
+    # Creates list to store matches
+    results_keys = []
+
+    # For each key in the key_list
+    for key in key_list:
+
+        # Sets up process to creater iterations
+        initial_iterations = []
+        iterations = []
+        lst = []
+        lst[:] = key.lower()
+
+        for i in range(len(key) + 1):
+            initial_iterations.append(lst[:i])
+
+
+        # So, what happens is it will create iterations like 'r' and 're'
+        # This removes the first two so that at least three letters are needed
+        initial_iterations.pop(0)
+        initial_iterations.pop(0)
+
+
+        # Puts all the iterations of the key in a list
+        for iteration in initial_iterations:
+            iterations.append("".join(iteration))
+
+        # If the query returns a match, it will return the key
+        if query.lower() in iterations:
+
+            results_keys.append(key)
+
+        else:
+            pass
+
+    # If there are matches, return a list
+    if len(results_keys) != 0:
+        return results_keys
+
+    # If there are no matches, return a string
+    else:
+        return "None"
+
+
+def add_image(img_name: str, img_url: str) -> list[str]:
+    """
+    Function that handles adding the image requested
+
+    Args:
+        img_name (str): Name of the image
+        img_url (str): URL of the image
+
+    Return:
+        ['status', 'status message']
+    """
+    
+    # Pulls and checks if the uvar exists
+    image_test = get_uvar("imageLibrary", default="None")
+
+    if image_test != "None":
+
+        # Grabs dictionary and then searches dictionary for matches
+        image_dict = load_json(image_test)
+        key_result = search_key(img_name, image_dict.keys())
+
+        # If it comes back with no matches
+        if key_result == "None":
+            # Adds image to uvar
+            image_dict[img_name] = img_url
+            set_uvar("imageLibrary", dump_json(image_dict))
+
+            return['Success']
+        
+        # If it comes back with at least one match
+        else:
+            for key in key_result:
+                if key.lower() != img_name.lower():
+                    pass
+
+                else:
+                    return ["Error", "Image name already exists"]
+
+            # Adds image to uvar if image doesn't have an exact match
+            image_dict[img_name] = img_url
+            set_uvar("imageLibrary", dump_json(image_dict))
+
+            return['Success']        
+
+    # If the uvar does not exist
+    else:
+        # Creates dictionary and adds image to uvar
+        image_dict = dict()
+        image_dict[str(img_name)] = str(img_url)
+        set_uvar("imageLibrary", dump_json(image_dict))
+
+        return['Success']
+
+
+def main(input_list: list[str]) -> list[str]:
+    """
+    Main program function
+
+    Args:
+        inputs (list[str]): List containing image name and url
+    
+    Return:
+        ['title of embed', 'caption of embed', 'image url']
+    """
+
+    # If there are at least two inputs
+    if len(input_list) >= 2:
+
+        # Checks to see if the url starts with http
+        url_split = input_list[1].lower().split("http")
+
+        # Valid url
+        if url_split[0] == "":
+            result_list = add_image(input_list[0], input_list[1])
+
+        # Invalid url
+        else:
+            return [f"{ctx.author.display_name} has encountered an error", "Invalid URL. The URL must start with https or http", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png"]
+
+        if result_list[0] != "Error":
+            return [f"{ctx.author.display_name}: Image has been added to your library", input_list[0], input_list[1]]
+
+        else:
+            return [f"{ctx.author.display_name} has encountered an error", result_list[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png"]
+
+    else:
+        return [f"{ctx.author.display_name} has encountered an error", "Expected two arguments", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png"]
+
+# Call main program and pull outputs
+response_list = main(&ARGS&)
+
+
+</drac2>
+-title "{{response_list[0]}}"
+-f "{{response_list[1]}}"
+-image "{{response_list[2]}}"
+-footer "!image add [image name] [image URL] | Updated 7/4/23 | ShadowsStride"

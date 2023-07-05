@@ -1,4 +1,4 @@
-<h1>Image Alias<img align="right" src="../list/canvas.png" width="100px"></h1>
+<h1>Image Alias<img align="right" src="canvas.png" width="100px"></h1>
 
 Subalias that handles adding images to the user's library
 
@@ -18,6 +18,4 @@ This subalias creates the user variable that holds the dictionary containing the
 
 6/22/2023 - Copyright/License Update
 
-## License Notice
-
-This work includes material written by Seth Hartman (aka ShadowsStride) and is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+7/4/2023 - Subalias rewrite
