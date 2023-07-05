@@ -1,4 +1,4 @@
-<h1>Image Alias<img align="right" src="image.png" width="100px"></h1>
+<h1>Image Alias<img align="right" src="restore.png" width="100px"></h1>
 
 Subalias that handles restoring images from user's backup library.
 
@@ -21,6 +21,4 @@ If you want to undo the restoration, simply run `!image restore` again.
 
 6/22/2023 - Copyright/License Update
 
-## License Notice
-
-This work includes material written by Seth Hartman (aka ShadowsStride) and is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+7/5/2023 - Subalias rewrite

@@ -1,0 +1,47 @@
+embed
+<drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International 
+# * License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
+
+def main() -> list[str]:
+    """
+    Main program function
+
+    Return:
+        (list[str]): Result
+    """
+
+    # Checks to see if the uvars exists
+    image_backup_test = get_uvar("imageLibraryBackup", default="None")
+    image_test = get_uvar("imageLibrary", default="None")
+
+    # If there is a backup and there is the main library
+    if image_backup_test != "None" and image_test != "None":
+
+        # Places backup into standard uvar, and standard into backup uvar
+        set_uvar("imageLibrary", image_backup_test)
+        set_uvar("imageLibraryBackup", image_test)
+
+        return [f'{ctx.author.display_name}: Image library restored from backup', "", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/restore.png"]
+
+    # If there is no backup
+    elif image_backup_test == "None" and image_test != "None":
+        return [f'{ctx.author.display_name} has encountered an error', "No backup found", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png"]
+
+    # If there is no library
+    else:
+        return [f'{ctx.author.display_name} has encountered an error', "Uvar `imageLibrary` does not exist!", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png"]
+
+
+# Call main program
+response_list = main()
+
+
+</drac2>
+-title "{{response_list[0]}}"
+-f "{{response_list[1]}}"
+-image "{{response_list[2]}}"
+-footer "!image remove [image name] | Updated 7/5/23 | ShadowsStride"
