@@ -1,4 +1,4 @@
-<h1>Image Alias<img align="right" src="./list/canvas.png" width="100px"></h1>
+<h1>Image Alias<img align="right" src="canvas.png" width="100px"></h1>
 
 Image alias that handles storing and viewing user images.
 
@@ -6,8 +6,7 @@ Image alias that handles storing and viewing user images.
 - Me (ShadowsStride)
 
 # Current Plans:
-- Implement better dictionary key searcher
-    - Sifts through multiple matches and checks for exact match
+- None
 
 ## Help:
 `!image [image name] [image url]`
@@ -28,6 +27,4 @@ If your are having problems displaying your image, verify that the image url end
 
 6/22/2023 - Copyright/License Update
 
-## License Notice
-
-This work includes material written by Seth Hartman (aka ShadowsStride) and is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+7/4/2023 - Alias rewrite

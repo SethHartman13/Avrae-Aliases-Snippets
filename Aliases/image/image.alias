@@ -73,11 +73,13 @@ def get_image(img_name: str) -> list[str]:
         ['status', 'status message']
     """
 
-    # Checks to see if the uvar exists
-    if uvar_exists("imageLibrary"):
+    # Pulls and checks if uvar exists
+    image_test = get_uvar("imageLibrary", default="None")
 
+    if image_test != "None":
+        
         # Grabs dictionary and then searches dictionary for matches
-        image_dict = load_json(get_uvar("imageLibrary"))
+        image_dict = load_json(image_test)
         key_result = search_key(img_name, image_dict.keys())
 
         # If it comes back with at least one match
@@ -89,19 +91,27 @@ def get_image(img_name: str) -> list[str]:
 
             # If it comes with multiple matches
             else:
+                for key in key_result:
+                    if name.lower() == key.lower():
+                        return ["Success", image_dict[key]]
+
+                    else:
+                        pass
+
                 key_result.insert(0, "**Multiple images found:**")
+
                 return ["Error", "\n".join(key_result)]
 
         # If it comes back with no matches
         else:
-            return ["Error", f"Image not found!"]
+            return ["Error", "Image not found!"]
 
     # If the uvar does not exist
     else:
         return ['Error', "Uvar `imageLibrary` does not exist!"]
 
 
-def main(inputs: list[str]) -> list[str]:
+def main(input_list: list[str]) -> list[str]:
     """
     Main program function
 
@@ -112,57 +122,25 @@ def main(inputs: list[str]) -> list[str]:
         ['title of embed', 'caption of embed', 'image url']
     """
 
-    # Creates error list to catch errors
-    error = []
+    if len(input_list) > 0:
+        results = get_image(input_list[0])
 
-    # If there is at least one input, though it ignores additional inputs other than the first
-    if len(inputs) >= 1:
-
-        # Stores image name
-        img_name = inputs[0]
-        
-        # Searches for the image
-        results = get_image(img_name)
-
-        # If it gets a status of success
-        if results[0] == "Success":
-            pass
-
-        # If it gets an error status
-        else:
-            error.append(results[1])
-
-    # If it does not at least get one argument
     else:
-        error.append("1 argument expected!")
+        return [f"{ctx.author.display_name} has encountered an error", "Expected one argument", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png"]
 
-    # If there were no errors, constructs success output
-    if len(error) == 0:
-        title = "Image:"
-        caption = img_name
-        img_url = results[1]
+    if results[0] != "Error":
+        return [f"{ctx.author.display_name}'s Image:", input_list[0], results[1]]
 
-    # If there were errors, constructs error output
     else:
-        title = "An error has occurred!"
-        caption = "\n".join(error)
-        img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png" # Error image
-
-    # Return output
-    return [title, caption, img_url]
+        return [f"{ctx.author.display_name} has encountered an error", results[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png"]
 
 
-# Call main program and pull outputs 
+# Call main program
 response_list = main(&ARGS&)
-
-# Store outputs for human readabilitiy
-title = response_list[0]
-caption = response_list[1]
-img_url = response_list[2]
 
 
 </drac2>
--title "{{title}}"
--image "{{img_url}}"
--f "{{caption}}"
--footer "!image [image name] | Updated 6/22/23 | ShadowsStride"
+-title "{{response_list[0]}}"
+-f "{{response_list[1]}}"
+-image "{{response_list[2]}}"
+-footer "!image [image name] | Updated 7/4/23 | ShadowsStride"
