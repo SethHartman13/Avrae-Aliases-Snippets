@@ -150,7 +150,7 @@ def main(input_list: list[str]) -> list[str]:
     else:
         return [f"{ctx.author.display_name} has encountered an error", "Expected two arguments", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png"]
 
-# Call main program and pull outputs
+# Call main program
 response_list = main(&ARGS&)
 
 
