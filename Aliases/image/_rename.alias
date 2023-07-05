@@ -1,0 +1,170 @@
+embed
+<drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International 
+# * License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
+
+
+def search_key(query: str, key_list: list[str]) -> list[str]|str:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
+
+    # Creates list to store matches
+    results_keys = []
+
+    # For each key in the key_list
+    for key in key_list:
+
+        # Sets up process to creater iterations
+        initial_iterations = []
+        iterations = []
+        lst = []
+        lst[:] = key.lower()
+
+        for i in range(len(key) + 1):
+            initial_iterations.append(lst[:i])
+
+
+        # So, what happens is it will create iterations like 'r' and 're'
+        # This removes the first two so that at least three letters are needed
+        initial_iterations.pop(0)
+        initial_iterations.pop(0)
+
+
+        # Puts all the iterations of the key in a list
+        for iteration in initial_iterations:
+            iterations.append("".join(iteration))
+
+        # If the query returns a match, it will return the key
+        if query.lower() in iterations:
+
+            results_keys.append(key)
+
+        else:
+            pass
+
+    # If there are matches, return a list
+    if len(results_keys) != 0:
+        return results_keys
+
+    # If there are no matches, return a string
+    else:
+        return "None"
+
+
+def rename_image(old_img_name: str, new_img_name) -> list[str]:
+    """
+    Function that handles renaming the image requested.
+
+    Args:
+        old_img_name (str): Current name of the image
+        new_img_name (str): New name of the image
+
+    Return:
+        ['status', 'status message']
+    """
+
+    # Checks to see if the uvar exists
+    image_test = get_uvar("imageLibrary", default="None")
+
+    if image_test != "None":
+        image_dict = load_json(image_test)
+
+    else:
+        return ['Error', "Uvar `imageLibrary` does not exist!"]
+
+    key_result = search_key(old_img_name, image_dict.keys())
+
+    # If it comes back with at least one match
+    if key_result != "None":
+
+        # If it comes with only one match
+        if len(key_result) == 1:
+
+            # Creates backup uvar incase user ranames incorrect image
+            set_uvar("imageLibraryBackup", dump_json(image_dict))
+
+            # Moves old entry into new entry
+            image_dict[new_img_name] = image_dict[old_img_name]
+
+            # Creates a new dictionary excluding the key:value that was requested to be renamed
+            new_image_dict = {key: val for key, val in image_dict.items() if key != key_result[0]}
+
+            # Sets uvar to new dictionary
+            set_uvar("imageLibrary", dump_json(new_image_dict))
+
+            return ["Success", image_dict[new_img_name]]
+
+        # If it comes back with multiple matches
+        else:
+            for dict_key in key_result:
+                if dict_key.lower() != old_img_name.lower():
+                    pass
+
+                else:
+                    # Creates backup uvar incase user renames incorrect image
+                    set_uvar("imageLibraryBackup", dump_json(image_dict))
+
+                    # Moves old entry into new entry
+                    image_dict[new_img_name] = image_dict[old_img_name]
+
+                    # Creates a new dictionary excluding the key:value that was requested to be renamed
+                    new_image_dict = {key: val for key, val in image_dict.items() if key != dict_key}
+
+                    # Sets uvar to new dictionary
+                    set_uvar("imageLibrary", dump_json(new_image_dict))
+
+                    return ["Success", image_dict[new_img_name]]
+
+            key_result.insert(0, "**Multiple images found:**")
+
+            return ["Error", "\n".join(key_result)]
+
+    # If it comes back with no matches
+    else:
+        return ["Error", "Image not found!"]
+
+
+def main(input_list: list[str]) -> list[str]:
+    """
+    Main program function
+
+    Args:
+        input_list (list[str]): List containing old and new image name
+    
+    Return:
+        ['title of embed', 'caption of embed', 'image url']
+    """
+
+    if len(input_list) > 1:
+        result_list = rename_image(input_list[0], input_list[1])
+
+    else:
+        return [f"{ctx.author.display_name} has encountered an error", "Expected two arguments", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png"]
+
+    if result_list[0] != "Error":
+        return [f"{ctx.author.display_name}: Image successfully updated", input_list[1], result_list[1]]
+
+    else:
+        return [f"{ctx.author.display_name} has encountered an error", result_list[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png"]
+
+
+# Call main program
+response_list = main(&ARGS&)
+
+
+</drac2>
+-title "{{response_list[0]}}"
+-f "{{response_list[1]}}"
+-image "{{response_list[2]}}"
+-footer "!image rename [old image name] [new image name] | Updated 7/5/23 | ShadowsStride"
