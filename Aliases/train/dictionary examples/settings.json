@@ -1,0 +1,10 @@
+{
+    "max_val": 10,
+    "disp_type": "star",
+    "jack_of_trades": "1",
+    "thresholds": {
+        "-999": 0,
+        "10": 1,
+        "20": 2
+    }
+}

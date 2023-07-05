@@ -1,0 +1,6 @@
+{
+    "dice set": ["dex", "int", "wis", "cha"],
+    "dragonchess set": ["int", "wis", "cha"],
+    "playing card set": ["dex", "int", "wis", "cha"],
+    "three-dragon ante set": ["int", "wis", "cha"]
+}

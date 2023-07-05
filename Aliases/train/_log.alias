@@ -1,0 +1,85 @@
+embed
+<drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International License 
+# * available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
+
+
+def main(ch=character()) -> list[str]:
+    """
+    Main program function
+
+    Args:
+        ch = character(): Character object
+
+    Return:
+        (list[str]): Result
+    """
+
+    # Checks to see if training cc exists
+    if ch.cc_exists("Training"):
+
+        counter = ch.cc("Training")
+
+        # checks to see if there is a training dictionary
+        settings_test = get_svar('training_settings', default="None")
+
+        # If it exists
+        if settings_test != "None":
+            settings_dict = load_json(settings_test)
+
+            try:
+                settings_dict['time_cooldown']
+
+            except:
+                settings_dict['time_cooldown'] = 561600
+        
+        # If it does not exist
+        else:
+            settings_dict = dict()
+            settings_dict['time_cooldown'] = 561600
+
+        # Capitalizes proficiency
+        desc_dict = load_json(counter.desc)
+        prof_name = desc_dict['prof']
+        prof_name_list_temp = prof_name.split(" ")
+        prof_name_list = []
+        for prof_name in prof_name_list_temp:
+            prof_name_list.append(prof_name.capitalize())
+        prof_name = " ".join(prof_name_list)
+
+        # Results
+        result_string = [ch.cc_str('Training')]
+        result_string.append(f"Next training session: <t:{desc_dict['time'] + settings_dict['time_cooldown']}:f>")
+        result_string.append(f"{counter.value}/{counter.max}")
+
+        # If counter is finished
+        if counter.value == counter.max:
+            result_string.append(f"You have finished your training for {prof_name}! Run `!train clear` to clear your cc!")
+
+        else:
+            pass
+
+        # If cooldown has been bypassed
+        if desc_dict['bypass']:
+            result_string.append('**`Previous training session bypassed cooldown timer`**')
+        
+        else:
+            pass
+
+        return [f'{name} ({ctx.author.display_name}) is checking their training progress with {prof_name}', "\n".join(result_string)]
+
+    else:
+        return [f'{ctx.author.display_name} has encountered an error', 'Training CC does not exist']
+
+
+output_list = main()
+
+
+</drac2>
+-title "{{output_list[0]}}"
+-f "{{output_list[1]}}"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/train/image.png"
+-footer "!train log | Updated 7/5/2023 | ShadowsStride"

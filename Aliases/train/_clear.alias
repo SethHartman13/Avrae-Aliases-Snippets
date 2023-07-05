@@ -1,12 +1,23 @@
 embed
 <drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International License 
+# * available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
 
 
 def main(ch = character()) -> list[str]:
+    """
+    Main program function
+    
+    """
 
+    # If the training cc exists
     if ch.cc_exists('Training'):
-        cc_detail_dict = dict()
 
+        # Creates back up cvar
+        cc_detail_dict = dict()
         cc_detail_dict['maxVal'] = str(ch.cc('Training').max)
         cc_detail_dict['dispType'] = ch.cc('Training').display_type
         cc_detail_dict['title'] = ch.cc('Training').title
@@ -15,21 +26,18 @@ def main(ch = character()) -> list[str]:
 
         ch.set_cvar("training_cc_backup", dump_json(cc_detail_dict))
 
+        # Capitalize proficiency
         desc_dict = load_json(ch.cc('Training').desc)
-
         prof_name = desc_dict['prof']
-
         prof_name_list_temp = prof_name.split(" ")
         prof_name_list = []
-
-
         for prof_name in prof_name_list_temp:
             prof_name_list.append(prof_name.capitalize())
-
         prof_name = " ".join(prof_name_list)
 
-
+        # Deletes cc
         ch.delete_cc("Training")
+        
         return [f"{name} ({ctx.author.display_name}) clears their {prof_name} training progress", f'Run `!train restore` to restore your CC if this was an accident']
 
     else:

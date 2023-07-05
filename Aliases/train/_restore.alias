@@ -1,0 +1,77 @@
+embed
+<drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International License 
+# * available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
+
+
+def main(ch = character()) -> list[str]:
+    """
+    Main program function
+
+    Args:
+        ch = character(): Character object
+
+    Return:
+        (list[str]): Result
+    """
+
+    # Checks to see if there is a backup
+    cc_detail_test = ch.get_cvar("training_cc_backup", default="None")
+
+    # If there is a backup
+    if cc_detail_test != "None":
+
+        # Loads dictionary
+        cc_detail_dict = load_json(cc_detail_test)
+
+        # Checks to see if the training cc exists
+        if ch.cc_exists('Training'):
+
+            # Pulls counter information
+            counter = ch.cc("Training")
+
+            # Creates backup
+            cc_detail_backup = dict()
+            cc_detail_backup['maxVal'] = str(counter.max)
+            cc_detail_backup['dispType'] = counter.display_type
+            cc_detail_backup['title'] = counter.title
+            cc_detail_backup['desc'] = counter.desc
+            cc_detail_backup['initial_value'] = counter.value
+
+            ch.set_cvar("training_cc_backup", dump_json(cc_detail_backup))
+
+        else:
+            pass
+        
+        # Overwrites training
+        ch.create_cc(name="Training", minVal="0", maxVal=cc_detail_dict['maxVal'], reset=None, dispType=cc_detail_dict['dispType'], reset_to="0", title=cc_detail_dict['title'], desc=cc_detail_dict['desc'], initial_value=cc_detail_dict['initial_value'])
+
+        # Re-pulls counter information
+        counter = ch.cc("Training")
+
+        # Capitalizes tool name
+        desc_dict = load_json(counter.desc)
+        prof_name = desc_dict['prof']
+        prof_name_list_temp = prof_name.split(" ")
+        prof_name_list = []
+        for prof_name in prof_name_list_temp:
+            prof_name_list.append(prof_name.capitalize())
+        prof_name = " ".join(prof_name_list)
+
+        return [f"{name} ({ctx.author.display_name}) has restored their {prof_name} training tracker", "Run `!train restore` to restore your CC if you accidentally overwrote your previous cc"]
+
+    else:
+        return [f'{ctx.author.display_name} has encountered an error', 'No backup found']
+
+
+output_list = main()
+
+
+</drac2>
+-title "{{output_list[0]}}"
+-f '{{output_list[1]}}'
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/train/image.png"
+-footer "!train restore | Updated 7/5/2023 | ShadowsStride"

@@ -1,0 +1,23 @@
+{
+    "alchemist's supplies": ["int", "wis"],
+    "brewer's supplies": ["int", "wis", "cha"],
+    "calligrapher's supplies": ["dex", "int", "cha"],
+    "carpenter's tools": ["str", "dex", "int", "wis"],
+    "cobbler's tools": ["str", "dex", "int", "wis", "cha"],
+    "cook's tools": ["dex", "int", "wis"],
+    "glassblower's tools": ["dex", "int"],
+    "jeweler's tools": ["dex", "cha"],
+    "leatherworker's tools": ["str", "dex", "wis"],
+    "mason's tools": ["str", "int"],
+    "painter's supplies": ["dex", "wis", "cha"],
+    "potter's tools": ["dex", "wis"],
+    "thieves' tools": ["dex", "int"],
+    "tinker's tools": ["dex", "int"],
+    "weaver's tools": ["dex", "int", "wis"],
+    "woodcarver's tools": ["dex", "int", "wis"],
+    "disguise kit": ["int", "wis", "cha"],
+    "forgery kit": ["int", "wis"],
+    "herbalism kit": ["int", "wis"],
+    "navigator's tools": ["int", "wis"],
+    "poisoner's kit": ["int", "wis"]
+}
