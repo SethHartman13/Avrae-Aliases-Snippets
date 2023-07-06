@@ -1,0 +1,36 @@
+embed
+<drac2>
+using(baglib="4119d62e-6a98-4153-bea9-0a99bb36da2c")
+
+ch = character()
+bagsLoaded = baglib.load_bags()
+old_coins = baglib.get_coins(bagsLoaded)[1].copy()
+autoCoins = baglib.settings.get('autoCoins',get("autocoins","0")=="1")
+delta, coin_error = baglib.parsecoins("&*&")
+resultList = list(old_coins.items())
+
+if delta:
+    focus, error = baglib.modify_coins(bagsLoaded, autoCoins=autoCoins, delta=delta)
+    if not error:
+        delta = list(delta.items())
+        delta.sort(key=lambda x: x[1], reverse=True)
+        if delta[0][1]>0:
+            title = f"{name} adds"
+            positive = True
+        else:
+            title = f"{name} removes"
+
+
+
+
+
+
+
+
+
+
+
+
+
+</drac2>
+-f {{delta}}
