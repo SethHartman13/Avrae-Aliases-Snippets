@@ -172,11 +172,11 @@ def grab_tool_weapon_lang_skill() -> dict:
         list_dicts.append(load_json(get_gvar('1ff63486-fd0e-44fd-aa20-72165a92a840')))
 
     # Skill dictionary
-    # skill_test = get_svar('skill_dict', default="None")
-    # if skill_test != 'None':
-    #   list_dicts.append(load_json(skill_test))
-    # else:
-    #   list_dicts.append(load_json(get_gvar('49fa8417-b31c-4c8f-bb4c-69bdcf6fcc92')))
+    skill_test = get_svar('skill_dict', default="None")
+    if skill_test != 'None':
+        list_dicts.append(load_json(skill_test))
+    else:
+        list_dicts.append(load_json(get_gvar('49fa8417-b31c-4c8f-bb4c-69bdcf6fcc92')))
 
     # Combines all the dictionaries into one
     for dictionary in list_dicts:
