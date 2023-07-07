@@ -1,5 +1,282 @@
 embed
 <drac2>
+
+
+def search_key(query: str, key_list: list[str]) -> list[str]|str:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
+
+    # Creates list to store matches
+    key_results = []
+
+    # For each key in the key_list
+    for key in key_list:
+
+        # Sets up process to creater iterations
+        initial_iterations = []
+        iterations = []
+        lst = []
+        lst[:] = key.lower()
+
+        for i in range(len(key) + 1):
+            initial_iterations.append(lst[:i])
+
+
+        # So, what happens is it will create iterations like 'r' and 're'
+        # This removes the first two so that at least three letters are needed
+        initial_iterations.pop(0)
+        initial_iterations.pop(0)
+
+
+        # Puts all the iterations of the key in a list
+        for iteration in initial_iterations:
+            iterations.append("".join(iteration))
+
+        # If the query returns a match, it will return the key
+        if query.lower() in iterations:
+
+            key_results.append(key)
+
+        else:
+            pass
+
+    # If there are matches, return a list
+    if len(key_results) != 0:
+        return key_results
+
+    # If there are no matches, return a string
+    else:
+        return "None"
+
+
+def grab_settings_dict() -> dict:
+
+    setting_test = get_svar("crafting_settings", default="None")
+
+    if setting_test != "None":
+        setting_dict = load_json(setting_test)
+
+        try:
+            setting_dict['lfg_integration']
+
+        except:
+            setting_dict['lfg_integration'] = False
+
+        try:
+            setting_dict['pro_rate_refund']
+
+        except:
+            setting_dict['pro_rate_refunt'] = True
+
+        try:
+            setting_dict['success_dispType']
+
+        except:
+            setting_dict['success_dispType'] = "star"
+
+        try:
+            setting_dict['failure_dispType']
+
+        except:
+            setting_dict['failure_dispType'] = "hex"
+
+        return setting_dict
+
+    else:
+        return load_json(get_gvar("d2daf66a-dce2-481b-ab28-f37ffe072de7"))
+
+
+def parse_money(money: str) -> list[str, float]:
+
+    money = money.replace(',', '')
+
+    money_split = money.lower().split('pp')
+    if len(money_split) == 2:
+        return ["Success", float(money_split[0]) * 10]
+
+    else:
+        money_split = money.lower().split('gp')
+        if len(money_split) == 2:
+            return ["Success", float(money_split[0])]
+
+        else:
+            money_split = money.lower().split('sp')
+            if len(money_split) == 2:
+                return ["Success", round(float(money_split[0]) / 10, 2)]
+
+            else:
+                money_split = money.lower().split('cp')
+                if len(money_split) == 2:
+                    return ["Success", round(float(money_split[0]) / 100, 2)]
+
+                else:
+                    return ["Error", f'Unknown currency given: {money}']
+
+
+def find_rarity_type_settings(craft_rarity: str, craft_type: str, settings_dict:str) -> list[str]:
+
+
+    if craft_rarity.lower() != "veryrare":
+        pass
+
+    else:
+        craft_rarity = "very rare"
+
+    key_result = search_key(craft_rarity, settings_dict.keys())
+
+    if key_result != "None":
+        if len(key_result) == 1:
+            type_dict = setting_dict[key_result[0]]
+            craft_rarity = key_result[0]
+
+        else:
+            for key in key_result:
+                if key.lower() != craft_rarity.lower():
+                    pass
+
+                else:
+                    type_dict = setting_dict[key]
+                    craft_rarity = key
+
+            key_result.insert(0, "**Multiple rarities found:**")
+
+            return ['Error', '\n'.join(key_result)]
+
+    else:
+        return ['Error', 'Rarity not found']
+
+    if craft_rarity != 'nonmagical':
+
+        key_result = search_key(craft_type, type_dict.keys())
+
+        if key_result != "None":
+            if len(key_result) == 0:
+                return ["Success", craft_rarity, key_result[0], type_dict[key_result[0]]]
+
+            else:
+                for key in key_result:
+                    if key.lower() != craft_type.lower():
+                        pass
+
+                    else:
+                        return ["Success", craft_rarity, key, type_dict[key]]
+
+                key_result.insert(0, "**Multiple types found:**")
+
+                return ['Error', '\n'.join(key_result)]
+
+
+        else:
+            return ['Error', 'Unknown craft type']
+
+    else:
+        result_list = parse_money(craft_type)
+
+        if result_list[0] != "Error":
+            craft_list = []
+
+            for key in type_dict.keys():
+
+                try:
+                    if result_list[1] >= float(key):
+                        craft_list = type_dict[key]
+
+                    else:
+                        pass
+
+                except:
+                    return ['Error', 'Non-float in nonmagical dictionary (within main settings dictionary)']
+
+            if craft_list != []:
+                return ["Success", craft_rarity, craft_type, craft_list]
+
+            else:
+                return ['Error', "Invalid cost input"]
+
+        else:
+            return result_list
+
+
+def create_cc_and_cvar(item_name: str, craft_rarity: str, craft_type: str, craft_list: list, setting_dict: dict) -> list[str]:
+    
+    crafting_dict = dict()
+    crafting_dict['name'] = item_name
+    crafting_dict['rarity'] = craft_rarity
+    crafting_dict['time'] = 1687830660
+    crafting_dict['warning'] = "Don't cheat, there is no reason to."
+
+    ch.set_cvar("craftingStatus", dump_json(crafting_dict))
+
+    ch.create_cc(name="Crafting: Success", minVal=0, )
+
+
+
+
+
+
+
+
+
+def main(input_list: list) -> list[str]:
+
+    if len(input_list) != 0:
+
+        # If the first input is not -b, -i, adv, or dis
+        if input_list[0].lower() not in ['-b', '-i', 'adv', 'dis']:
+
+            if not ch.cc_exists("Crafting: Success"):
+                pass
+
+            else:
+                return [f'{ctx.author.display_name} has encountered an error', 'Crafting CC already exists']
+
+            settings_dict = grab_settings_dict()
+
+            result_list = find_rarity_type_settings(input_list[2], input_list[1], settings_dict)
+
+            if result_list[0] != "Error":
+
+
+            else:
+                [f'{ctx.author.display_name} has encountered an error', result_list[1], ]
+            
+            result_list2 = create_cc_and_cvar(input_list[0], input_list[2], input_list[1], craft_list: list, setting_dict)
+
+            # Parses arguments
+            args = argparse(" ".join(input_list))
+            adv = args.adv()
+            bonus = args.last("b", default=False)
+            lucky = args.get("lucky", default=False)
+            ignore_restrictions = args.last('i', default=False)
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 using(baglib="4119d62e-6a98-4153-bea9-0a99bb36da2c")
 
 ch = character()
