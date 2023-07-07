@@ -1,0 +1,38 @@
+{
+    "examples": {
+        "permanent": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Crafting Cost in GP (int or float)"],
+        "consumable": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Crafting Cost in GP (int or float)"],
+        "0": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)"]
+    },
+    "nonmagical": {
+        "0": [5, 8, -1, 5, 1, 1, 7200],
+        "101": [9, 13, -2, 5, 5, 2, 14400],
+        "501": [13, 18, -3, 5, 8, 3, 21600],
+        "5001": [17, 23, -4, 5, 13, 4, 28800],
+        "50001": [20, 25, -5, 5, 20, 5, 36000]
+    },
+    "common": {
+        "permanent": [5, 10, -1, 5, 8, 2, 7200, 50],
+        "consumable": [5, 10, -1, 5, 1, 2, 7200, 25]
+    },
+    "uncommon": {
+        "permanent": [9, 15, -2, 5, 15, 2, 14400, 250],
+        "consumable": [9, 15,-2, 5, 5, 2, 14400, 125]
+    },
+    "rare": {
+        "permanent": [13, 20, -3, 5, 70, 3, 21600, 2500],
+        "consumable": [13, 20, -3, 5, 30, 3, 21600, 1250]
+    },
+    "very rare": {
+        "permanent": [17, 25, -4, 5, 130, 4, 28800, 25000],
+        "consumable": [17, 25, -4, 5, 70, 4, 28800, 12500]
+    },
+    "legendary": {
+        "permanent": [20, 25, -5, 5, 170, 5, 36000, 65000],
+        "consumable": [20, 25, -5, 5, 130, 5, 36000, 32500]
+    },
+    "lfg_integration": false,
+    "pro_rate_refund": true,
+    "success_dispType": "star",
+    "failure_dispType": "hex"
+}

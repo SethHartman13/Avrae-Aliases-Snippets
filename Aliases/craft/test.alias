@@ -1,0 +1,18 @@
+embed
+
+<drac2>
+
+
+args = argparse(" ".join(&ARGS&).lower())
+
+
+
+
+
+
+
+
+
+
+</drac2>
+-f "{{args.get("lucky", default="None")}}"
