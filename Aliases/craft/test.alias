@@ -3,16 +3,8 @@ embed
 <drac2>
 
 
-args = argparse(" ".join(&ARGS&).lower())
-
-
-
-
-
-
-
-
+test_roll = vroll("1d20+6+6")
 
 
 </drac2>
--f "{{args.get("lucky", default="None")}}"
+-f "{{test_roll.raw}}"

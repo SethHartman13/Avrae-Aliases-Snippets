@@ -17,133 +17,171 @@ def search_key(query: str, key_list: list[str]) -> list[str]|str:
     # Creates list to store matches
     key_results = []
 
-    # For each key in the key_list
+    # Checks each item if a match occurs
     for key in key_list:
 
-        # Sets up process to creater iterations
-        initial_iterations = []
-        iterations = []
-        lst = []
-        lst[:] = key.lower()
-
-        for i in range(len(key) + 1):
-            initial_iterations.append(lst[:i])
-
-
-        # So, what happens is it will create iterations like 'r' and 're'
-        # This removes the first two so that at least three letters are needed
-        initial_iterations.pop(0)
-        initial_iterations.pop(0)
-
-
-        # Puts all the iterations of the key in a list
-        for iteration in initial_iterations:
-            iterations.append("".join(iteration))
-
-        # If the query returns a match, it will return the key
-        if query.lower() in iterations:
-
+        # If matches
+        if query.lower() in key.lower():
             key_results.append(key)
 
         else:
             pass
 
-    # If there are matches, return a list
-    if len(key_results) != 0:
+    # Finds at least 1 match
+    if len(key_results) > 0:
         return key_results
 
-    # If there are no matches, return a string
+    # If it finds no matches
     else:
-        return "None"
-
+        return 'None'
+        
 
 def grab_settings_dict() -> dict:
+    """
+    Grabs the settings dictionary, prioritizes svar, but falls back on gvar just in case.
 
+    Return:
+        (dict): Settings dictionary
+    """
+
+    # Tries to grab the svar
     setting_test = get_svar("crafting_settings", default="None")
 
+    # If the svar exists
     if setting_test != "None":
-        setting_dict = load_json(setting_test)
 
+        # Load dictionary
+        settings_dict = load_json(setting_test)
+
+        # Checks if success_dispType exists, otherwise defaults to standard settings
         try:
-            setting_dict['lfg_integration']
+            settings_dict['success_dispType']
+        except:
+            settings_dict['success_dispType'] = "star"
+
+        # Checks if failure_dispType exists, otherwise defaults to standard settings
+        try:
+            settings_dict['failure_dispType']
+        except:
+            settings_dict['failure_dispType'] = "hex"
+
+        # Checks to see if jack_of_trades exists, otherwise defaults to standard settings
+        try:
+            settings_dict["jack_of_trades"]
+        except:
+            settings_dict["jack_of_trades"] = True
+
+        # Checks to see if extra_bonus_threshold exists, otherwise defaults to standard settings
+        try:
+            settings_dict['extra_bonus_threshold']
 
         except:
-            setting_dict['lfg_integration'] = False
+            settings_dict['extra_bonus_threshold'] = {"0": 0, "5": 1, "10": 2, "15": 3, "20": 4, "25": 5}
 
+        # Checks to see if extra_bonus_max exists, otherwise defaults to standard settings
         try:
-            setting_dict['pro_rate_refund']
-
+            settings_dict['extra_bonus_max']
         except:
-            setting_dict['pro_rate_refunt'] = True
+            settings_dict['extra_bonus_max'] = 5
 
-        try:
-            setting_dict['success_dispType']
-
-        except:
-            setting_dict['success_dispType'] = "star"
-
-        try:
-            setting_dict['failure_dispType']
-
-        except:
-            setting_dict['failure_dispType'] = "hex"
-
-        return setting_dict
+        return settings_dict
 
     else:
         return load_json(get_gvar("d2daf66a-dce2-481b-ab28-f37ffe072de7"))
 
 
 def parse_money(money: str) -> list[str, float]:
+    """
+    Converts money amount into gold
+    
+    Args:
+        money (str): Money amount
+    
+    Return:
+        (list[str, float]): Money in gold
+    
+    """
 
+    # Removes apostrophies in case someone is stupid
     money = money.replace(',', '')
 
+    # Platinum
     money_split = money.lower().split('pp')
     if len(money_split) == 2:
         return ["Success", float(money_split[0]) * 10]
 
+    # Gold
     else:
         money_split = money.lower().split('gp')
         if len(money_split) == 2:
             return ["Success", float(money_split[0])]
 
+        # Silver
         else:
             money_split = money.lower().split('sp')
             if len(money_split) == 2:
                 return ["Success", round(float(money_split[0]) / 10, 2)]
 
+            # Copper
             else:
                 money_split = money.lower().split('cp')
                 if len(money_split) == 2:
                     return ["Success", round(float(money_split[0]) / 100, 2)]
 
+                # Gold (with decimal)
                 else:
-                    return ["Error", f'Unknown currency given: {money}']
+                    try:
+                        return ["Success", float(money_split[0])]
+                    
+                    # Not valid money
+                    except:
+                        return ["Error", 'Program has problems parsing money, check money entry']
 
 
-def find_rarity_type_settings(craft_rarity: str, craft_type: str, settings_dict:str) -> list[str]:
+def find_rarity_type_settings(craft_rarity: str, craft_type: str, settings_dict:dict) -> list[str]:
+    """
+    Grabs the settings for the rarity given.
+
+    Args:
+        craft_rarity (str): Crafting rarity
+        craft_type (str): Crafting type
+        settings_dict (dict): Settings dictionary
+
+    Return:
+        (list[str]): Result
+    """
 
 
-    if craft_rarity.lower() != "veryrare":
-        pass
+
+
+    # Hardcoded, if very gets put in, it automatically gets changed to very
+    if 'very' in craft_rarity.lower():
+        craft_rarity = 'very'
 
     else:
-        craft_rarity = "very rare"
+        pass
 
+    # Searches to see if it finds the crafting rarity
     key_result = search_key(craft_rarity, settings_dict.keys())
 
+    # If it at least finds at least one match
     if key_result != "None":
+
+        # If it finds exactly one match
         if len(key_result) == 1:
-            type_dict = setting_dict[key_result[0]]
+
+            # Changes craft rarity
+            type_dict = settings_dict[key_result[0]]
             craft_rarity = key_result[0]
 
+        # If it finds more than one match
         else:
             for key in key_result:
                 if key.lower() != craft_rarity.lower():
                     pass
 
                 else:
-                    type_dict = setting_dict[key]
+                    type_dict = settings_dict[key]
                     craft_rarity = key
 
             key_result.insert(0, "**Multiple rarities found:**")
@@ -153,14 +191,20 @@ def find_rarity_type_settings(craft_rarity: str, craft_type: str, settings_dict:
     else:
         return ['Error', 'Rarity not found']
 
-    if craft_rarity != 'nonmagical':
+    # If the rarity is not 'nonmagical'
+    if craft_rarity.lower() != 'nonmagical':
 
+        # Checks for the craft type
         key_result = search_key(craft_type, type_dict.keys())
 
+        # If it finds at least one match
         if key_result != "None":
+
+            # If it find exactly one match
             if len(key_result) == 0:
                 return ["Success", craft_rarity, key_result[0], type_dict[key_result[0]]]
 
+            # If it finds multiple matches    
             else:
                 for key in key_result:
                     if key.lower() != craft_type.lower():
@@ -172,7 +216,6 @@ def find_rarity_type_settings(craft_rarity: str, craft_type: str, settings_dict:
                 key_result.insert(0, "**Multiple types found:**")
 
                 return ['Error', '\n'.join(key_result)]
-
 
         else:
             return ['Error', 'Unknown craft type']
@@ -205,109 +248,496 @@ def find_rarity_type_settings(craft_rarity: str, craft_type: str, settings_dict:
             return result_list
 
 
-def create_cc_and_cvar(item_name: str, craft_rarity: str, craft_type: str, craft_list: list, setting_dict: dict) -> list[str]:
+def withdraw_funds(cost: float) -> bool:
+    if cost > 0:
+        cost = f"-{str(cost)}"
+
+    else:
+        cost = f"-{str(abs(cost))}"
+
+    using(baglib="4119d62e-6a98-4153-bea9-0a99bb36da2c")
+
+    ch = character()
+    bagsLoaded = baglib.load_bags()
+    old_coins = baglib.get_coins(bagsLoaded)[1].copy()
+    autoCoins = baglib.settings.get('autoCoins',get("autocoins","0")=="1")
+    delta, coin_error = baglib.parsecoins(str(cost))
+    resultList = list(old_coins.items())
+
+    if delta:
+        focus, error = baglib.modify_coins(bagsLoaded, autoCoins=autoCoins, delta=delta)
+        if not error:
+            return True
+
+        else:
+            return False
+
+
+def capitalize_name(name: str) -> str:
+    name_list_temp = name.split(" ")
+    name_list = []
+    for temp_name in name_list_temp:
+        name_list.append(temp_name.capitalize())
+
+    return " ".join(name_list)
+
+
+def create_cc_and_cvar(item_name: str, craft_type: str, craft_rarity: str, craft_list: list, settings_dict: dict, ch = character()) -> list[str]:
     
-    crafting_dict = dict()
+    item_name = capitalize_name(item_name)
+
+    crafting_test = ch.get_cvar("craftingStatus", default="None")
+
+    if crafting_test != 'None':
+        crafting_dict = load_json(crafting_test)
+
+    else:
+        crafting_dict = dict()
+        crafting_dict['history'] = []
+    
     crafting_dict['name'] = item_name
     crafting_dict['rarity'] = craft_rarity
+    crafting_dict['type'] = craft_type
     crafting_dict['time'] = 1687830660
+    crafting_dict['cooldown'] = craft_list[6]
     crafting_dict['warning'] = "Don't cheat, there is no reason to."
+    crafting_dict['history'].insert(0, item_name)
 
-    ch.set_cvar("craftingStatus", dump_json(crafting_dict))
+    ch.create_cc(name="Crafting: Successes", minVal="0", maxVal=str(craft_list[4]), reset="none", dispType=settings_dict["success_dispType"], title=f"{item_name}'s Successes", desc=f"Success Tracker for {item_name}", initial_value="0")
+    ch.create_cc(name="Crafting: Failures", minVal="0", maxVal=str(craft_list[5]), reset="none", dispType=settings_dict["failure_dispType"], title=f"{item_name}'s Failures", desc=f"Failure Tracker for {item_name}", initial_value="0")
 
-    ch.create_cc(name="Crafting: Success", minVal=0, )
-
-
-
-
+    return crafting_dict
 
 
+def update_cc_settings(craft_list: list, settings_dict: dict) -> list[str]:
+
+    ch.edit_cc(name="Crafting: Successes", maxVal=str(craft_list[4]), dispType=settings_dict["success_dispType"])
+    ch.edit_cc(name="Crafting: Failures", max_val=str(craft_list[4]), dispType=settings_dict["failure_dispType"])
 
 
 
-def main(input_list: list) -> list[str]:
+def run_crafting_session(craft_list: list, settings_dict: dict, crafting_dict: dict, ch = character(), adv: int = 0, bonus: str = "None", lucky: bool = False, ignore_restrictions: bool = False) -> str[str]:
+    
+    settings_dict['cooldown'] = craft_list[6]
 
+    if settings_dict['jack_of_trades']:
+            for (player_cls, level) in ch.levels:
+                if player_cls == "Bard" and level >= 2:
+                    if bonus == "None":
+                        bonus = floor(proficiencyBonus / 2)
+
+                    else:
+                        bonus = f"{bonus} + {floor(proficiencyBonus / 2)}"
+
+                else:
+                    pass
+    else:
+        pass
+
+    if lucky:
+        if adv == 2:
+            if bonus:
+                d20_roll = vroll('3d20ro1kh1')           
+                bonus_roll = vroll(bonus) 
+
+            else:
+                dice_roll = vroll('3d20ro1kh1')
+                
+
+        elif adv == 1:
+            if bonus:
+                dice_roll = vroll('2d20ro1kh1')
+                bonus_roll = vroll(bonus)
+
+            else:
+                dice_roll = vroll('2d20ro1kh1')
+                
+
+        elif adv == 0:
+            if bonus:
+                dice_roll = vroll('1d20ro1')
+                bonus_roll = vroll(bonus)
+            
+            else:
+                dice_roll = vroll('1d20ro1')
+                
+        
+        else:
+            if bonus:
+                dice_roll = vroll('2d20ro1kl1')
+                bonus_roll = vroll(bonus)
+
+            else:
+                dice_roll = vroll('2d20ro1kl1')
+                
+
+    else:
+        if adv == 2:
+            if bonus:
+                d20_roll = vroll('3d20kh1')
+                bonus_roll = vroll(bonus)       
+
+            else:
+                dice_roll = vroll('3d20kh1')
+                
+
+        elif adv == 1:
+            if bonus:
+                dice_roll = vroll('2d20kh1')
+                bonus_roll = vroll(bonus)  
+
+            else:
+                dice_roll = vroll('2d20kh1')
+                
+
+        elif adv == 0:
+            if bonus:
+                dice_roll = vroll('1d20')
+                bonus_roll = vroll(bonus)
+            
+            else:
+                dice_roll = vroll('1d20')
+                
+        
+        else:
+            if bonus:
+                dice_roll = vroll('2d20kl1')
+                bonus_roll = vroll(bonus)
+
+            else:
+                dice_roll = vroll('2d20kl1')
+                
+                
+    if bonus:
+        if dice_roll.total + bonus_roll.total >= craft_list[1]:
+            excess = dice_roll.total + bonus_roll.total - craft_list[1]
+            success_mod = 1
+            bonus_mod = 0
+
+            for key in extra_bonus_threshold.keys():
+                if excess >= int(key):
+                    bonus_mod = extra_bonus_threshold[key]
+                else:
+                    pass
+
+            success_mod += bonus_mod
+
+            failure_mod = 0
+
+        else:
+            failure_mod = 1
+            success_mod = 0
+
+        result_roll = f"{dice_roll.dice} + {bonus_roll.total} = {dice_roll.total + bonus_roll.total}"
+
+    else:
+        if dice_roll.total >= craft_list[1]:
+
+            excess = dice_roll.total - craft_list[1]
+            success_mod = 1
+            bonus_mod = 0
+
+            for key in extra_bonus_threshold.keys():
+                if excess >= int(key):
+                    bonus_mod = extra_bonus_threshold[key]
+                else:
+                    pass
+
+            success_mod += bonus_mod
+            failure_mod = 0
+
+        else:
+            failure_mod = 1
+            success_mod = 0
+
+        result_roll = dice_roll.full
+
+    # Nat1 and Nat20
+    if dice_roll.total == 1:
+        success_mod =+ abs(int(craft_list[2])) * -1
+
+    elif dice_roll.total == 20:
+        success_mod =+ abs(int(craft_list[3]))
+    else:
+        pass
+
+
+    if success_mod <= settings_dict['extra_bonus_max']:
+        pass
+
+    else:
+        success_mod = settings_dict['extra_bonus_max']
+
+    ch.mod_cc('Crafting: Successes', success_mod)
+    ch.mod_cc('Crafting: Failures', failure_mod)
+
+    if ignore_restrictions:
+        crafting_dict['bypass'] = True
+
+    else:
+        crafting_dict['bypass'] = False
+        crafting_dict['time'] = int(round(time(), 0))
+
+    ch.set_cvar('craftingStatus', dump_json(crafting_dict))
+
+    return ['Success', result_roll, success_mod, failure_mod, crafting_dict]
+
+
+def main(input_list: list[str], ch = character()) -> list[str]:
+    """
+    Main program function
+    
+    Args:
+        input_list (list[str]): List of inputs
+        ch = character(): Character object
+
+    Return:
+        (list[str]): Result 
+    """
+    # If length if inputs is not 0
     if len(input_list) != 0:
 
         # If the first input is not -b, -i, adv, or dis
-        if input_list[0].lower() not in ['-b', '-i', 'adv', 'dis']:
+        if input_list[0].lower() not in ['-b', '-i', 'adv', 'dis', 'lucky']:
 
-            if not ch.cc_exists("Crafting: Success"):
+            # If someone forgets to use quotes to input 'very rare'
+            if input_list[2].lower() == "very" and input_list[3].lower() == "rare":
+                input_list.pop(3)
+                input_list[2] = 'very rare'
+
+            else:
                 pass
 
-            else:
-                return [f'{ctx.author.display_name} has encountered an error', 'Crafting CC already exists']
 
+            # Verifies that crafting CC is not active
+            if not ch.cc_exists("Crafting: Successes"):
+                pass
+
+            # Throws error if it is active
+            else:
+                return [f'{ctx.author.display_name} has encountered an error', 'Crafting CC already exists', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+            # Grabs settings dictionary
             settings_dict = grab_settings_dict()
-
-            result_list = find_rarity_type_settings(input_list[2], input_list[1], settings_dict)
-
-            if result_list[0] != "Error":
-
-
-            else:
-                [f'{ctx.author.display_name} has encountered an error', result_list[1], ]
-            
-            result_list2 = create_cc_and_cvar(input_list[0], input_list[2], input_list[1], craft_list: list, setting_dict)
 
             # Parses arguments
             args = argparse(" ".join(input_list))
-            adv = args.adv()
+            adv = args.adv(eadv=True)
             bonus = args.last("b", default=False)
             lucky = args.get("lucky", default=False)
             ignore_restrictions = args.last('i', default=False)
 
+            # Grabs rarity settings
+            result_list = find_rarity_type_settings(input_list[2], input_list[1], settings_dict)
+            # intended output: ["Success", craft_rarity, key, rarity[type[settings]]]
 
+            # This grabs money
+            if result_list[1] == "nonmagical":
+                cost = parse_money(result_list[2])
             
+            else:
+                cost = parse_money(result_list[3][7])
+
+            if cost[0] != "Error":
+                cost = cost[1]
+
+            else:
+                return [f'{ctx.author.display_name} encounterred an error', cost[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+            crafting_test = ch.get_cvar('craftingStatus', default='None')
+            if crafting_test != 'None':
+                crafting_dict = load_json(crafting_test)
+
+                if time() > crafting_dict['time'] + crafting_dict['cooldown'] or ignore_restrictions:
+                    if ignore_restrictions:
+                        withdraw_bool = True
+                        
+                    else:
+                        withdraw_bool = withdraw_funds(cost)
+
+                else:
+                    return [f'{ctx.author.display_name} has encountered an error', f"You cannot craft until <t:{crafting_dict['time'] + crafting_dict['cooldown']}:f>", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+            
+            else:
+
+                if not ignore_restrictions:
+                    withdraw_bool = withdraw_funds(cost)
+
+                else:
+                    withdraw_bool = True
 
 
 
+            if result_list[0] != "Error":
+                if (ch.levels.total_level >= result_list[3][0] and withdraw_bool) or ignore_restrictions:
+                    crafting_dict = create_cc_and_cvar(input_list[0], input_list[1], input_list[2], result_list[3], settings_dict)
 
+                elif (ch.levels.total_level < result_list[3][0]) and not withdraw_bool:
+                    return [f'{ctx.author.display_name} has encountered an error', f'You need to be at least level {result_list[3][0]} and you do not have sufficient funds', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
 
+                elif not withdraw_bool:
+                    return [f'{ctx.author.display_name} has encountered an error', 'You do not have sufficient funds', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
 
+                else:
+                    return [f'{ctx.author.display_name} has encountered an error', f'You need to be at least level {result_list[3][0]}', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
 
+            else:
+                return [f'{ctx.author.display_name} has encountered an error', result_list[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
 
-
-
-
-
-
-
-
-
-
-
-using(baglib="4119d62e-6a98-4153-bea9-0a99bb36da2c")
-
-ch = character()
-bagsLoaded = baglib.load_bags()
-old_coins = baglib.get_coins(bagsLoaded)[1].copy()
-autoCoins = baglib.settings.get('autoCoins',get("autocoins","0")=="1")
-delta, coin_error = baglib.parsecoins("&*&")
-resultList = list(old_coins.items())
-
-if delta:
-    focus, error = baglib.modify_coins(bagsLoaded, autoCoins=autoCoins, delta=delta)
-    if not error:
-        delta = list(delta.items())
-        delta.sort(key=lambda x: x[1], reverse=True)
-        if delta[0][1]>0:
-            title = f"{name} adds"
-            positive = True
+            result_list = run_crafting_session(result_list[3], settings_dict, crafting_dict, adv=adv, bonus=bonus, lucky=lucky, ignore_restrictions=ignore_restrictions)
+            
         else:
-            title = f"{name} removes"
+            
+            crafting_test = ch.get_cvar("craftingStatus", default="None")
+
+            if crafting_test != 'None' and ch.cc_exists("Crafting: Successes"):
+                if ch.cc("Crafting: Failures").value == ch.cc("Crafting: Failures").max:
+                    return [f'{ctx.author.display_name} has encountered an error', 'Maximum failures reached! Please run `!craft clear` as you have ruined your materials',  "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+                elif ch.cc("Crafting: Successes").value == ch.cc("Crafting: Successes").max:
+                    return [f'{ctx.author.display_name} has encountered an error', f"You have finished crafting a {crafting_dict['name']}! Run `!craft clear` to clear your CC's",  "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+                else:
+                    crafting_dict = load_json(crafting_test)
+
+                # Parses arguments
+                args = argparse(" ".join(input_list))
+                adv = args.adv(eadv=True)
+                bonus = args.last("b", default=False)
+                lucky = args.get("lucky", default=False)
+                ignore_restrictions = args.last('i', default=False)
+
+                if crafting_dict['cooldown'] + crafting_dict['time'] < time() or not ignore_restrictions:
+                    pass
+
+                else:
+                    return [f'{ctx.author.display_name} has encountered an error', f"You cannot craft until <t:{crafting_dict['time'] + crafting_dict['cooldown']}:f>", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+            elif not ch.cc_exists("Crafting: Successes"):
+                return [f'{ctx.author.display_name} has encountered an error', "Crafting CC doesn't exist", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+            else:
+                return [f'{ctx.author.display_name} has encountered an error', "Crafting cvar doesn't exist", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+            
+            settings_dict = get_settings_dict()
 
 
 
+            result_list = find_rarity_type_settings(crafting_dict['rarity'], crafting_dict['type'], settings_dict)
+
+            if result_list[0] != "Error":
+                result_list = run_crafting_session(result_list[3], settings_dict, crafting_dict, adv=adv, bonus=bonus, lucky=lucky, ignore_restrictions=ignore_restrictions)
+
+            else:
+                return [f'{ctx.author.display_name} has encountered an error', result_list[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+    else:
+        crafting_test = ch.get_cvar("craftingStatus", default="None")
+
+        if crafting_test != 'None' and ch.cc_exists("Crafting: Successes"):
+            crafting_dict = load_json(crafting_test)
+
+            if ch.cc("Crafting: Failures").value == ch.cc("Crafting: Failures").max:
+                return [f'{ctx.author.display_name} has encountered an error', 'Maximum failures reached! Please run `!craft clear` as you have ruined your materials',  "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+            elif ch.cc("Crafting: Successes").value == ch.cc("Crafting: Successes").max:
+                return [f'{ctx.author.display_name} has encountered an error', f"You have finished crafting a {crafting_dict['name']}! Run `!craft clear` to clear your CC's",  "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+            else:
+                if crafting_dict['time'] + crafting_dict['cooldown'] < time():
+                    pass
+
+                else:
+                    return [f'{ctx.author.display_name} has encountered an error', f"You cannot craft until <t:{crafting_dict['time'] + crafting_dict['cooldown']}:f>", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+            settings_dict = get_settings_dict()
+            result_list = find_rarity_type_settings(crafting_dict['rarity'], crafting_dict['type'], settings_dict)
+
+        elif not ch.cc_exists("Crafting: Successes"):
+            return [f'{ctx.author.display_name} has encountered an error', "Crafting CC doesn't exist", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+        else:
+            return [f'{ctx.author.display_name} has encountered an error', "Crafting cvar doesn't exist", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+        if result_list[0] != "Error":
+            result_list = run_crafting_session(result_list[3], settings_dict, craft_dict)
+
+        else:
+            return [f'{ctx.author.display_name} has encountered an error', result_list[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+        
+    if result_list[0] != "Error":
+
+        success_counter = ch.cc('Crafting: Successes')
+        fail_counter = ch.cc('Crafting: Failures')
+
+        if result_list[3] > 0:
+            result_string = ['**Failure**']
+
+        else:
+            result_string = ['**Success**']
+
+        result_string.append(result_list[1])
+        result_string.append('')
+
+        result_string.append("Successes:")
+        result_string.append(ch.cc_str('Crafting: Successes'))
+        if result_list[2] != 0:
+            if result_list[2] > 0:
+                sign = "+"
+            else:
+                sign = '-'
+
+            result_string.append(f"{success_counter.value}/{success_counter.max} ({sign}{result_list[2]})")
+        
+        else:
+            result_string.append(f"{success_counter.value}/{success_counter.max}")
+        
+        result_string.append("Failures:")
+        result_string.append(ch.cc_str('Crafting: Failures'))
+        if result_list[3] != 0:
+
+            if result_list[3] > 0:
+                sign = "+"
+            else:
+                sign = '-'
+
+            result_string.append(f"{fail_counter.value}/{fail_counter.max} ({sign}{result_list[3]})")
+
+        else:
+            result_string.append(f"{fail_counter.value}/{fail_counter.max}")
+
+        result_string.append(f"Next crafting session: <t:{result_list[4]['time'] + result_list[4]['cooldown']}:f>")
+
+        if fail_counter.value != fail_counter.max:
+            pass
+        
+        else:
+            result_string.append('Maximum failures reached! Please run `!craft clear` as you have ruined your materials')
+
+        if success_counter.value != success_counter.max:
+            pass
+
+        else:
+            result_string.append(f"You have finished crafting a {result_list[4]['name']}! Run `!craft clear` to clear your CC's")
+
+        if result_list[4]['bypass']:
+            result_string.append("`Bypass has been used`")
+
+        else:
+            pass
+
+        return [f"{name}'s' ({ctx.author.display_name}) Crafting Session: {result_list[4]['name']}", '\n'.join(result_string), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/image.png"]
+
+    return [f'{ctx.author.display_name} has encountered an error', result_list[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
 
 
-
-
-
-
-
-
+output_list = main(&ARGS&)
+left_arrow = "<"
+dash = "-"
 
 
 </drac2>
--f {{delta}}
+-title "{{output_list[0]}}"
+-f "{{output_list[1]}}"
+-thumb "{{output_list[2]}}"
+-footer "!craft {{left_arrow}}item_name> {{left_arrow}}item_type> {{left_arrow}}magic_rarity | cost> {{left_arrow}}{{dash}}b #> {{left_arrow}}eadv/adv/dis> {{left_arrow}}lucky>{{"\n"}}Updated 7/7/2023 | ShadowsStride"

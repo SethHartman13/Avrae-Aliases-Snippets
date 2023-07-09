@@ -34,5 +34,8 @@
     "lfg_integration": false,
     "pro_rate_refund": true,
     "success_dispType": "star",
-    "failure_dispType": "hex"
+    "failure_dispType": "hex",
+    "jack_of_trades": true,
+    "extra_bonus_threshold": {"0": 0, "5": 1, "10": 2, "15": 3, "20": 4, "25": 5},
+    "extra_bonus_max": 5
 }
