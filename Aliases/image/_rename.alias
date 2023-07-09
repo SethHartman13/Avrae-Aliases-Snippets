@@ -20,46 +20,54 @@ def search_key(query: str, key_list: list[str]) -> list[str]|str:
     """
 
     # Creates list to store matches
-    results_keys = []
+    key_results = []
 
-    # For each key in the key_list
+    # Checks each item if a match occurs
     for key in key_list:
 
-        # Sets up process to creater iterations
-        initial_iterations = []
-        iterations = []
-        lst = []
-        lst[:] = key.lower()
-
-        for i in range(len(key) + 1):
-            initial_iterations.append(lst[:i])
-
-
-        # So, what happens is it will create iterations like 'r' and 're'
-        # This removes the first two so that at least three letters are needed
-        initial_iterations.pop(0)
-        initial_iterations.pop(0)
-
-
-        # Puts all the iterations of the key in a list
-        for iteration in initial_iterations:
-            iterations.append("".join(iteration))
-
-        # If the query returns a match, it will return the key
-        if query.lower() in iterations:
-
-            results_keys.append(key)
+        # If matches
+        if query.lower() in key.lower():
+            key_results.append(key)
 
         else:
             pass
 
-    # If there are matches, return a list
-    if len(results_keys) != 0:
-        return results_keys
+    # Finds at least 1 match
+    if len(key_results) > 0:
+        return key_results
 
-    # If there are no matches, return a string
+    # If it finds no matches
     else:
-        return "None"
+        return 'None'
+
+
+def edit_backup_remove_old(old_img_name: str, new_img_name: str, image_dict: dict, key_dict: str) -> list[str]:
+    """
+    Creates backup, renames entry, saves dictionary.
+    
+    Args:
+        old_img_name (str): Original image name
+        new_img_name (str): New image name
+        image_dict (dict): Image dictionary
+        key_dict: (str): Relevent dictionary key
+
+    Return:
+        (list[str]): Result
+    """
+
+    # Creates backup uvar incase user ranames incorrect image
+    set_uvar("imageLibraryBackup", dump_json(image_dict))
+
+    # Moves old entry into new entry
+    image_dict[new_img_name] = image_dict[old_img_name]
+
+    # Creates a new dictionary excluding the key:value that was requested to be renamed
+    new_image_dict = {key: val for key, val in image_dict.items() if key.lower() != key_dict.lower()}
+
+    # Sets uvar to new dictionary
+    set_uvar("imageLibrary", dump_json(new_image_dict))
+
+    return ["Success", image_dict[new_img_name]]
 
 
 def rename_image(old_img_name: str, new_img_name) -> list[str]:
@@ -85,46 +93,75 @@ def rename_image(old_img_name: str, new_img_name) -> list[str]:
 
     key_result = search_key(old_img_name, image_dict.keys())
 
-    # If it comes back with at least one match
+    # If it comes back with at least one match for old_img_name
     if key_result != "None":
 
-        # If it comes with only one match
+        # If it comes with only one match for old_img_name
         if len(key_result) == 1:
 
-            # Creates backup uvar incase user ranames incorrect image
-            set_uvar("imageLibraryBackup", dump_json(image_dict))
+            key_result2 = search_key(new_img_name, image_dict.keys())
 
-            # Moves old entry into new entry
-            image_dict[new_img_name] = image_dict[old_img_name]
+            # If it comes back with at least one match for new_img_name
+            if key_result2 != "None":
 
-            # Creates a new dictionary excluding the key:value that was requested to be renamed
-            new_image_dict = {key: val for key, val in image_dict.items() if key != key_result[0]}
+                # If it comes with only one match for new_img_name
+                if len(key_result2) == 1:
+                    if key_result2[0].lower() == new_img_name.lower():
+                        return ["Error", "New image name is already taken"]
 
-            # Sets uvar to new dictionary
-            set_uvar("imageLibrary", dump_json(new_image_dict))
+                    else:
+                        return edit_backup_remove_old(old_img_name, new_img_name, image_dict, key_result[0])
 
-            return ["Success", image_dict[new_img_name]]
+                # If it finds multiple matches for new_img_name
+                else:
+                    for key in key_result2:
+                        if key.lower() != new_img_name.lower():
+                            pass
 
-        # If it comes back with multiple matches
+                        else:
+                            return ["Error", "New image name is already taken"]
+
+                    return edit_backup_remove_old(old_img_name, new_img_name, image_dict, key_result[0])
+
+            # If it comes bcak with no matches for new_img_name
+            else:
+                return edit_backup_remove_old(old_img_name, new_img_name, image_dict, key_result[0])
+
+        # If it comes back with multiple matches for old_img name
         else:
             for dict_key in key_result:
                 if dict_key.lower() != old_img_name.lower():
                     pass
 
                 else:
-                    # Creates backup uvar incase user renames incorrect image
-                    set_uvar("imageLibraryBackup", dump_json(image_dict))
+                    key_result2 = search_key(new_img_name, image_dict.keys())
 
-                    # Moves old entry into new entry
-                    image_dict[new_img_name] = image_dict[old_img_name]
+                    # If it comes back with at least one match for new_img_name
+                    if key_result2 != "None":
 
-                    # Creates a new dictionary excluding the key:value that was requested to be renamed
-                    new_image_dict = {key: val for key, val in image_dict.items() if key != dict_key}
+                        # If it comes with only one match for new_img_name
+                        if len(key_result2) == 1:
+                            if key_result2[0].lower() == new_img_name.lower():
+                                return ["Error", "New image name is already taken"]
 
-                    # Sets uvar to new dictionary
-                    set_uvar("imageLibrary", dump_json(new_image_dict))
+                            else:
+                                return edit_backup_remove_old(old_img_name, new_img_name, image_dict, dict_key)
 
-                    return ["Success", image_dict[new_img_name]]
+                        # If it finds multiple matches for new_img_name
+                        else:
+                            for key in key_result2:
+                                if key.lower() != new_img_name.lower():
+                                    pass
+
+                                else:
+                                    return ["Error", "New image name is already taken"]
+
+                            return edit_backup_remove_old(old_img_name, new_img_name, image_dict, dict_key)
+
+                    # If it comes bcak with no matches for new_img_name
+                    else:
+                        return edit_backup_remove_old(old_img_name, new_img_name, image_dict, dict_key)
+
 
             key_result.insert(0, "**Multiple images found:**")
 
@@ -167,4 +204,4 @@ response_list = main(&ARGS&)
 -title "{{response_list[0]}}"
 -f "{{response_list[1]}}"
 -image "{{response_list[2]}}"
--footer "!image rename [old image name] [new image name] | Updated 7/5/23 | ShadowsStride"
+-footer "!image rename [old image name] [new image name]{{"\n"}}Updated 7/8/23 | ShadowsStride"

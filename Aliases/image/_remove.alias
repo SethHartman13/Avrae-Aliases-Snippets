@@ -20,46 +20,25 @@ def search_key(query: str, key_list: list[str]) -> list[str]|str:
     """
 
     # Creates list to store matches
-    results_keys = []
+    key_results = []
 
-    # For each key in the key_list
+    # Checks each item if a match occurs
     for key in key_list:
 
-        # Sets up process to creater iterations
-        initial_iterations = []
-        iterations = []
-        lst = []
-        lst[:] = key.lower()
-
-        for i in range(len(key) + 1):
-            initial_iterations.append(lst[:i])
-
-
-        # So, what happens is it will create iterations like 'r' and 're'
-        # This removes the first two so that at least three letters are needed
-        initial_iterations.pop(0)
-        initial_iterations.pop(0)
-
-
-        # Puts all the iterations of the key in a list
-        for iteration in initial_iterations:
-            iterations.append("".join(iteration))
-
-        # If the query returns a match, it will return the key
-        if query.lower() in iterations:
-
-            results_keys.append(key)
+        # If matches
+        if query.lower() in key.lower():
+            key_results.append(key)
 
         else:
             pass
 
-    # If there are matches, return a list
-    if len(results_keys) != 0:
-        return results_keys
+    # Finds at least 1 match
+    if len(key_results) > 0:
+        return key_results
 
-    # If there are no matches, return a string
+    # If it finds no matches
     else:
-        return "None"
+        return 'None'
 
 
 def remove_image(img_name: str) -> list[str]:
@@ -155,4 +134,4 @@ response_list = main(&ARGS&)
 -title "{{response_list[0]}}"
 -f "{{response_list[1]}}"
 -image "{{response_list[2]}}"
--footer "!image remove [image name] | Updated 7/5/23 | ShadowsStride"
+-footer "!image remove [image name] | Updated 7/8/23 | ShadowsStride"

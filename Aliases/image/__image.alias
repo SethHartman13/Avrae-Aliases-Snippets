@@ -20,46 +20,25 @@ def search_key(query: str, key_list: list[str]) -> list[str]|str:
     """
 
     # Creates list to store matches
-    results_keys = []
+    key_results = []
 
-    # For each key in the key_list
+    # Checks each item if a match occurs
     for key in key_list:
 
-        # Sets up process to creater iterations
-        initial_iterations = []
-        iterations = []
-        lst = []
-        lst[:] = key.lower()
-
-        for i in range(len(key) + 1):
-            initial_iterations.append(lst[:i])
-
-
-        # So, what happens is it will create iterations like 'r' and 're'
-        # This removes the first two so that at least three letters are needed
-        initial_iterations.pop(0)
-        initial_iterations.pop(0)
-
-
-        # Puts all the iterations of the key in a list
-        for iteration in initial_iterations:
-            iterations.append("".join(iteration))
-
-        # If the query returns a match, it will return the key
-        if query.lower() in iterations:
-
-            results_keys.append(key)
+        # If matches
+        if query.lower() in key.lower():
+            key_results.append(key)
 
         else:
             pass
 
-    # If there are matches, return a list
-    if len(results_keys) != 0:
-        return results_keys
+    # Finds at least 1 match
+    if len(key_results) > 0:
+        return key_results
 
-    # If there are no matches, return a string
+    # If it finds no matches
     else:
-        return "None"
+        return 'None'
 
 
 def get_image(img_name: str) -> list[str]:
@@ -87,13 +66,13 @@ def get_image(img_name: str) -> list[str]:
 
             # If it comes with only one match
             if len(key_result) == 1:
-                return ["Success", image_dict[key_result[0]]]
+                return ["Success", image_dict[key_result[0]], key_result[0]]
 
             # If it comes with multiple matches
             else:
                 for key in key_result:
                     if name.lower() == key.lower():
-                        return ["Success", image_dict[key]]
+                        return ["Success", image_dict[key], key]
 
                     else:
                         pass
@@ -129,7 +108,7 @@ def main(input_list: list[str]) -> list[str]:
         return [f"{ctx.author.display_name} has encountered an error", "Expected one argument", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png"]
 
     if results[0] != "Error":
-        return [f"{ctx.author.display_name}'s Image:", input_list[0], results[1]]
+        return [f"{ctx.author.display_name}'s Image:", results[2], results[1]]
 
     else:
         return [f"{ctx.author.display_name} has encountered an error", results[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/image/image.png"]
@@ -143,4 +122,4 @@ response_list = main(&ARGS&)
 -title "{{response_list[0]}}"
 -f "{{response_list[1]}}"
 -image "{{response_list[2]}}"
--footer "!image [image name] | Updated 7/4/23 | ShadowsStride"
+-footer "!image [image name] | Updated 7/8/23 | ShadowsStride"
