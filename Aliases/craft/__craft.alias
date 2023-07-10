@@ -71,18 +71,22 @@ def grab_settings_dict() -> dict:
         except:
             settings_dict["jack_of_trades"] = True
 
-        # Checks to see if extra_bonus_threshold exists, otherwise defaults to standard settings
+        # Checks to see if success_mod_threshold exists, otherwise defaults to standard settings
         try:
-            settings_dict['extra_bonus_threshold']
+            settings_dict['success_mod_threshold']
+
+            if "-999" not in settings_dict['success_mod_threshold'].keys():
+                settings_dict['success_mod_threshold']['-999'] = 1
 
         except:
-            settings_dict['extra_bonus_threshold'] = {"0": 0, "5": 1, "10": 2, "15": 3, "20": 4, "25": 5}
+            settings_dict['success_mod_threshold'] = {"-999": 1, "5": 2, "10": 3, "15": 4, "20": 5}
 
-        # Checks to see if extra_bonus_max exists, otherwise defaults to standard settings
+        # Checks to see if restricted_channel_ids exist, otherwise defaults to standard settings
         try:
-            settings_dict['extra_success_max']
+            settings_dict["restricted_channel_ids"]
+
         except:
-            settings_dict['extra_success_max'] = 5
+            settings_dict["restricted_channel_ids"] = []
 
         return settings_dict
 
@@ -366,7 +370,7 @@ def create_cc_and_dict(item_name: str, craft_category: str, craft_type: str, set
         title=f"{item_name}'s Successes", 
         desc=f"Success Tracker for {item_name}", 
         initial_value="0"
-        )
+    )
 
     # Create failure CC
     ch.create_cc(
@@ -377,12 +381,13 @@ def create_cc_and_dict(item_name: str, craft_category: str, craft_type: str, set
         dispType=settings_dict["failure_dispType"], 
         title=f"{item_name}'s Failures", 
         desc=f"Failure Tracker for {item_name}", 
-        initial_value="0")
+        initial_value="0"
+    )
 
     return crafting_dict
 
 
-def update_cc_settings(settings_dict: dict, item_category: str, item_type: str) -> list[str]:
+def update_cc_settings(settings_dict: dict, item_category: str, item_type: str, ch: character) -> list[str]:
     """
     Updates CC settings
 
@@ -394,19 +399,14 @@ def update_cc_settings(settings_dict: dict, item_category: str, item_type: str) 
     Return:
         (list[str]): Result
     """
-    try:
-        ch.edit_cc(name="Crafting: Successes", maxVal=str(settings_dict[item_category][item_type][4]), dispType=settings_dict["success_dispType"])
 
-    except:
-        return ["Error", "Problems updating Success CC settings"]
+    success_counter = ch.edit_cc(name="Crafting: Successes", maxVal=str(settings_dict[item_category][item_type][4]), dispType=settings_dict["success_dispType"])
 
-    try:
-        ch.edit_cc(name="Crafting: Failures", maxVal=str(settings_dict[item_category][item_type][5]), dispType=settings_dict["failure_dispType"])
 
-    except:
-        return ["Error", "Problems updating Failure CC settings"]
+    failure_counter = ch.edit_cc(name="Crafting: Failures", maxVal=str(settings_dict[item_category][item_type][5]), dispType=settings_dict["failure_dispType"])
 
-    return ["Success"]
+
+    return ["Success", success_counter, failure_counter]
 
 
 def run_crafting_session(settings_dict: dict, crafting_dict: dict, ch: character, adv: int = 0, bonus: bool|str = False, ignore_restrictions: bool = False) -> str[str]:
@@ -496,13 +496,13 @@ def run_crafting_session(settings_dict: dict, crafting_dict: dict, ch: character
             roll3 = lucky_reroll(roll2[0])
 
             # Finds highest die
-            if roll1[1].total < roll[2].total:
-                result_d20 = roll[2].total
+            if roll1[1].total >= roll2[1].total:
+                result_d20 = roll1[1].total
 
             else:
-                result_d20 = roll[1].total
+                result_d20 = roll2[1].total
 
-            if roll3[1].total > result_d20:
+            if roll3[1].total >= result_d20:
                 result_d20 = roll3[1].total
 
             else:
@@ -553,7 +553,7 @@ def run_crafting_session(settings_dict: dict, crafting_dict: dict, ch: character
                     roll_string.append(f' {roll2[2]}, {roll2_initial_str},')
 
                 else:
-                    roll_string.append(f" {roll1[2]}, **{roll2_initial_str}**,")
+                    roll_string.append(f" {roll2[2]}, **{roll2_initial_str}**,")
 
             # Add dice roll 3
             if len(roll3) == 2:
@@ -581,11 +581,11 @@ def run_crafting_session(settings_dict: dict, crafting_dict: dict, ch: character
             roll2 = lucky_reroll(roll1[0])
 
             # Finds highest die
-            if roll1[1].total < roll[2].total:
-                result_d20 = roll[2].total
+            if roll1[1].total < roll2[1].total:
+                result_d20 = roll2[1].total
 
             else:
-                result_d20 = roll[1].total
+                result_d20 = roll1[1].total
 
             # Format crossouts
             if roll1[1].total == result_d20:
@@ -625,16 +625,16 @@ def run_crafting_session(settings_dict: dict, crafting_dict: dict, ch: character
                     roll_string.append(f' {roll2[2]}, {roll2_initial_str})')
 
                 else:
-                    roll_string.append(f" {roll1[2]}, **{roll2_initial_str}**)")
+                    roll_string.append(f" {roll2[2]}, **{roll2_initial_str}**)")
 
 # (halfling) Straight roll
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 
         elif adv == 0:
 
-            roll = vroll('1d20ro1')   
-            roll_string.append(roll.dice)
-            result_d20 = roll.total
+            roll1 = vroll('1d20ro1')   
+            roll_string.append(roll1.dice)
+            result_d20 = roll1.total
 
 # (halfling) Disadvantage roll
 # ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -647,11 +647,11 @@ def run_crafting_session(settings_dict: dict, crafting_dict: dict, ch: character
             roll2 = lucky_reroll(roll1[0])
 
             # Finds lowest die
-            if roll1[1].total > roll[2].total:
-                result_d20 = roll[2].total
+            if roll1[1].total > roll2[1].total:
+                result_d20 = roll2[1].total
 
             else:
-                result_d20 = roll[1].total
+                result_d20 = roll1[1].total
 
             # Format crossouts
             if roll1[1].total == result_d20:
@@ -747,29 +747,28 @@ def run_crafting_session(settings_dict: dict, crafting_dict: dict, ch: character
     # If it beats the DC
     if roll_total >= settings_dict[crafting_dict['category']][crafting_dict['type']][1]:
 
-        success_mod = 1
         failure_mod = 0
-        bonus_mod = 0
         success = True
 
         # If it doesn't have problems with using threshold
         try:
-            for key in settings_dict["extra_bonus_threshold"]:
-                if roll_total - settings_dict[crafting_dict['category']][crafting_dict['type']][1] >= int(key):
-                    bonus_mod = settings_dict["extra_bonus_threshold"][key]
+            excess = roll_total - settings_dict[crafting_dict['category']][crafting_dict['type']][1]
+
+            for key in settings_dict["success_mod_threshold"]:
+                if excess >= int(key):
+                    success_mod = int(settings_dict["success_mod_threshold"][key])
 
                 else:
                     pass
 
         # If it has problems with using threshold
         except:
-            bonus_mod = 0
+            success_mod = 1
 
     # If it doesn't beat the DC
     else:
         success_mod = 0
         failure_mod = 1
-        bonus_mod = 0
         success = False
 
     # Not nat20 or nat1
@@ -784,28 +783,27 @@ def run_crafting_session(settings_dict: dict, crafting_dict: dict, ch: character
         else:
             success_mod =+ abs(int(settings_dict[crafting_dict['category']][crafting_dict['type']][3]))
 
-    # If the success max was not exceeded
-    if success_mod + bonus_mod < settings_dict['extra_success_max']:
-        success_mod =+ bonus_mod
+    if success_mod > max(settings_dict['success_mod_threshold'].values()):
+        success_mod = max(settings_dict['success_mod_threshold'].values())
 
-    # If the success mod was exceeded
     else:
-        success_mod = settings_dict['extra_success_max']
+        pass
+
 
     # Modifies the CCs
     ch.cc('Crafting: Successes').mod(success_mod)
     ch.cc('Crafting: Failures').mod(failure_mod)
-    cc_test = update_cc_settings(settings_dict, item_category, item_type)
-
-    if cc_test != "Error":
-        pass
-
-    else:
-        return cc_test
 
     # If ignore restrictions
     if ignore_restrictions:
         crafting_dict['bypass'] = True
+
+        if crafting_dict['first']:
+            crafting_dict['time'] = int(round(time(), 0))
+            crafting_dict['crafting_cost'] = 0
+        
+        else:
+            pass
         
     # If it did not ignore restrictions
     else:
@@ -830,7 +828,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
     Return:
         (list[str]): Result 
     """
-    
+
 # Failure/Success limit check
 # ---------------------------------------------------------------------------------------------------------------------------------------------
     if ch.cc_exists("Crafting: Successes") and ch.cc_exists("Crafting: Failures"):
@@ -843,14 +841,59 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
         elif success_counter.value == success_counter.max:
             crafting_dictionary = load_json(ch.get_cvar('crafting_dict'))
-            return [f"{ctx.author.display_name} has encountered an error", f"You have already finished crafting a {crafting_dictionary['name']}! Please run `!craft clear` as you have already finished your item.", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+            return [f"{ctx.author.display_name} has encountered an error", f"You have already finished crafting a {crafting_dictionary['name']}! Please run `!craft clear` as you have already finished your item.", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/hammer.png"]
 
         else:
             pass
 
     else:
-        # Grabs settings dictionary
-        settings_dict = grab_settings_dict()
+        pass
+
+# Valid channel check
+# ---------------------------------------------------------------------------------------------------------------------------------------------
+
+    channel_id = 0
+
+    # Grabs settings dictionary
+    settings_dict = grab_settings_dict()
+
+    # If there are no channels that this has to be run in
+    if len(settings_dict["restricted_channel_ids"]) == 0:
+        pass
+
+    # If there are channels that this needs to be run in
+    else:
+        
+        # For each channel id
+        for id_num in settings_dict["restricted_channel_ids"]:
+
+            # If this is a channel (not a thread)
+            if int(id_num) == ctx.channel.id:
+                channel_id = int(id_num)
+
+            else:
+                # If this is a thread
+                try:
+                    if int(id_num) == ctx.channel.parent.id:
+                        channel_id = int(id_num)
+
+                    else:
+                        pass
+                
+                except:
+                    pass
+
+        # If a match was found
+        if channel_id != 0:
+            pass
+
+        # If a match was not found
+        else:
+            try:
+                return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.parent.name} is not a valid channel nor is {ctx.channel.name} a valid thread to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+            
+            except:
+                return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.name} is not a valid channel to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
 
     # If length if inputs is not 0
     if len(input_list) != 0:
@@ -909,7 +952,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
                     return [f'{ctx.author.display_name} has encountered an error', cost[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
 
                 for key in settings_dict[input_list[1]]:
-                    if cost[1] >= float(key):
+                    if cost[1] * 2 >= float(key):
                         input_list[2] = key
 
             # If exception, assumes that type is not a money amount (and that cost is within the list stored in the type)
@@ -972,6 +1015,8 @@ def main(input_list: list[str], ch = character()) -> list[str]:
             else:
                 return [f'{ctx.author.display_name} has encountered an error', f"Problems pulling money from coin purse, do you have enough funds?", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
 
+            crafting_dictionary['first'] = True
+
             # Run crafting session
             result_list = run_crafting_session(settings_dict, crafting_dictionary, ch, adv=adv, bonus=bonus, ignore_restrictions=ignore_restrictions)
 
@@ -979,11 +1024,20 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 
         else:
+            # Parses arguments
+            args = argparse(" ".join(input_list))
+            adv = args.adv(eadv=True)
+            bonus = args.last("b", default=False)
+            ignore_restrictions = args.last('i', default=False)
+            settings_dict = grab_settings_dict()
+
+
             settings_dict = grab_settings_dict()
             
             # Crafting CC's exist
             if ch.cc_exists("Crafting: Successes") and ch.cc_exists("Crafting: Failures"):
                 crafting_dictionary = load_json(ch.get_cvar('crafting_dict'))
+                crafting_dictionary['first'] = False
 
             # Crafting CC's don't exist
             else:
@@ -1005,16 +1059,17 @@ def main(input_list: list[str], ch = character()) -> list[str]:
         # Crafting CC's exist
         if ch.cc_exists("Crafting: Successes") and ch.cc_exists("Crafting: Failures"):
             crafting_dictionary = load_json(ch.get_cvar('crafting_dict'))
+            crafting_dictionary['first'] = False
 
         # Crafting CC's don't exist
         else:
             return [f'{ctx.author.display_name} has encountered an error', 'Crafting CCs not found', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
 
-        # If not active cooldown (or skipped)
-        if (settings_dict[crafting_dictionary['category']][crafting_dictionary['type']][6] + crafting_dictionary['time'] < time()):
+        # If not active cooldown
+        if (settings_dict[crafting_dictionary['category']][crafting_dictionary['type']][6] + crafting_dictionary['time'] <= time()):
             result_list = run_crafting_session(settings_dict, crafting_dictionary, ch)
 
-        # Cooldown active and no skip
+        # Cooldown active
         else:
             return [f'{ctx.author.display_name} has encountered an error', f"You cannot have a crafting session until <t:{crafting_dictionary['time'] + settings_dict[crafting_dictionary['category']][crafting_dictionary['type']][6]}:f>", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
 
@@ -1022,12 +1077,20 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 # ---------------------------------------------------------------------------------------------------------------------------------------------
     # If there were no errors
     if result_list[0] != "Error":
-        success_counter = ch.cc("Crafting: Successes")
-        failure_counter = ch.cc("Crafting: Failures")
 
-        result_string = []
         crafting_dictionary = load_json(result_list[4])
 
+        cc_test = update_cc_settings(settings_dict, crafting_dictionary['category'], crafting_dictionary['type'], ch)
+
+        if cc_test[0] != "Error":
+            success_counter = cc_test[1]
+            failure_counter = cc_test[2]
+
+        else:
+            return [f'{ctx.author.display_name} has encountered an error', cc_test[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+        result_string = []
+        
         if result_list[5]:
             # Header
             result_string.append("**Success**")
@@ -1046,7 +1109,11 @@ def main(input_list: list[str], ch = character()) -> list[str]:
             result_string.append(f"Successes: {success_counter.value}/{success_counter.max} (-{result_list[2]})")
         else:
             result_string.append(f"Successes: {success_counter.value}/{success_counter.max}")
-        result_string.append(ch.cc_str('Crafting: Successes'))
+
+        if f"{success_counter.value}/{success_counter.max}" == ch.cc_str('Crafting: Successes'):
+            pass
+        else:
+            result_string.append(ch.cc_str('Crafting: Successes'))
 
 
         # Displays value of failure (with change, if any)
@@ -1056,7 +1123,30 @@ def main(input_list: list[str], ch = character()) -> list[str]:
             result_string.append(f"Failures: {failure_counter.value}/{failure_counter.max} (-{result_list[3]})")
         else:
             result_string.append(f"Failures: {failure_counter.value}/{failure_counter.max}")
-        result_string.append(ch.cc_str('Crafting: Failures'))
+
+        if f"{failure_counter.value}/{failure_counter.max}" == ch.cc_str('Crafting: Failures'):
+            pass
+        else:
+            result_string.append(ch.cc_str('Crafting: Failures'))
+
+
+        
+        if failure_counter.value == failure_counter.max:
+            result_string.append("")
+            result_string.append(f"Maximum failures reached for a {crafting_dictionary['name']}! Please run `!craft clear` as you have ruined your materials.")
+
+        elif success_counter.value == success_counter.max:
+            result_string.append("")
+            result_string.append(f"You have finished crafting a {crafting_dictionary['name']}! Please run `!craft clear` as you have finished your item.")
+
+        else:
+            pass
+
+        if crafting_dictionary['bypass']:
+            result_string.append("")
+            result_string.append('`BYPASS USED`')
+        else:
+            pass
 
     # If there was an error
     else:
@@ -1074,4 +1164,4 @@ d = "-"
 -title "{{output_list[0]}}"
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
--footer "!craft {{l}}item_name> {{l}}item_category> {{l}}magic_type | cost> {{l}}{{d}}b #> {{l}}eadv/adv/dis>{{"\n"}}Updated 7/9/2023 | ShadowsStride"
+-footer "!craft {{l}}item_name> {{l}}item_category> {{l}}magic_type | cost> {{l}}{{d}}b #> {{l}}eadv/adv/dis>{{"\n"}}Updated 7/10/2023 | ShadowsStride"

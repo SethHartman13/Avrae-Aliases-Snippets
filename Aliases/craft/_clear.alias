@@ -1,0 +1,200 @@
+embed
+<drac2>
+
+
+def grab_settings_dict() -> dict:
+    """
+    Grabs the settings dictionary, prioritizes svar, but falls back on gvar just in case.
+
+    Return:
+        (dict): Settings dictionary
+    """
+
+    # Tries to grab the svar
+    setting_test = get_svar("crafting_settings", default="None")
+
+    # If the svar exists
+    if setting_test != "None":
+
+        # Load dictionary
+        settings_dict = load_json(setting_test)
+
+        # Checks if pro_rate_refund exists, otherwise defaults to standard settings
+        try:
+            settings_dict['pro_rate_refund']
+        except:
+            settings_dict['pro_rate_refund'] = True
+
+        return settings_dict
+
+    else:
+        return load_json(get_gvar("d2daf66a-dce2-481b-ab28-f37ffe072de7"))
+
+
+def add_funds(cost: float, ch: character) -> bool:
+    """
+    Function that handles the adding of funds
+    
+    Args:
+        cost (float): Cost in gp to be added
+        ch (character): Character object 
+
+    Returns:
+        (bool): If adding was successful
+    """
+
+    # Makes cost always add to coin purse
+    cost = f"{abs(cost)}"
+
+    # Pulls baglibrary
+    using(baglib="4119d62e-6a98-4153-bea9-0a99bb36da2c")
+
+    # Pull necessary items
+    bagsLoaded = baglib.load_bags()
+    old_coins = baglib.get_coins(bagsLoaded)[1].copy()
+    autoCoins = baglib.settings.get('autoCoins',get("autocoins","0")=="1")
+
+    # Pulls money from coin purse
+    delta, coin_error = baglib.parsecoins(str(cost))
+
+    # Pulls results
+    resultList = list(old_coins.items())
+
+    # Delta just is the change in coin
+    if delta:
+        focus, error = baglib.modify_coins(bagsLoaded, autoCoins=autoCoins, delta=delta)
+
+        # If there was no error
+        if not error:
+            return True
+
+        # If there was an error
+        else:
+            return False
+
+
+def main(ch = character()) -> list[str]:
+    """
+    Main program function
+
+    Args:
+        ch = character(): Character object
+    
+    Return:
+        (list[str]): Result    
+    """
+
+    # If the crafting CCs exist
+    if ch.cc_exists('Crafting: Successes') and ch.cc_exists('Crafting: Failures'):
+
+        settings_dictionary = grab_settings_dict()
+        crafting_dictionary = load_json(ch.get_cvar('crafting_dict'))
+        success_counter = ch.cc('Crafting: Successes')
+        failure_counter = ch.cc('Crafting: Failures')
+
+    # If the crafting CCs don't exist
+    else:
+        return [f'{ctx.author.display_name} has encountered an error', "Crafting CCs don't exist", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+    # If pro_rate_refund is true and that counters have not reached their limts
+    if settings_dictionary['pro_rate_refund'] and (success_counter.value != success_counter.max) and (failure_counter.value != failure_counter.max) and crafting_dictionary['crafting_cost'] != 0:
+
+        percentage_back = (1 - ((success_counter.value / success_counter.max) + (failure_counter.value /(failure_counter.max * 2))) * .5)
+
+        if percentage_back < 0:
+            money_back = 0
+
+        else:
+            money_back = round(percentage_back * crafting_dictionary['crafting_cost'], 2)
+            
+            if add_funds(money_back, ch):
+                pass
+
+            else:
+                return [f'{ctx.author.display_name} has encountered an error', "Prorated refund was not added to your coin purse", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+    # If pro_rate_refund is false or the counters have reached their limits   
+    else:
+        money_back = 0
+
+    # Grabs counter values and creates backups
+    crafting_dictionary['backup'] = {
+        'cvar': [
+            crafting_dictionary['name'], 
+            crafting_dictionary['category'], 
+            crafting_dictionary['type'], 
+            crafting_dictionary['time'], 
+            crafting_dictionary['cooldown'], 
+            crafting_dictionary['history'], 
+            crafting_dictionary['crafting_cost']
+        ],
+        'success_cc': [
+            success_counter.value, 
+            success_counter.max, 
+            success_counter.desc, 
+            success_counter.title
+        ],
+        'failure_cc': [
+            failure_counter.value, 
+            failure_counter.max, 
+            failure_counter.desc, 
+            failure_counter.title
+        ],
+        'money_back': money_back
+    }
+
+    
+    # Deletes CCs
+    ch.delete_cc('Crafting: Successes')
+    ch.delete_cc('Crafting: Failures')
+
+    
+
+    if money_back > 0:
+
+        gold = floor(money_back)
+        money_list = [f"{gold}gp"]
+
+        silver = floor((money_back - gold) * 10)
+
+        if silver != 0:
+            money_list.append(f"{silver}sp")
+        
+        else:
+            pass
+
+        copper = round(floor((money_back - gold - floor(money_back - gold)) * 100), 0)
+
+        if copper != 0:
+            money_list.append(f'{copper}cp')
+        else:
+            pass
+
+        return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", f"Prorated refund: {' '.join(money_list)}", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/image.png", crafting_dictionary]
+
+    else:
+        if crafting_dictionary['backup']['success_cc'][0] == crafting_dictionary['backup']['success_cc'][1]:
+           return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", "", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/hammer.png", crafting_dictionary]
+
+        elif crafting_dictionary['backup']['failure_cc'][0] == crafting_dictionary['backup']['failure_cc'][1]:
+            return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", "", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/fail.png", crafting_dictionary]
+
+        else:
+            return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", "", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/image.png", crafting_dictionary]
+    
+
+# Runs main program alias
+output_list = main()
+
+try:
+    character().set_cc('crafting_dict', dump_json(output_list[3]))
+
+except:
+    pass
+
+
+</drac2>
+-title "{{output_list[0]}}"
+-f "{{output_list[1]}}"
+-thumb "{{output_list[2]}}"
+-footer "!craft clear | Updated 7/10/2023 | ShadowsStride"

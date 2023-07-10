@@ -1,7 +1,7 @@
 {
     "examples": {
-        "permanent": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Crafting Cost in GP (int or float)"],
-        "consumable": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Crafting Cost in GP (int or float)"],
+        "permanent": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Item Cost in GP (int or float)"],
+        "consumable": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Item Cost in GP (int or float)"],
         "0": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)"]
     },
     "nonmagical": {
@@ -36,6 +36,6 @@
     "success_dispType": "star",
     "failure_dispType": "hex",
     "jack_of_trades": true,
-    "extra_bonus_threshold": {"0": 0, "5": 1, "10": 2, "15": 3, "20": 4, "25": 5},
-    "extra_success_max": 5
+    "success_mod_threshold": {"-999": 1, "5": 2, "10": 3, "15": 4, "20": 5},
+    "restricted_channel_ids": []
 }
