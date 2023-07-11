@@ -1,0 +1,314 @@
+embed
+<drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International License 
+# * available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
+
+
+def search_key(query: str, key_list: list[str]) -> list[str]|str:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
+
+    # Creates list to store matches
+    key_results = []
+
+    # Checks each item if a match occurs
+    for key in key_list:
+
+        # If matches
+        if query.lower() in key.lower():
+            key_results.append(key)
+
+        else:
+            pass
+
+    # Finds at least 1 match
+    if len(key_results) > 0:
+        return key_results
+
+    # If it finds no matches
+    else:
+        return 'None'
+
+
+def grab_settings_dict() -> dict:
+    """
+    Grabs the settings dictionary, prioritizes svar, but falls back on gvar just in case.
+
+    Return:
+        (dict): Settings dictionary
+    """
+
+    # Tries to grab the svar
+    setting_test = get_svar("crafting_settings", default="None")
+
+    # If the svar exists
+    if setting_test != "None":
+
+        # Load dictionary
+        settings_dict = load_json(setting_test)
+
+        try:
+            settings_dict['lfg_integration']
+        except:
+            settings_dict['lfg_integration'] = False
+
+        try:
+            settings_dict['pro_rate_refund']
+        except:
+            settings_dict['pro_rate_refund'] = True
+
+        try:
+            settings_dict['success_dispType']
+        except:
+            settings_dict['success_dispType'] = "star"
+
+        try:
+            settings_dict['failure_dispType']
+        except:
+            settings_dict['failure_dispType'] = "hex"
+
+        try:
+            settings_dict['jack_of_trades']
+        except:
+            settings_dict['jack_of_trades'] = True
+
+        try:
+            settings_dict["success_mod_threshold"]
+        except:
+            settings_dict["success_mod_threshold"] = {"-999": 1, "5": 2, "10": 3, "15": 4, "20": 5}
+        
+        try:
+            settings_dict['whitelisted_channel_ids']
+        except:
+            settings_dict['whitelisted_channel_ids'] = []
+
+        try:
+            setting_dict['parent_channel_inherit']
+        except:
+            settings_dict['parent_channel_inherit'] = False
+
+        return settings_dict
+
+    else:
+        return load_json(get_gvar("d2daf66a-dce2-481b-ab28-f37ffe072de7"))
+
+
+def calc_time(time:int) -> str:
+    """
+    Converts seconds into hours, minutes, seconds.
+    
+    Args:
+        time(int): Time in seconds
+
+    Return:
+        (str): Result
+    """
+
+    result_list = []
+
+    # Converts time into hours, minutes, seconds
+    hours = time // 3600
+    minutes = (time % 3600) // 60
+    seconds = (time % 3600) % 60
+
+    if hours > 0:
+        if hours != 1:
+            result_list.append(f"{hours} hours")
+        
+        else:
+            result_list.append(f"{hours} hour")
+    
+    else:
+        pass
+
+    if minutes > 0:
+        if minutes != 1:
+            result_list.append(f"{minutes} minutes")
+        
+        else:
+            result_list.append(f"{minutes} minute")
+    
+    else:
+        pass
+
+    if seconds > 0:
+        if seconds != 1:
+            result_list.append(f"{seconds} second(s)")
+        
+        else:
+            result_list.append(f"{seconds} second")
+    
+    else:
+        pass
+
+    return ", ".join(result_list)
+
+
+def find_category(category_name: str, _list: list) -> list[str]:
+
+    result_key = search_key(category_name, _list)
+
+    if result_key != "None":
+
+        if len(result_key) == 1:
+            return ['Success', result_key[0]]
+
+        else:
+            for dict_key in result_key:
+                if dict_key.lower() != category_name.lower():
+                    pass
+
+                else:
+                    return ['Success', dict_key]
+
+
+            result_key.insert(0, "**Multiple Item Categories Found:**")
+
+            return ['Error', '\n'.join(result_key)]
+
+    else:
+        return ['Success', 'None']
+
+
+def main(input_list: list, settings_dictionary: dict = grab_settings_dict()) -> list[str]:
+
+    if len(input_list) == 0:
+        result_list = []
+        settings_list = []
+        result_list.append("**Bold** = Item Category (except for settings)")
+        result_list.append("Normal = Item Type (except for settings)")
+        result_list.append("")
+        for key in settings_dictionary.keys():
+            if typeof(settings_dictionary[key]) == "SafeDict" and key != "success_mod_threshold":
+                result_list.append(f'**{key}:**')
+
+                for key2 in settings_dictionary[key].keys():
+                    try:
+                        result_list.append(f"{int(key2)}gp")
+                        cost_based = True
+
+                    except:
+                        result_list.append(key2)
+                        cost_based = False
+                    
+                if cost_based:
+                    result_list.append("(Thresholds)")
+
+                else:
+                    pass
+
+                result_list.append("")
+
+            else:
+                settings_list.append(key)
+
+        result_list.append("")
+        result_list.append("**Settings:**")
+
+        for setting in settings_list:
+            result_list.append(setting)
+
+        return [f'{ctx.author.display_name} views crafting options and settings', '\n'.join(result_list), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/list.png"]
+    
+    elif len(input_list) > 0:
+        full_settings = [[],[]]
+        result_list = []
+
+        for key in settings_dictionary.keys():
+            if typeof(settings_dictionary[key]) == "SafeDict" and key != "success_mod_threshold":
+                full_settings[0].append(key)
+
+            else:
+                full_settings[1].append(key)
+
+        results = find_category(input_list[0], full_settings[0])
+
+        if results[0] == "Error":
+            return [f'{ctx.author.display_name} has encountered an error', results[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+        elif results[1] == "None":
+            results = find_category(input_list[0], full_settings[1])
+
+        else:
+            input_list[0] = results[1]
+
+        if results[0] == "Error":
+            return [f'{ctx.author.display_name} has encountered an error', results[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+        elif results[1] == "None":
+            return [f'{ctx.author.display_name} has encountered an error', "Item category/setting not found", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+        else:
+            input_list[0] = results[1]
+
+        if input_list[0] in full_settings[0]:
+            
+            result_list.append(f"**{input_list[0]}:**")
+            result_list.append("")
+
+            for item_type in settings_dictionary[input_list[0]].keys():
+                try:
+                    result_list.append(f"**{float(item_type)}gp**")
+                
+                except:
+                    result_list.append(f"**{item_type}**")
+
+                result_list.append(f"Level Requirement: {settings_dictionary[input_list[0]][item_type][0]}")
+                result_list.append(f"DC: {settings_dictionary[input_list[0]][item_type][1]}")
+                result_list.append(f"Nat1 Penalty: {settings_dictionary[input_list[0]][item_type][2]}")
+                result_list.append(f"Nat20 Bonus: {settings_dictionary[input_list[0]][item_type][3]}")
+                result_list.append(f"Successes Needed: {settings_dictionary[input_list[0]][item_type][4]}")
+                result_list.append(f"Maximum Failures Alotted: {settings_dictionary[input_list[0]][item_type][5]}")
+                result_list.append(f"Cooldown: {calc_time(settings_dictionary[input_list[0]][item_type][6])}")
+
+                try:
+                    result_list.append(f"Retail Item Cost: {settings_dictionary[input_list[0]][item_type][7]}")
+
+                except:
+                    pass
+                result_list.append("")
+
+            return [f'{ctx.author.display_name} views crafting settings for the {input_list[0]} category', '\n'.join(result_list), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/list.png"]
+
+        else:
+
+            result_list.append(f'**{input_list[0]}:**')
+
+            if typeof(settings_dictionary[input_list[0]]) == 'str':
+                result_list.append(settings_dictionary[input_list[0]])
+
+            elif typeof(settings_dictionary[input_list[0]]) == 'bool':
+                if settings_dictionary[input_list[0]]:
+                    result_list.append("On")
+
+                else:
+                    result_list.append("Off")
+
+            else:
+                for key in settings_dictionary[input_list[0]].keys():
+                    result_list.append(f"**{key}:** {settings_dictionary[input_list[0]][key]}")
+
+            return [f'{ctx.author.display_name} views settings for {input_list[0]}', '\n'.join(result_list), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/list.png"]    
+
+
+# Main program
+output_list = main(&ARGS&)
+l = "<"
+
+
+</drac2>
+-title "{{output_list[0]}}"
+-f "{{output_list[1]}}"
+-thumb "{{output_list[2]}}"
+-footer "!craft settings {{l}}item_category> | Updated 7/11/2023 | ShadowsStride"

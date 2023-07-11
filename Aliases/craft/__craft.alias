@@ -1,5 +1,15 @@
 embed
 <drac2>
+# *******************************************************
+# * This work includes material taken from the System Reference Document 5.1 
+# * (“SRD 5.1”) by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. 
+# * The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License 
+# * available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# * 
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International License 
+# * available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
 
 
 def search_key(query: str, key_list: list[str]) -> list[str]|str:
@@ -81,12 +91,17 @@ def grab_settings_dict() -> dict:
         except:
             settings_dict['success_mod_threshold'] = {"-999": 1, "5": 2, "10": 3, "15": 4, "20": 5}
 
-        # Checks to see if restricted_channel_ids exist, otherwise defaults to standard settings
+        # Checks to see if whitelisted_channel_ids exists, otherwise defaults to standard settings
         try:
-            settings_dict["restricted_channel_ids"]
-
+            settings_dict["whitelisted_channel_ids"]
         except:
-            settings_dict["restricted_channel_ids"] = []
+            settings_dict["whitelisted_channel_ids"] = []
+
+        # Checks to see if parent_channel_inherit exists, otherwise defaults to standard settings
+        try:
+            settings_dict["parent_channel_inherit"]
+        except:
+            settings_dict["parent_channel_inherit"] = False
 
         return settings_dict
 
@@ -155,13 +170,6 @@ def find_rarity_type_settings(craft_category: str, craft_type: str, settings_dic
         (list[str]): Result
     """
 
-    # Hardcoded, if very gets put in, it automatically gets changed to very
-    if 'very' in craft_category.lower():
-        craft_category = 'very'
-
-    else:
-        pass
-
     # Searches to see if it finds the crafting rarity
     key_result = search_key(craft_category, settings_dict.keys())
 
@@ -177,16 +185,21 @@ def find_rarity_type_settings(craft_category: str, craft_type: str, settings_dic
 
         # If it finds more than one match
         else:
+            i = 0
             for key in key_result:
                 if key.lower() != craft_category.lower():
-                    pass
+                    i =+ 1
 
                 else:
                     type_dict = settings_dict[key]
                     craft_category = key
 
-            key_result.insert(0, "**Multiple categories found:**")
-            return ['Error', '\n'.join(key_result)]
+            if i == len(key_result):
+                key_result.insert(0, "**Multiple categories found:**")
+                return ['Error', '\n'.join(key_result)]
+            
+            else:
+                pass
 
     else:
         return ['Error', f'Category not found {craft_category}']
@@ -262,7 +275,7 @@ def find_rarity_type_settings(craft_category: str, craft_type: str, settings_dic
             return result_list
 
 
-def withdraw_funds(cost: float, ch: character) -> bool:
+def withdraw_funds(cost: str, ch: character) -> bool:
     """
     Function that handles the withdrawing of funds
     
@@ -273,10 +286,6 @@ def withdraw_funds(cost: float, ch: character) -> bool:
     Returns:
         (bool): If withdrawl was successful
     """
-
-    # Makes cost always subtract from coin purse
-    cost = f"-{abs(cost)}"
-
     # Pulls baglibrary
     using(baglib="4119d62e-6a98-4153-bea9-0a99bb36da2c")
 
@@ -817,6 +826,73 @@ def run_crafting_session(settings_dict: dict, crafting_dict: dict, ch: character
     return ['Success', roll_string, success_mod, failure_mod, crafting_dict, success]
 
 
+def check_channel(settings_dict: dict = grab_settings_dict()) -> list[str]:
+    """
+    Verifies that channel is in whitelist
+    
+    Args:
+        settings_dict (dict): Settings dictionary (default: grab_settings_dict())
+
+    Return:
+        (list[str]): Return
+    """
+
+    channel_id = 0
+
+    # If there are no channels that this has to be run in
+    if len(settings_dict["whitelisted_channel_ids"]) == 0:
+        return ['Success']
+
+    # If there are channels that this needs to be run in
+    else:
+        
+        # For each channel id
+        for id_num in settings_dict["whitelisted_channel_ids"]:
+
+            # If this is a channel (not a thread)
+            if int(id_num) == ctx.channel.id:
+                channel_id = int(id_num)
+
+            else:
+
+                # Inherit rules are off
+                if not settings_dict["parent_channel_inherit"]:
+                    pass
+
+                # Inherit rules are on
+                else:
+
+                    # If this is a thread
+                    try:
+                        if int(id_num) == ctx.channel.parent.id:
+                            channel_id = int(id_num)
+
+                        else:
+                            pass
+                    
+                    except:
+                        pass
+
+        # If a match was found
+        if channel_id != 0:
+            return ['Success']
+
+        # If a match was not found
+        else:
+            try:
+
+                # Inherit rules are off
+                if not settings_dict["parent_channel_inherit"]:
+                    int('boop')
+
+                # Inherit rules are on
+                else:
+                    return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.parent.name} is not a valid channel nor is {ctx.channel.name} a valid thread to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+            
+            except:
+                return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.name} is not a valid channel to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+
 def main(input_list: list[str], ch = character()) -> list[str]:
     """
     Main program function
@@ -852,48 +928,17 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 # Valid channel check
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 
-    channel_id = 0
-
     # Grabs settings dictionary
     settings_dict = grab_settings_dict()
 
-    # If there are no channels that this has to be run in
-    if len(settings_dict["restricted_channel_ids"]) == 0:
+    # Checks channel
+    result_list = check_channel(settings_dict)
+
+    if result_list[0] == "Success":
         pass
 
-    # If there are channels that this needs to be run in
     else:
-        
-        # For each channel id
-        for id_num in settings_dict["restricted_channel_ids"]:
-
-            # If this is a channel (not a thread)
-            if int(id_num) == ctx.channel.id:
-                channel_id = int(id_num)
-
-            else:
-                # If this is a thread
-                try:
-                    if int(id_num) == ctx.channel.parent.id:
-                        channel_id = int(id_num)
-
-                    else:
-                        pass
-                
-                except:
-                    pass
-
-        # If a match was found
-        if channel_id != 0:
-            pass
-
-        # If a match was not found
-        else:
-            try:
-                return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.parent.name} is not a valid channel nor is {ctx.channel.name} a valid thread to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
-            
-            except:
-                return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.name} is not a valid channel to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+        return result_list
 
     # If length if inputs is not 0
     if len(input_list) != 0:
@@ -996,25 +1041,66 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
             
 
-# (new) Cost check, crafting dictionary update, and run crafting session
+# (new) Cost withdraw, crafting dictionary update, and run crafting session
 # ---------------------------------------------------------------------------------------------------------------------------------------------
+            money_dict = dict()
+
             # Pulls money if not skipped
             if not ignore_restrictions:
-                withdraw_bool = withdraw_funds(cost[1], ch)
+                
+                # Finds how much gold
+                gold = floor(cost[1])
+                if gold != 0:
+                    money_dict['gold'] = [f"{gold}gp"]
+                    
+                else:
+                    pass
+
+                # Finds out how much silver
+                silver = floor((cost[1] * 10) % 10)
+                if silver != 0:
+                    money_dict['silver'] = [f"{silver}sp"]
+                else:
+                    pass
+
+                # Finds out how much copper
+                copper = floor((cost[1] * 100) % 10)
+                if copper != 0:
+                    money_dict['copper'] = [f'{copper}cp']
+                else:
+                    pass
+
+                # For each coin type, withdraw money
+                for key in money_dict.keys():
+                    money_dict[key].append(withdraw_funds(f"-{money_dict[key][0]}", ch))
 
             # Skips money pull
             else:
-                withdraw_bool = True
+                money_dict['none'] = ["", "", True]
 
-            # No problems pulling money
-            if withdraw_bool:
-                
+            good_dict = dict()
+
+            # Checks to see which coins worked
+            for key in money_dict.keys():
+                if money_dict[key][1]:
+                    good_dict[key] = money_dict[key][0]
+
+                else:
+                    pass
+
+            # If all keys coins worked
+            if len(good_dict.keys()) == len(money_dict.keys()) or ignore_restrictions:
+
                 # Update crafting dictionary with updated details
                 crafting_dictionary = create_cc_and_dict(input_list[0], input_list[1], input_list[2], settings_dict, crafting_dictionary, ch, cost[1])
-                
-            else:
-                return [f'{ctx.author.display_name} has encountered an error', f"Problems pulling money from coin purse, do you have enough funds?", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
 
+            # If at least one key did not work, put money back that we took
+            else:
+                for money in good_dict.keys():
+                    withdraw_funds(good_dict[money], ch)
+
+                return [f'{ctx.author.display_name} has encountered an error', f"Problems pulling money from coin purse, do you have enough funds?", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+             
             crafting_dictionary['first'] = True
 
             # Run crafting session

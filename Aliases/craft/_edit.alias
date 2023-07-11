@@ -1,0 +1,256 @@
+embed
+<drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International License 
+# * available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
+
+
+def grab_settings_dict() -> dict:
+    """
+    Grabs the settings dictionary, prioritizes svar, but falls back on gvar just in case.
+
+    Return:
+        (dict): Settings dictionary
+    """
+
+    # Tries to grab the svar
+    setting_test = get_svar("crafting_settings", default="None")
+
+    # If the svar exists
+    if setting_test != "None":
+
+        # Load dictionary
+        settings_dict = load_json(setting_test)
+
+        # Checks to see if whitelisted_channel_ids exists, otherwise defaults to standard settings
+        try:
+            settings_dict["whitelisted_channel_ids"]
+        except:
+            settings_dict["whitelisted_channel_ids"] = []
+
+        # Checks to see if parent_channel_inherit exists, otherwise defaults to standard settings
+        try:
+            settings_dict["parent_channel_inherit"]
+        except:
+            settings_dict["parent_channel_inherit"] = False
+
+        return settings_dict
+
+    else:
+        return load_json(get_gvar("d2daf66a-dce2-481b-ab28-f37ffe072de7"))
+
+
+def check_channel(settings_dict: dict = grab_settings_dict()) -> list[str]:
+    """
+    Verifies that channel is in whitelist
+    
+    Args:
+        settings_dict (dict): Settings dictionary (default: grab_settings_dict())
+
+    Return:
+        (list[str]): Return
+    """
+
+    channel_id = 0
+    
+    # If there are no channels that this has to be run in
+    if len(settings_dict["whitelisted_channel_ids"]) == 0:
+        return ['Success']
+
+    # If there are channels that this needs to be run in
+    else:
+        
+        # For each channel id
+        for id_num in settings_dict["whitelisted_channel_ids"]:
+
+            # If this is a channel (not a thread)
+            if int(id_num) == ctx.channel.id:
+                channel_id = int(id_num)
+
+            else:
+
+                # Inherit rules are off
+                if not settings_dict["parent_channel_inherit"]:
+                    pass
+
+                # Inherit rules are on
+                else:
+
+                    # If this is a thread
+                    try:
+                        if int(id_num) == ctx.channel.parent.id:
+                            channel_id = int(id_num)
+
+                        else:
+                            pass
+                    
+                    except:
+                        pass
+
+        # If a match was found
+        if channel_id != 0:
+            return ['Success']
+
+        # If a match was not found
+        else:
+            try:
+
+                # Inherit rules are off
+                if not settings_dict["parent_channel_inherit"]:
+                    int('boop')
+
+                # Inherit rules are on
+                else:
+                    return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.parent.name} is not a valid channel nor is {ctx.channel.name} a valid thread to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+            
+            except:
+                return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.name} is not a valid channel to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+
+def main(input_list: list[str], ch = character()) -> list[str]:
+    """
+    Main program function
+
+    Args:
+        input_list (list[str]): List of inputs
+        ch = character(): Character object
+    
+    Return:
+        (list[str]): Result    
+    """
+    # If there are two or more arguments
+    if len(input_list) > 1:
+
+        result_list = check_channel()
+
+        if result_list[0] == "Success":
+            pass
+
+        else:
+            return result_list
+
+        # Turns second argument into an integer
+        try:
+            input_list[1] = int(input_list[1])
+
+        # If the second argument is actually a string
+        except:
+            return [f'{ctx.author.display_name} has encountered an error', "Second argument is not an integer", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+    # If there are not two or more arguments
+    else:
+        return [f'{ctx.author.display_name} has encountered an error', "Expected two arguments", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+    # If crafting CCs exist
+    if ch.cc_exists('Crafting: Successes') and ch.cc_exists('Crafting: Failures'):
+
+        # Checks to see if it is a valid input
+        change = False
+        for cc in ['Successes', 'Failures']:
+            if input_list[0].lower() in cc.lower():
+
+                # Alter cc
+                ch.mod_cc(f'Crafting: {cc}', input_list[1])
+                change = True
+            
+            else:
+                pass
+
+        if change:
+            pass
+
+        # Invalid input for first argument
+        else:
+            return [f'{ctx.author.display_name} has encountered an error', "Invalid counter name entered. Valid names: Successes, Failures", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+    # Crafting CCs do not exist
+    else:
+        return [f'{ctx.author.display_name} has encountered an error', "Crafting CCs do not exist", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+    # Pulls counters
+    success_counter = ch.cc('Crafting: Successes')
+    failure_counter = ch.cc('Crafting: Failures')
+    result_string = []
+  
+    if input_list[1] >= 0:
+        mod = "+"
+
+    else:
+        mod = ""
+
+    # If successes was altered
+    if input_list[0].lower() in 'successes':
+
+        # Displays success counter
+        result_string.append(f"Successes: {success_counter.value}/{success_counter.max} ({mod}{input_list[1]})")
+        if f"{success_counter.value}/{success_counter.max}" == ch.cc_str('Crafting: Successes'):
+            pass
+        else:
+            result_string.append(ch.cc_str('Crafting: Successes'))
+
+        # Displays failure counter
+        result_string.append(f"Failures: {failure_counter.value}/{failure_counter.max}")
+        if f"{failure_counter.value}/{failure_counter.max}" != ch.cc_str('Crafting: Failures'):
+            result_string.append(ch.cc_str('Crafting: Failures'))
+        else:
+            pass
+
+        # If a positive change
+        if input_list[1] > 0:
+            return [f'({ctx.author.display_name}) {name} has increased their CC on their Crafting successes', '\n'.join(result_string), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/hammer.png"]
+
+        # If a negative change
+        elif input_list[1] < 0: 
+            return [f'({ctx.author.display_name}) {name} has decreased their CC on their Crafting successes', '\n'.join(result_string), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/fail.png"]
+
+        # If no change
+        else:
+            result_string.append("")
+            result_string.append("*pssssst* Run `!craft log` next time if you are going to not alter any CC")
+
+            return [f'({ctx.author.display_name}) {name} has checked on their CC on their Crafting progress', '\n'.join(result_string), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/fail.png"]
+
+    # If failures was altered
+    else:
+
+        # Displays success counter
+        result_string.append(f"Successes: {success_counter.value}/{success_counter.max}")
+        if f"{success_counter.value}/{success_counter.max}" != ch.cc_str('Crafting: Successes'):
+            result_string.append(ch.cc_str('Crafting: Successes'))
+        else:
+            pass
+
+        # Displays failure counter
+        result_string.append(f"Failures: {failure_counter.value}/{failure_counter.max} ({mod}{input_list[1]})")
+        if f"{failure_counter.value}/{failure_counter.max}" != ch.cc_str('Crafting: Failures'):
+            result_string.append(ch.cc_str('Crafting: Failures'))
+        else:
+            pass
+    
+        # If a negative change
+        if input_list[1] < 0:
+            return [f'({ctx.author.display_name}) {name} has decreased their CC on their Crafting failures', '\n'.join(result_string), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/hammer.png"]
+
+        # If a positive change
+        elif input_list[1] > 0: 
+            return [f'({ctx.author.display_name}) {name} has increased their CC on their Crafting failures', '\n'.join(result_string), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/fail.png"]
+
+        # If no change
+        else:
+            result_string.append("")
+            result_string.append("*pssssst* Run `!craft log` next time if you are going to not alter any CC")
+
+            return [f'({ctx.author.display_name}) {name} has checked on their CC on their Crafting progress', '\n'.join(result_string), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/fail.png"]
+
+
+# Runs main program
+output_list = main(&ARGS&)
+
+
+</drac2>
+-title "{{output_list[0]}}"
+-f "{{output_list[1]}}"
+-thumb "{{output_list[2]}}"
+-footer "!craft edit [success|failure] [#] | Updated 7/10/2023 | ShadowsStride"

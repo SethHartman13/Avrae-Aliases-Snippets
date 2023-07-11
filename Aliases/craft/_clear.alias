@@ -1,5 +1,15 @@
 embed
 <drac2>
+# *******************************************************
+# * This work includes material taken from the System Reference Document 5.1 
+# * (“SRD 5.1”) by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. 
+# * The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License 
+# * available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# * 
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International License 
+# * available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
 
 
 def grab_settings_dict() -> dict:
@@ -25,13 +35,92 @@ def grab_settings_dict() -> dict:
         except:
             settings_dict['pro_rate_refund'] = True
 
+        # Checks to see if whitelisted_channel_ids exists, otherwise defaults to standard settings
+        try:
+            settings_dict["whitelisted_channel_ids"]
+        except:
+            settings_dict["whitelisted_channel_ids"] = []
+
+        # Checks to see if parent_channel_inherit exists, otherwise defaults to standard settings
+        try:
+            settings_dict["parent_channel_inherit"]
+        except:
+            settings_dict["parent_channel_inherit"] = False
+
         return settings_dict
 
     else:
         return load_json(get_gvar("d2daf66a-dce2-481b-ab28-f37ffe072de7"))
 
 
-def add_funds(cost: float, ch: character) -> bool:
+def check_channel(settings_dict: dict = grab_settings_dict()) -> list[str]:
+    """
+    Verifies that channel is in whitelist
+    
+    Args:
+        settings_dict (dict): Settings dictionary (default: grab_settings_dict())
+
+    Return:
+        (list[str]): Return
+    """
+
+    channel_id = 0
+
+    # If there are no channels that this has to be run in
+    if len(settings_dict["whitelisted_channel_ids"]) == 0:
+        return ['Success']
+
+    # If there are channels that this needs to be run in
+    else:
+        
+        # For each channel id
+        for id_num in settings_dict["whitelisted_channel_ids"]:
+
+            # If this is a channel (not a thread)
+            if int(id_num) == ctx.channel.id:
+                channel_id = int(id_num)
+
+            else:
+
+                # Inherit rules are off
+                if not settings_dict["parent_channel_inherit"]:
+                    pass
+
+                # Inherit rules are on
+                else:
+
+                    # If this is a thread
+                    try:
+                        if int(id_num) == ctx.channel.parent.id:
+                            channel_id = int(id_num)
+
+                        else:
+                            pass
+                    
+                    except:
+                        pass
+
+        # If a match was found
+        if channel_id != 0:
+            return ['Success']
+
+        # If a match was not found
+        else:
+            try:
+
+                # Inherit rules are off
+                if not settings_dict["parent_channel_inherit"]:
+                    int('boop')
+
+                # Inherit rules are on
+                else:
+                    return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.parent.name} is not a valid channel nor is {ctx.channel.name} a valid thread to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+            
+            except:
+                return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.name} is not a valid channel to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+
+
+def add_funds(cost: str, ch: character) -> bool:
     """
     Function that handles the adding of funds
     
@@ -42,9 +131,6 @@ def add_funds(cost: float, ch: character) -> bool:
     Returns:
         (bool): If adding was successful
     """
-
-    # Makes cost always add to coin purse
-    cost = f"{abs(cost)}"
 
     # Pulls baglibrary
     using(baglib="4119d62e-6a98-4153-bea9-0a99bb36da2c")
@@ -84,6 +170,8 @@ def main(ch = character()) -> list[str]:
         (list[str]): Result    
     """
 
+
+
     # If the crafting CCs exist
     if ch.cc_exists('Crafting: Successes') and ch.cc_exists('Crafting: Failures'):
 
@@ -92,6 +180,14 @@ def main(ch = character()) -> list[str]:
         success_counter = ch.cc('Crafting: Successes')
         failure_counter = ch.cc('Crafting: Failures')
 
+        result_list = check_channel(settings_dictionary)
+
+        if result_list[0] == 'Success':
+            pass
+
+        else:
+            return result_list
+
     # If the crafting CCs don't exist
     else:
         return [f'{ctx.author.display_name} has encountered an error', "Crafting CCs don't exist", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
@@ -99,19 +195,69 @@ def main(ch = character()) -> list[str]:
     # If pro_rate_refund is true and that counters have not reached their limts
     if settings_dictionary['pro_rate_refund'] and (success_counter.value != success_counter.max) and (failure_counter.value != failure_counter.max) and crafting_dictionary['crafting_cost'] != 0:
 
-        percentage_back = (1 - ((success_counter.value / success_counter.max) + (failure_counter.value /(failure_counter.max * 2))) * .5)
+        # Calculates the money to give back
+        percentage_back = (1 - ((success_counter.value / success_counter.max) + (failure_counter.value /(failure_counter.max * 2)))) * .5
 
+        # If it goes negative money back
         if percentage_back < 0:
             money_back = 0
 
+        # If it stays positive
         else:
             money_back = round(percentage_back * crafting_dictionary['crafting_cost'], 2)
-            
-            if add_funds(money_back, ch):
+            money_dict = dict()
+
+            # Finds how much gold
+            gold = floor(money_back)
+            if gold != 0:
+                money_dict['gold'] = [f"{gold}gp"]
+                
+            else:
                 pass
 
+            # Finds out how much silver
+            silver = floor((money_back * 10) % 10)
+            if silver != 0:
+                money_dict['silver'] = [f"{silver}sp"]
             else:
-                return [f'{ctx.author.display_name} has encountered an error', "Prorated refund was not added to your coin purse", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+                pass
+
+            # Finds out how much copper
+            copper = floor((money_back * 100) % 10)
+            if copper != 0:
+                money_dict['copper'] = [f'{copper}cp']
+            else:
+                pass
+
+            # For each coin type, give money
+            for key in money_dict.keys():
+                money_dict[key].append(add_funds(f"{money_dict[key][0]}", ch))
+
+            good_dict = dict()
+
+            # Checks to see which coins worked
+            for key in money_dict.keys():
+                if money_dict[key][1]:
+                    good_dict[key] = money_dict[key][0]
+
+                else:
+                    pass
+
+            # If all keys coins worked
+            if len(good_dict.keys()) == len(money_dict.keys()):
+                money_list = []
+
+                for value in good_dict.values():
+                    money_list.append(value)
+
+            # If at least one key did not work, take money back that we took
+            else:
+                for money in good_dict.keys():
+                    add_funds(f"-{good_dict[money]}", ch)
+
+                else:
+                    return [f'{ctx.author.display_name} has encountered an error', f"Prorated refund was not added to your coin purse properly", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+                
 
     # If pro_rate_refund is false or the counters have reached their limits   
     else:
@@ -149,36 +295,20 @@ def main(ch = character()) -> list[str]:
     ch.delete_cc('Crafting: Failures')
 
     
-
+    # If money was given back
     if money_back > 0:
-
-        gold = floor(money_back)
-        money_list = [f"{gold}gp"]
-
-        silver = floor((money_back - gold) * 10)
-
-        if silver != 0:
-            money_list.append(f"{silver}sp")
-        
-        else:
-            pass
-
-        copper = round(floor((money_back - gold - floor(money_back - gold)) * 100), 0)
-
-        if copper != 0:
-            money_list.append(f'{copper}cp')
-        else:
-            pass
-
         return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", f"Prorated refund: {' '.join(money_list)}", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/image.png", crafting_dictionary]
 
     else:
+        # Successfully finished the item
         if crafting_dictionary['backup']['success_cc'][0] == crafting_dictionary['backup']['success_cc'][1]:
            return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", "", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/hammer.png", crafting_dictionary]
 
+        # Max failures
         elif crafting_dictionary['backup']['failure_cc'][0] == crafting_dictionary['backup']['failure_cc'][1]:
             return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", "", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/fail.png", crafting_dictionary]
 
+        # Quitting early
         else:
             return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", "", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/image.png", crafting_dictionary]
     
@@ -187,7 +317,7 @@ def main(ch = character()) -> list[str]:
 output_list = main()
 
 try:
-    character().set_cc('crafting_dict', dump_json(output_list[3]))
+    character().set_cvar('crafting_dict', dump_json(output_list[3]))
 
 except:
     pass
