@@ -3,8 +3,9 @@ embed
 <drac2>
 
 
-test_roll = vroll("1d20+6+6")
+
 
 
 </drac2>
--f "{{test_roll.raw}}"
+-f "test"
+-color "#FEA227"

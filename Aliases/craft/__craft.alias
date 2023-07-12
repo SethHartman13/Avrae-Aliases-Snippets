@@ -368,6 +368,17 @@ def create_cc_and_dict(item_name: str, craft_category: str, craft_type: str, set
     crafting_dict['warning'] = "Don't cheat, there is no reason to."
     crafting_dict['history'].insert(0, item_name)
     crafting_dict['crafting_cost'] = crafting_cost
+    try:
+        crafting_dict['color'] = settings_dict[craft_category][craft_type][8]
+
+    except:
+        try:
+            crafting_dict['color'] = settings_dict[craft_category][craft_type][7]
+
+        except:
+            crafting_dict['color'] = ""
+
+        
 
     # Create success CC
     ch.create_cc(
@@ -823,6 +834,17 @@ def run_crafting_session(settings_dict: dict, crafting_dict: dict, ch: character
 
     ch.set_cvar('crafting_dict', dump_json(crafting_dict))
 
+    # Tries to pull the color from the settings, defaulting to "" if fails.
+    try:
+        crafting_dict['color'] = settings_dict[craft_category][craft_type][8]
+
+    except:
+        try:
+            crafting_dict['color'] = settings_dict[craft_category][craft_type][7]
+
+        except:
+            pass
+
     return ['Success', roll_string, success_mod, failure_mod, crafting_dict, success]
 
 
@@ -887,10 +909,10 @@ def check_channel(settings_dict: dict = grab_settings_dict()) -> list[str]:
 
                 # Inherit rules are on
                 else:
-                    return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.parent.name} is not a valid channel nor is {ctx.channel.name} a valid thread to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+                    return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.parent.name} is not a valid channel nor is {ctx.channel.name} a valid thread to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
             
             except:
-                return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.name} is not a valid channel to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+                return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.name} is not a valid channel to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
 
 
 def main(input_list: list[str], ch = character()) -> list[str]:
@@ -972,11 +994,11 @@ def main(input_list: list[str], ch = character()) -> list[str]:
                     input_list[2] = result_list[2]
 
                 else:
-                    return [f'{ctx.author.display_name} has encountered an error', result_list[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+                    return [f'{ctx.author.display_name} has encountered an error', result_list[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
 
             # Crafting CCs are active
             else:
-                return [f'{ctx.author.display_name} has encountered an error', "Crafting CCs already exist", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+                return [f'{ctx.author.display_name} has encountered an error', "Crafting CCs already exist", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
 
 # (new) Level check and grab cost
 # ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -994,7 +1016,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
                     cost[1] = round(cost[1] / 2, 2)
 
                 else:
-                    return [f'{ctx.author.display_name} has encountered an error', cost[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+                    return [f'{ctx.author.display_name} has encountered an error', cost[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
 
                 for key in settings_dict[input_list[1]]:
                     if cost[1] * 2 >= float(key):
@@ -1008,14 +1030,14 @@ def main(input_list: list[str], ch = character()) -> list[str]:
                     cost[1] = round(cost[1] / 2, 2)
 
                 else:
-                    return [f'{ctx.author.display_name} has encountered an error', cost[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+                    return [f'{ctx.author.display_name} has encountered an error', cost[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
  
             # If they are of the proper level (or skipped that)
             if (ch.levels.total_level >= settings_dict[input_list[1]][input_list[2]][0]) or ignore_restrictions:
                 pass
                 
             else:
-                return [f'{ctx.author.display_name} has encountered an error', f'You need to be at least level {settings_dict[input_list[1]][input_list[2]][0]}', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+                return [f'{ctx.author.display_name} has encountered an error', f'You need to be at least level {settings_dict[input_list[1]][input_list[2]][0]}', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
 
 # (new) Cooldown check, grabs/creates crafting dictionary
 # ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -1033,7 +1055,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
                 # Cooldown is active and not skipped
                 else:
-                    return [f'{ctx.author.display_name} has encountered an error', f"You cannot have a crafting session until <t:{crafting_dictionary['time'] + settings_dict[input_list[1]][input_list[2]][6]}:f>", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+                    return [f'{ctx.author.display_name} has encountered an error', f"You cannot have a crafting session until <t:{crafting_dictionary['time'] + settings_dict[input_list[1]][input_list[2]][6]}:f>", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
 
             # If crafting dictionary doesn't exist
             else:
@@ -1099,7 +1121,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
                 for money in good_dict.keys():
                     withdraw_funds(good_dict[money], ch)
 
-                return [f'{ctx.author.display_name} has encountered an error', f"Problems pulling money from coin purse, do you have enough funds?", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+                return [f'{ctx.author.display_name} has encountered an error', f"Problems pulling money from coin purse, do you have enough funds?", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
              
             crafting_dictionary['first'] = True
 
@@ -1127,7 +1149,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
             # Crafting CC's don't exist
             else:
-                return [f'{ctx.author.display_name} has encountered an error', 'Crafting CCs not found', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+                return [f'{ctx.author.display_name} has encountered an error', 'Crafting CCs not found', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
 
             # If not active cooldown (or skipped)
             if (settings_dict[crafting_dictionary['category']][crafting_dictionary['type']][6] + crafting_dictionary['time'] < time()) or ignore_restrictions:
@@ -1135,7 +1157,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
             # Cooldown active and no skip
             else:
-                return [f'{ctx.author.display_name} has encountered an error', f"You cannot have a crafting session until <t:{crafting_dictionary['time'] + settings_dict[crafting_dictionary['category']][crafting_dictionary['type']][6]}:f>", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+                return [f'{ctx.author.display_name} has encountered an error', f"You cannot have a crafting session until <t:{crafting_dictionary['time'] + settings_dict[crafting_dictionary['category']][crafting_dictionary['type']][6]}:f>", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
 
 # (old, no inputs) Active crafting check, grab crafting dictionary, check cooldown, and run crafting session
 # ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -1149,7 +1171,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
         # Crafting CC's don't exist
         else:
-            return [f'{ctx.author.display_name} has encountered an error', 'Crafting CCs not found', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+            return [f'{ctx.author.display_name} has encountered an error', 'Crafting CCs not found', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
 
         # If not active cooldown
         if (settings_dict[crafting_dictionary['category']][crafting_dictionary['type']][6] + crafting_dictionary['time'] <= time()):
@@ -1157,7 +1179,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
         # Cooldown active
         else:
-            return [f'{ctx.author.display_name} has encountered an error', f"You cannot have a crafting session until <t:{crafting_dictionary['time'] + settings_dict[crafting_dictionary['category']][crafting_dictionary['type']][6]}:f>", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+            return [f'{ctx.author.display_name} has encountered an error', f"You cannot have a crafting session until <t:{crafting_dictionary['time'] + settings_dict[crafting_dictionary['category']][crafting_dictionary['type']][6]}:f>", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
 
 # (new/old) Output results
 # ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -1173,7 +1195,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
             failure_counter = cc_test[2]
 
         else:
-            return [f'{ctx.author.display_name} has encountered an error', cc_test[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+            return [f'{ctx.author.display_name} has encountered an error', cc_test[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
 
         result_string = []
         
@@ -1192,7 +1214,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
         if result_list[2] > 0:
             result_string.append(f"Successes: {success_counter.value}/{success_counter.max} (+{result_list[2]})")
         elif result_list[2] < 0:
-            result_string.append(f"Successes: {success_counter.value}/{success_counter.max} (-{result_list[2]})")
+            result_string.append(f"Successes: {success_counter.value}/{success_counter.max} ({result_list[2]})")
         else:
             result_string.append(f"Successes: {success_counter.value}/{success_counter.max}")
 
@@ -1206,7 +1228,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
         if result_list[3] > 0:
             result_string.append(f"Failures: {failure_counter.value}/{failure_counter.max} (+{result_list[3]})")
         elif result_list[3] < 0:
-            result_string.append(f"Failures: {failure_counter.value}/{failure_counter.max} (-{result_list[3]})")
+            result_string.append(f"Failures: {failure_counter.value}/{failure_counter.max} ({result_list[3]})")
         else:
             result_string.append(f"Failures: {failure_counter.value}/{failure_counter.max}")
 
@@ -1236,18 +1258,29 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
     # If there was an error
     else:
-        return [f'{ctx.author.display_name} has encountered an error', result_list[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+        return [f'{ctx.author.display_name} has encountered an error', result_list[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
 
-    return [f"({ctx.author.display_name}) {name}'s Crafting Session: {crafting_dictionary['name']}", "\n".join(result_string), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/image.png"]
+    try:
+        return [f"({ctx.author.display_name}) {name}'s Crafting Session: {crafting_dictionary['name']}", "\n".join(result_string), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/image.png", crafting_dictionary['color']]
+
+    except:
+        return [f"({ctx.author.display_name}) {name}'s Crafting Session: {crafting_dictionary['name']}", "\n".join(result_string), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/image.png", ""]
 
            
 output_list = main(&ARGS&)
 l = "<"
 d = "-"
 
+try:
+    output_list[3]
+
+except:
+    output_list.append("#CC0202")
+
 
 </drac2>
 -title "{{output_list[0]}}"
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
--footer "!craft {{l}}item_name> {{l}}item_category> {{l}}magic_type | cost> {{l}}{{d}}b #> {{l}}eadv/adv/dis>{{"\n"}}Updated 7/10/2023 | ShadowsStride"
+-color "{{output_list[3]}}"
+-footer "!craft {{l}}item_name> {{l}}item_category> {{l}}magic_type | cost> {{l}}{{d}}b #> {{l}}eadv/adv/dis>{{"\n"}}Updated 7/12/2023 | ShadowsStride"

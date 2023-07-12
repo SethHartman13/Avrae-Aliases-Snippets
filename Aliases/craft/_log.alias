@@ -1,0 +1,74 @@
+embed
+<drac2>
+
+def main(ch = character()):
+
+
+    if ch.cc_exists('Crafting: Successes') and ch.cc_exists('Crafting: Failures'):
+        crafting_dictionary = load_json(ch.get_cvar('crafting_dict'))
+
+        success_counter = ch.cc('Crafting: Successes')
+        failure_counter = ch.cc('Crafting: Failures')
+
+        result_string = []
+
+        # Success counter
+        result_string.append(f"Successes: {success_counter.value}/{success_counter.max}")
+
+        if f"{success_counter.value}/{success_counter.max}" == ch.cc_str('Crafting: Successes'):
+            pass
+        else:
+            result_string.append(ch.cc_str('Crafting: Successes'))
+
+        # Failure counter
+        result_string.append(f"Failures: {failure_counter.value}/{failure_counter.max}")
+
+        if f"{failure_counter.value}/{failure_counter.max}" == ch.cc_str('Crafting: Failures'):
+            pass
+        else:
+            result_string.append(ch.cc_str('Crafting: Failures'))
+
+        # If failure counter at max
+        if failure_counter.value == failure_counter.max:
+            result_string.append("")
+            result_string.append(f"Maximum failures reached for a {crafting_dictionary['name']}! Please run `!craft clear` as you have ruined your materials.")
+            img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/fail.png"
+
+        # If success counter at max
+        elif success_counter.value == success_counter.max:
+            result_string.append("")
+            result_string.append(f"You have finished crafting a {crafting_dictionary['name']}! Please run `!craft clear` as you have finished your item.")
+            img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/hammer.png"
+
+        else:
+            img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/image.png"
+
+        # If bypass was used
+        if crafting_dictionary['bypass']:
+            result_string.append("")
+            result_string.append('`BYPASS USED`')
+        else:
+            pass
+
+        try:
+            color = crafting_dictionary['color']
+
+        except:
+            color = ""
+
+        return [f'({ctx.author.display_name}) {name} checks their Crafting progress with their {crafting_dictionary["name"]}', "\n".join(result_string), img_url, color]
+
+    else:
+        return [f'({ctx.author.display_name}) {name} checks their Crafting progress', 'No crafting project in-progress', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", '#CC0202']
+        
+
+# Main program
+output_list = main()
+
+
+</drac2>
+-title "{{output_list[0]}}"
+-f "{{output_list[1]}}"
+-thumb "{{output_list[2]}}"
+-color "{{output_list[3]}}"
+-footer "!craft log | Updated 7/12/23 | ShadowsStride"

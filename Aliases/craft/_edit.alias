@@ -248,6 +248,12 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 # Runs main program
 output_list = main(&ARGS&)
 
+try:
+    crafting_dictionary = load_json(character().get_cvar("crafting_dict"))
+    output_list.append(crafting_dictionary['color'])
+
+except:
+    output_list.append("#CC0202")
 
 </drac2>
 -title "{{output_list[0]}}"

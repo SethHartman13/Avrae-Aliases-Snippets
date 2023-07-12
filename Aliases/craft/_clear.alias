@@ -114,10 +114,10 @@ def check_channel(settings_dict: dict = grab_settings_dict()) -> list[str]:
 
                 # Inherit rules are on
                 else:
-                    return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.parent.name} is not a valid channel nor is {ctx.channel.name} a valid thread to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+                    return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.parent.name} is not a valid channel nor is {ctx.channel.name} a valid thread to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
             
             except:
-                return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.name} is not a valid channel to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+                return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.name} is not a valid channel to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
 
 
 def add_funds(cost: str, ch: character) -> bool:
@@ -190,7 +190,7 @@ def main(ch = character()) -> list[str]:
 
     # If the crafting CCs don't exist
     else:
-        return [f'{ctx.author.display_name} has encountered an error', "Crafting CCs don't exist", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+        return [f'{ctx.author.display_name} has encountered an error', "Crafting CCs don't exist", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
 
     # If pro_rate_refund is true and that counters have not reached their limts
     if settings_dictionary['pro_rate_refund'] and (success_counter.value != success_counter.max) and (failure_counter.value != failure_counter.max) and crafting_dictionary['crafting_cost'] != 0:
@@ -256,7 +256,7 @@ def main(ch = character()) -> list[str]:
                     add_funds(f"-{good_dict[money]}", ch)
 
                 else:
-                    return [f'{ctx.author.display_name} has encountered an error', f"Prorated refund was not added to your coin purse properly", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+                    return [f'{ctx.author.display_name} has encountered an error', f"Prorated refund was not added to your coin purse properly", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
                 
 
     # If pro_rate_refund is false or the counters have reached their limits   
@@ -297,22 +297,21 @@ def main(ch = character()) -> list[str]:
     
     # If money was given back
     if money_back > 0:
-        return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", f"Prorated refund: {' '.join(money_list)}", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/image.png", crafting_dictionary]
+        return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", f"Prorated refund: {' '.join(money_list)}", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/image.png", crafting_dictionary, "#FFD700"]
 
     else:
         # Successfully finished the item
         if crafting_dictionary['backup']['success_cc'][0] == crafting_dictionary['backup']['success_cc'][1]:
-           return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", "", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/hammer.png", crafting_dictionary]
+           return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", "", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/hammer.png", crafting_dictionary, "#ffffff"]
 
         # Max failures
         elif crafting_dictionary['backup']['failure_cc'][0] == crafting_dictionary['backup']['failure_cc'][1]:
-            return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", "", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/fail.png", crafting_dictionary]
+            return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", "", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/fail.png", crafting_dictionary, "#CC0202"]
 
         # Quitting early
         else:
-            return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", "", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/image.png", crafting_dictionary]
+            return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", "", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/image.png", crafting_dictionary, "#CC0202"]
     
-
 # Runs main program alias
 output_list = main()
 
@@ -322,9 +321,16 @@ try:
 except:
     pass
 
+try:
+    output_list[3]
+
+except:
+    output_list.append("#CC0202")
+
 
 </drac2>
 -title "{{output_list[0]}}"
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
--footer "!craft clear | Updated 7/10/2023 | ShadowsStride"
+-color "{{output_list[3]}}"
+-footer "!craft clear | Updated 7/12/2023 | ShadowsStride"

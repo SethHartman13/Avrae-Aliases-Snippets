@@ -1,0 +1,39 @@
+embed
+<drac2>
+
+
+def main(ch = character()) -> list[str]:
+
+    crafting_test = ch.get_cvar('crafting_dict', default="None")
+
+    if crafting_test != "None":
+        crafting_dictionary = load_json(crafting_test)
+
+        try:
+            crafting_dictionary['history'][0] = f"{crafting_dictionary['history'][0]} <- Most recent"
+            result_string = "\n".join(crafting_dictionary['history'])
+
+        except:
+            result_string = "None"
+
+        try:
+            color = crafting_dictionary['color']
+
+        except:
+            color = ""
+
+        return [f'({ctx.author.display_name}) {name} checks their crafting history', result_string, "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/history.png", color]
+
+    else:
+        return [f'{ctx.author.display_name} has encountered an error', 'Crafting cvar not found', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+
+
+# Main program
+output_list = main()
+
+
+</drac2>
+-title "{{output_list[0]}}"
+-f "{{output_list[1]}}"
+-thumb "{{output_list[2]}}"
+-color "{{output_list[3]}}"

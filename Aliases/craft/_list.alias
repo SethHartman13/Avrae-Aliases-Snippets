@@ -219,7 +219,9 @@ def main(input_list: list, settings_dictionary: dict = grab_settings_dict()) -> 
         for setting in settings_list:
             result_list.append(setting)
 
-        return [f'{ctx.author.display_name} views crafting options and settings', '\n'.join(result_list), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/list.png"]
+        color_list = ["#242528", "#1FC219", "#4990E2", "#9810E0", "#FEA227"]
+
+        return [f'{ctx.author.display_name} views crafting options and settings', '\n'.join(result_list), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/list.png", randchoice(color_list)]
     
     elif len(input_list) > 0:
         full_settings = [[],[]]
@@ -273,13 +275,16 @@ def main(input_list: list, settings_dictionary: dict = grab_settings_dict()) -> 
                 result_list.append(f"Cooldown: {calc_time(settings_dictionary[input_list[0]][item_type][6])}")
 
                 try:
-                    result_list.append(f"Retail Item Cost: {settings_dictionary[input_list[0]][item_type][7]}")
+                    color = settings_dictionary[input_list[0]][item_type][8]
+                    result_list.append(f"Retail Item Cost: {settings_dictionary[input_list[0]][item_type][7]}gp")
+                    result_list.append(f"Hex Color: {settings_dictionary[input_list[0]][item_type][8]}")
 
                 except:
-                    pass
+                    result_list.append(f"Hex Color: {settings_dictionary[input_list[0]][item_type][7]}")
+                    color = settings_dictionary[input_list[0]][item_type][7]
                 result_list.append("")
 
-            return [f'{ctx.author.display_name} views crafting settings for the {input_list[0]} category', '\n'.join(result_list), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/list.png"]
+            return [f'{ctx.author.display_name} views crafting settings for the {input_list[0]} category', '\n'.join(result_list), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/list.png", color]
 
         else:
 
@@ -299,16 +304,25 @@ def main(input_list: list, settings_dictionary: dict = grab_settings_dict()) -> 
                 for key in settings_dictionary[input_list[0]].keys():
                     result_list.append(f"**{key}:** {settings_dictionary[input_list[0]][key]}")
 
-            return [f'{ctx.author.display_name} views settings for {input_list[0]}', '\n'.join(result_list), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/list.png"]    
+            color_list = ["#242528", "#1FC219", "#4990E2", "#9810E0", "#FEA227"]
+
+            return [f'{ctx.author.display_name} views settings for {input_list[0]}', '\n'.join(result_list), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/list.png", randchoice(color_list)]    
 
 
 # Main program
 output_list = main(&ARGS&)
 l = "<"
 
+try:
+    output_list[3]
+
+except:
+    output_list.append("#CC0202")
+
 
 </drac2>
 -title "{{output_list[0]}}"
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
--footer "!craft settings {{l}}item_category> | Updated 7/11/2023 | ShadowsStride"
+-color "{{output_list[3]}}"
+-footer "!craft settings {{l}}item_category> | Updated 7/12/2023 | ShadowsStride"

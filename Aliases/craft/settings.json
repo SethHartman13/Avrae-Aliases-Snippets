@@ -1,35 +1,35 @@
 {
     "examples": {
-        "permanent": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Retail Item Cost in GP (int or float)"],
-        "consumable": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Retail Item Cost in GP (int or float)"],
-        "0": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)"]
+        "permanent": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Retail Item Cost in GP (int or float)", "Hex code (with or without #)"],
+        "consumable": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Retail Item Cost in GP (int or float)", "Hex code (with or without #)"],
+        "0": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Hex code (with or without #)"]
     },
     "nonmagical": {
-        "0": [5, 8, -1, 5, 1, 1, 7200],
-        "101": [9, 13, -2, 5, 5, 2, 14400],
-        "501": [13, 18, -3, 5, 8, 3, 21600],
-        "5001": [17, 23, -4, 5, 13, 4, 28800],
-        "50001": [20, 25, -5, 5, 20, 5, 36000]
+        "0": [5, 8, -1, 5, 1, 1, 7200, "#242528"],
+        "101": [9, 13, -2, 5, 5, 2, 14400, "#242528"],
+        "501": [13, 18, -3, 5, 8, 3, 21600, "#242528"],
+        "5001": [17, 23, -4, 5, 13, 4, 28800, "#242528"],
+        "50001": [20, 25, -5, 5, 20, 5, 36000, "#242528"]
     },
     "common": {
-        "permanent": [5, 10, -1, 5, 8, 2, 7200, 100],
-        "consumable": [5, 10, -1, 5, 1, 2, 7200, 50]
+        "permanent": [5, 10, -1, 5, 8, 2, 7200, 100, "#242528"],
+        "consumable": [5, 10, -1, 5, 1, 2, 7200, 50, "#242528"]
     },
     "uncommon": {
-        "permanent": [9, 15, -2, 5, 15, 2, 14400, 500],
-        "consumable": [9, 15,-2, 5, 5, 2, 14400, 250]
+        "permanent": [9, 15, -2, 5, 15, 2, 14400, 500, "#1FC219"],
+        "consumable": [9, 15,-2, 5, 5, 2, 14400, 250, "#1FC219"]
     },
     "rare": {
-        "permanent": [13, 20, -3, 5, 70, 3, 21600, 5000],
-        "consumable": [13, 20, -3, 5, 30, 3, 21600, 2500]
+        "permanent": [13, 20, -3, 5, 70, 3, 21600, 5000, "#4990E2"],
+        "consumable": [13, 20, -3, 5, 30, 3, 21600, 2500, "#4990E2"]
     },
     "very rare": {
-        "permanent": [17, 25, -4, 5, 130, 4, 28800, 50000],
-        "consumable": [17, 25, -4, 5, 70, 4, 28800, 25000]
+        "permanent": [17, 25, -4, 5, 130, 4, 28800, 50000, "#9810E0"],
+        "consumable": [17, 25, -4, 5, 70, 4, 28800, 25000, "#9810E0"]
     },
     "legendary": {
-        "permanent": [20, 25, -5, 5, 170, 5, 36000, 130000],
-        "consumable": [20, 25, -5, 5, 130, 5, 36000, 65000]
+        "permanent": [20, 25, -5, 5, 170, 5, 36000, 130000, "#FEA227"],
+        "consumable": [20, 25, -5, 5, 130, 5, 36000, 65000, "#FEA227"]
     },
     "lfg_integration": false,
     "pro_rate_refund": true,
