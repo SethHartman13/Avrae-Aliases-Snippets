@@ -333,7 +333,11 @@ def get_photo_url(ch: character, char_bool: bool):
         (str): String containing URL
     """
     if char_bool:
-        return ch.image
+        if ch.image != "":
+            return ch.image
+
+        else:
+            return "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/lfg/image.png"
     else:
         return "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/lfg/image.png"
 
@@ -381,7 +385,7 @@ def get_ac(ch: character, ac_bool: bool):
         return f"**AC:** {ch.ac}"
 
 
-def get_passives(ch:character, ins_bool: bool, inv_bool: bool, perc_bool: bool) -> str:
+def get_passives(ch: character, ins_bool: bool, inv_bool: bool, perc_bool: bool) -> str:
     """
     Grabs character's passives
 
@@ -431,27 +435,65 @@ def get_passives(ch:character, ins_bool: bool, inv_bool: bool, perc_bool: bool) 
 
             # If perception is included
             if perc_bool:
-                if observant:
-                    results.append(f"**Passive Perception:** {10 + 5 + ch.skills['perception'].value} [observant]")
-                    
-                else:
+
+                # Not observant and no adv/dis
+                if not observant and typeof(ch.skills.perception.adv) == "NoneType":
                     results.append(f"**Passive Perception:** {10 + ch.skills['perception'].value}")
+
+                # Observant and no adv/dis
+                elif observant and typeof(ch.skills.perception.adv) == "NoneType":
+                    results.append(f"**Passive Perception:** {10 + 5 + ch.skills['perception'].value} [observant]")
+
+                else:
+
+                    # Observant and adv
+                    if observant and ch.skills.perception.adv:
+                        results.append(f"**Passive Perception:** {10 + 5 + ch.skills['perception'].value + 5} [observant and advantage]")
+
+                    # Observant and dis
+                    elif observant and not ch.skills.perception.adv:
+                        results.append(f"**Passive Perception:** {10 + ch.skills['perception'].value} [observant and disadvantage]")
+
+                    # Not observant and adv
+                    elif ch.skills.perception.adv:
+                        results.append(f"**Passive Perception:** {10 + ch.skills['perception'].value + 5} [advantage]")
+
+                    # Not observant and dis
+                    else:
+                        results.append(f"**Passive Perception:** {10 + ch.skills['perception'].value - 5} [disadvantage]")
+
+            else:
+                pass
 
             # If insight is included
             if ins_bool:
-                if observant:
+
+                # Not observant and no adv/dis
+                if not observant and typeof(ch.skills.insight.adv) == "NoneType":
+                    results.append(f"**Passive Insight:** {10 + ch.skills['insight'].value}")
+
+                # Observant and no adv/dis
+                elif observant and typeof(ch.skills.insight.adv) == "NoneType":
                     results.append(f"**Passive Insight:** {10 + 5 + ch.skills['insight'].value} [observant]")
 
                 else:
-                    results.append(f"**Passive Insight:** {10 + ch.skills['insight'].value}")
 
-            if not observant:
-                if perc_bool or ins_bool:
-                    # Adds note
-                    # results.append("*If you do not have 'observant' in your `feats` cvar, observant does not apply properly*") 
-                    pass 
-                else:
-                    pass
+                    # Observant and adv
+                    if observant and ch.skills.insight.adv:
+                        results.append(f"**Passive Insight:** {10 + 5 + ch.skills['insight'].value + 5} [observant and advantage]")
+
+                    # Observant and dis
+                    elif observant and not ch.skills.insight.adv:
+                        results.append(f"**Passive Insight:** {10 + ch.skills['insight'].value} [observant and disadvantage]")
+
+                    # Not observant and adv
+                    elif ch.skills.insight.adv:
+                        results.append(f"**Passive Insight:** {10 + ch.skills['insight'].value + 5} [advantage]")
+
+                    # Not observant and dis
+                    else:
+                        results.append(f"**Passive Insight:** {10 + ch.skills['insight'].value - 5} [disadvantage]")
+
             else:
                 pass
 
@@ -460,7 +502,15 @@ def get_passives(ch:character, ins_bool: bool, inv_bool: bool, perc_bool: bool) 
 
         # If investigation is included
         if inv_bool:
-            results.append(f"**Passive Investigation:** {10 + ch.skills['investigation'].value}")
+            if ch.skills.investigation.adv != "":
+                if ch.skills.investigation.adv:
+                    results.append(f"**Passive Investigation:** {10 + ch.skills['investigation'].value + 5} [advantage]")
+
+                else:
+                    results.append(f"**Passive Investigation:** {10 + ch.skills['investigation'].value - 5} [disadvantage]")
+
+            else:
+                results.append(f"**Passive Investigation:** {10 + ch.skills['investigation'].value}")
 
         else:
             pass
@@ -785,19 +835,14 @@ def main(input_string):
     return [title, image_url, "\n".join(result_list)]
 
 
+# Main program
 input_list = &ARGS&
-
 output_list = main(" ".join(input_list))
+l = "<"
 
-# Extracts outputs
-title = output_list[0]
-image_url = output_list[1]
-result_string = output_list[2]
 
-left_arrow = "<"
 </drac2>
-
--title "{{title}}"
--f "{{result_string}}"
--thumb "{{image_url}}"
--footer "!lfg {{left_arrow}}optional phrase> | Updated 7/15/23 | ShadowsStride"
+-title "{{output_list[0]}}"
+-thumb "{{output_list[1]}}"
+-f "{{output_list[2]}}"
+-footer "!lfg {{l}}optional phrase> | Updated 7/21/23 | ShadowsStride"

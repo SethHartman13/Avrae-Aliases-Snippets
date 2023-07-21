@@ -74,3 +74,5 @@ Here is an example dictionary with default values. You do not need every value, 
 6/21/23 - Alias created
 
 6/27/23 - Documentation completed
+
+7/21/23 - Added support for automatic adv/dis (based upon character sheet)
