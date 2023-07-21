@@ -19,6 +19,4 @@ This alias works as a
 
 7/4/2023 - Subaliases created
 
-## License Notice
-
-This work includes material written by Seth Hartman (aka ShadowsStride) and is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+7/21/2023 - Folder Reorganized
