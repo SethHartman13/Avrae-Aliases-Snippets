@@ -1,0 +1,443 @@
+embed
+<drac2>
+
+
+def add_remove_funds(cost: str, ch: character) -> bool:
+    """
+    Function that handles the adding of funds
+    
+    Args:
+        cost (float): Cost in gp to be added
+        ch (character): Character object 
+
+    Returns:
+        (bool): If adding was successful
+    """
+
+    # Pulls baglibrary
+    using(baglib="4119d62e-6a98-4153-bea9-0a99bb36da2c")
+
+    # Pull necessary items
+    bagsLoaded = baglib.load_bags()
+    old_coins = baglib.get_coins(bagsLoaded)[1].copy()
+    autoCoins = baglib.settings.get('autoCoins',get("autocoins","0")=="1")
+
+    # Pulls money from coin purse
+    delta, coin_error = baglib.parsecoins(str(cost))
+
+    # Pulls results
+    resultList = list(old_coins.items())
+
+    # Delta just is the change in coin
+    if delta:
+        focus, error = baglib.modify_coins(bagsLoaded, autoCoins=autoCoins, delta=delta)
+
+        # If there was no error
+        if not error:
+            return True
+
+        # If there was an error
+        else:
+            return False
+
+
+def grab_settings_dict() -> dict:
+    """
+    Grabs the settings dictionary, prioritizes svar, but falls back on gvar just in case.
+
+    Return:
+        (dict): Settings dictionary
+    """
+
+    # Tries to grab the svar
+    setting_test = get_svar("crafting_settings", default="None")
+
+    # If the svar exists
+    if setting_test != "None":
+
+        # Load dictionary
+        settings_dict = load_json(setting_test)
+
+        return settings_dict
+
+    else:
+        return load_json(get_gvar("d2daf66a-dce2-481b-ab28-f37ffe072de7"))
+
+
+def deal_money(money: float, ch: character) -> list[str]:
+    """
+    Manages the flow of money
+    
+    Args:
+        money (float): Money in gp to remove/add
+        ch (character): Character object
+
+    Return:
+        (list[str]): Result
+    """
+
+    money_list = []
+
+    # If money is positive
+    if money > 0:
+        give = True
+
+    # If money is negative
+    else:
+        give = False
+
+    # Removes any possible negative negative
+    money = abs(money)
+
+    # Calculates the number of gold
+    gold = floor(money)
+    if gold != 0:
+        if give:
+            money_list.append(f"{gold}gp")
+        
+        else:
+            money_list.append(f"-{gold}gp")
+
+    else:
+        pass
+
+    # Calculates the number of silver
+    silver = floor((money * 10) % 10)
+    if silver != 0:
+        if give:
+            money_list.append(f"{silver}sp")
+        
+        else:
+            money_list.append(f"-{silver}sp")
+
+    else:
+        pass
+
+    # Calculates the number of copper
+    copper = floor((money * 100) % 10)
+    if copper != 0:
+        if give:
+            money_list.append(f"{copper}cp")
+        
+        else:
+            money_list.append(f"-{copper}cp")
+
+    else:
+        pass
+
+    good_list = []
+
+    # Takes/removes money
+    for currency in money_list:
+        if add_remove_funds(currency, ch):
+            good_list.append(currency)
+
+        else:
+            pass
+
+    # If the same amount of money succeeded
+    if len(money_list) == len(good_list):
+        return ['Success']
+
+    # If there was an error
+    else:
+
+        # If money was given, take it back
+        if give:
+            for currency in good_list:
+                add_remove_funds(f"-{currency}", ch)
+
+            return ["Error"]
+
+        # If money was taken, give it back
+        else:
+            for currency in good_list:
+                split_list = currency.split("-")
+                add_remove_funds(split_list[1], ch)
+
+            return ["Error"]
+
+
+def main(ch = character()) -> list[str]:
+    """
+    Main program function
+
+    Args:
+        ch = character(): Character object
+
+    Return:
+        (list[str]): Result    
+    """
+
+    # Settings and crafting dictionary
+    settings_dictionary = grab_settings_dict()
+    crafting_test = ch.get_cvar('crafting_dict', default="None")
+
+    # If the crafting dictionary exists
+    if crafting_test != 'None':
+        crafting_dictionary = load_json(crafting_test)
+
+        try:
+            crafting_dictionary['backup']
+
+        except:
+            return [f'{ctx.author.display_name} has encountered an error', 'Backup not found', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", '#CC0202']
+
+    # If the crafting dictionary does not exist
+    else:
+        return [f'{ctx.author.display_name} has encountered an error', 'Crafting cvar does not exist', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", '#CC0202']
+
+    # If the item that they are trying to restore is not 'completed'
+    if crafting_dictionary['backup']['success_cc'][0] != crafting_dictionary['backup']['success_cc'][1] and crafting_dictionary['backup']['failure_cc'][0] != crafting_dictionary['backup']['failure_cc'][1]:
+        pass
+
+    # If the item that they are trying to restore is 'completed'
+    else:
+        return [f'{ctx.author.display_name} has encountered an error', 'You cannot restore a failed/completed item', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", '#CC0202']
+
+    # If the CCs already exist (aka a restore during a current crafting session)
+    if ch.cc_exists('Crafting: Successes') and ch.cc_exists('Crafting: Failures'):
+        success_counter = ch.cc('Crafting: Successes')
+        failure_counter = ch.cc('Crafting: Failures')
+
+        # Checks to verify that the items are not 'completed'
+        if success_counter.value != success_counter.max and failure_counter.value != failure_counter.max:
+
+            # If the money back is not zero
+            if crafting_dictionary['backup']['money_back'] != 0:
+
+                # Take money from the player
+                result_list = deal_money(abs(crafting_dictionary['backup']['money_back']) * -1, ch)
+
+                # Player has the money
+                if result_list[0] != "Error":
+                    pass
+
+                # Player does not have the money
+                else:
+                    return [f'{ctx.author.display_name} has encountered an error', f"You do not have enough funds to do a restore. You need {abs(crafting_dictionary['backup']['money_back'])}gp total", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", '#CC0202']
+
+            # Money back is 0
+            else:
+                money_back = 0
+
+        # Money back is 0
+        else:
+            money_back = 0
+
+        # Sees if there is a pro rate refund
+        if settings_dictionary['pro_rate_refund'] and crafting_dictionary['crafting_cost'] != 0:
+
+            # Calculates the money to give back
+            percentage_back = (1 - ((success_counter.value / success_counter.max) + (failure_counter.value /(failure_counter.max * 2)))) * .5
+
+            # If it goes negative money back, give nothing
+            if percentage_back < 0:
+                money_back = 0
+
+            # If it stays positive
+            else:
+                money_back = abs(round(percentage_back * crafting_dictionary['crafting_cost'], 2))
+
+                result_list = deal_money(money_back, ch)
+
+                # If there is not any problems giving the player money
+                if result_list[0] != "Error":
+                    pass
+
+                else:
+
+                    # Checks again that it was not already completed and takes money back
+                    if crafting_dictionary['backup']['money_back'] != 0 and (success_counter.value != success_counter.max and failure_counter.value != failure_counter.max):
+                        deal_money(abs(crafting_dictionary['backup']['money_back']), ch)
+
+                    else:
+                        pass
+
+                    return [f'{ctx.author.display_name} has encountered an error', result_list[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", '#CC0202']
+                
+        else:
+            money_back = 0
+
+
+        # Creates string of backup dictionary, have to do it this way since draconic doesn't know how to deep copy
+        temp_str_dictionary = dump_json(crafting_dictionary['backup'])
+
+        # Puts all the stuff from the main section of the dictionary into the backup
+        crafting_dictionary['backup']['cvar'][0] = crafting_dictionary['name']
+        crafting_dictionary['backup']['cvar'][1] = crafting_dictionary['category']
+        crafting_dictionary['backup']['cvar'][2] = crafting_dictionary['type']
+        crafting_dictionary['backup']['cvar'][3] = crafting_dictionary['time']
+        crafting_dictionary['backup']['cvar'][4] = crafting_dictionary['cooldown']
+        crafting_dictionary['backup']['cvar'][5] = crafting_dictionary['crafting_cost']
+
+        # This was to allow so that previously made crafting sessions do not derp
+        try:
+            crafting_dictionary['backup']['cvar'][6] = crafting_dictionary['stat']
+
+        except:
+            crafting_dictionary['backup']['cvar'][6] = ""
+
+        crafting_dictionary['backup']['money_back'] = money_back
+
+        # Puts the counter values into backup
+        crafting_dictionary['backup']['success_cc'][0] = success_counter.value
+        crafting_dictionary['backup']['success_cc'][1] = success_counter.max
+        crafting_dictionary['backup']['success_cc'][2] = success_counter.desc
+        crafting_dictionary['backup']['success_cc'][3] = success_counter.title
+
+        crafting_dictionary['backup']['failure_cc'][0] = failure_counter.value
+        crafting_dictionary['backup']['failure_cc'][1] = failure_counter.max
+        crafting_dictionary['backup']['failure_cc'][2] = failure_counter.desc
+        crafting_dictionary['backup']['failure_cc'][3] = failure_counter.title
+
+        # Pulls the temporary dictionary and puts items from the backup into the main cvar
+        temp_dictionary = load_json(temp_str_dictionary)
+        crafting_dictionary['name'] = temp_dictionary['cvar'][0]
+        crafting_dictionary['category'] = temp_dictionary['cvar'][1]
+        crafting_dictionary['type'] = temp_dictionary['cvar'][2]
+        crafting_dictionary['time'] = temp_dictionary['cvar'][3]
+        crafting_dictionary['cooldown'] = temp_dictionary['cvar'][4]
+        crafting_dictionary['crafting_cost'] = temp_dictionary['cvar'][5]
+
+        # This was to allow so that previously made crafting sessions do not derp
+        try:
+            crafting_dictionary['stat'] = temp_dictionary['cvar'][6]
+
+        except:
+            crafting_dictionary['stat'] = ""
+        
+        # Stores disptypes so that I don't have to pull from the settings dictionary
+        success_dispType = success_counter.display_type
+        failure_dispType = failure_counter.display_type
+
+        # Delete old ccs
+        ch.delete_cc('Crafting: Successes')
+        ch.delete_cc('Crafting: Failures')
+
+        # Create new ccs
+        success_counter = ch.create_cc(
+            name="Crafting: Successes",
+            minVal="0",
+            maxVal=str(temp_dictionary['success_cc'][1]),
+            reset='none',
+            dispType=success_dispType,
+            title=temp_dictionary['success_cc'][3],
+            desc=temp_dictionary['success_cc'][2],
+            initial_value=str(temp_dictionary['success_cc'][0])
+        )
+
+        failure_counter = ch.create_cc(
+            name="Crafting: Failures",
+            minVal="0",
+            maxVal=str(temp_dictionary['failure_cc'][1]),
+            reset='none',
+            dispType=success_dispType,
+            title=temp_dictionary['failure_cc'][3],
+            desc=temp_dictionary['failure_cc'][2],
+            initial_value=str(temp_dictionary['failure_cc'][0])
+        )
+
+    # If there is not an active crafting session
+    else:
+
+        # If a refund was given
+        if settings_dictionary['pro_rate_refund'] and crafting_dictionary['backup']['money_back'] != 0:
+            
+            result_list = deal_money(abs(crafting_dictionary['backup']['money_back']) * -1, ch)
+
+            # If the player is able to pay
+            if result_list[0] != "Error":
+                pass
+
+            # If the players does not have the funds
+            else:
+                return [f'{ctx.author.display_name} has encountered an error', f"You do not have enough funds to do a restore. You need {abs(crafting_dictionary['backup']['money_back'])}gp total", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", '#CC0202']
+
+        # No refund
+        else:
+            money_back = 0
+
+        # Puts items from backup into main cvar
+        crafting_dictionary['name'] = crafting_dictionary['backup']['cvar'][0]
+        crafting_dictionary['category'] = crafting_dictionary['backup']['cvar'][1]
+        crafting_dictionary['type'] = crafting_dictionary['backup']['cvar'][2]
+        crafting_dictionary['time'] = crafting_dictionary['backup']['cvar'][3]
+        crafting_dictionary['cooldown'] = crafting_dictionary['backup']['cvar'][4]
+        crafting_dictionary['crafting_cost'] = crafting_dictionary['backup']['cvar'][5]
+
+        # This was to allow so that previously made crafting sessions do not derp
+        try:
+            crafting_dictionary['stat'] = crafting_dictionary['backup']['cvar'][6]
+
+        except:
+            crafting_dictionary['stat'] = ""
+
+        # Creates new counters
+        success_counter = ch.create_cc(
+            name="Crafting: Successes",
+            minVal="0",
+            maxVal=str(crafting_dictionary['backup']['success_cc'][1]),
+            reset='none',
+            dispType=settings_dictionary['success_dispType'],
+            title=crafting_dictionary['backup']['success_cc'][3],
+            desc=crafting_dictionary['backup']['success_cc'][2],
+            initial_value=str(crafting_dictionary['backup']['success_cc'][0])
+        )
+
+        failure_counter = ch.create_cc(
+            name="Crafting: Failures",
+            minVal="0",
+            maxVal=str(crafting_dictionary['backup']['failure_cc'][1]),
+            reset='none',
+            dispType=settings_dictionary['failure_dispType'],
+            title=crafting_dictionary['backup']['failure_cc'][3],
+            desc=crafting_dictionary['backup']['failure_cc'][2],
+            initial_value=str(crafting_dictionary['backup']['failure_cc'][0])
+        )
+
+        # Deletes the backup
+        crafting_dictionary.pop('backup')
+
+    # Tries to pull a color
+    try:
+        crafting_dictionary['color'] = settings_dictionary[crafting_dictionary['category']][crafting_dictionary['type']][-1]
+
+    # Random color if fail
+    except:
+        crafting_dictionary['color'] = ""
+
+    # Save cvar
+    ch.set_cvar('crafting_dict', dump_json(crafting_dictionary))
+
+    result_string = []
+
+    # Success counter
+    result_string.append(f"Successes: {success_counter.value}/{success_counter.max}")
+
+    if f"{success_counter.value}/{success_counter.max}" == ch.cc_str('Crafting: Successes'):
+        pass
+    else:
+        result_string.append(ch.cc_str('Crafting: Successes'))
+
+    # Failure counter
+    result_string.append(f"Failures: {failure_counter.value}/{failure_counter.max}")
+
+    if f"{failure_counter.value}/{failure_counter.max}" == ch.cc_str('Crafting: Failures'):
+        pass
+    else:
+        result_string.append(ch.cc_str('Crafting: Failures'))
+
+    return [f"({ctx.author.display_name}) has restored their crafting progress for a {crafting_dictionary['name']}", "\n".join(result_string), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/hammer.png", crafting_dictionary['color']]
+
+
+# Main program
+output_list = main()
+
+
+</drac2>
+-title "{{output_list[0]}}"
+-f "{{output_list[1]}}"
+-thumb "{{output_list[2]}}"
+-color "{{output_list[3]}}"
+-footer "!craft restore | Updated 7/19/23 | ShadowsStride"

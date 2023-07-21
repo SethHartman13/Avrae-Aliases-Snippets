@@ -1,29 +1,81 @@
 embed
 <drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International License 
+# * available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
 
 
 def main(ch = character()) -> list[str]:
+    """
+    Main program function
 
+    Args:
+        ch = character(): Character object
+
+    Return:
+        (list[str]): Result
+    """
+
+    # Tries to check if the crafting dictionary exists
     crafting_test = ch.get_cvar('crafting_dict', default="None")
 
+    # If the dictionary exists
     if crafting_test != "None":
         crafting_dictionary = load_json(crafting_test)
 
+        # Tries to pull a history, looks for more recent item
         try:
-            crafting_dictionary['history'][0] = f"{crafting_dictionary['history'][0]} <- Most recent"
-            result_string = "\n".join(crafting_dictionary['history'])
+            found = False
+            for name in crafting_dictionary['history']:
+                if not found:
+                    if name == crafting_dictionary['name']:
+                        index_num = crafting_dictionary['history'].index(name)
+                        crafting_dictionary['history'][index_num] = f"{crafting_dictionary['history'][index_num]} <- Current/most recent"
+                        found = True
 
+                    else:
+                        pass
+        # No history
         except:
-            result_string = "None"
+            history = False
 
+        # Tries to pull a backup, looks for item in backup
+        try:
+            found = False
+            if crafting_dictionary['backup']['success_cc'][0] != crafting_dictionary['backup']['success_cc'][1] and crafting_dictionary['backup']['failure_cc'][0] != crafting_dictionary['backup']['failure_cc'][1]:
+                for name in crafting_dictionary['history']:
+                    if not found:
+                        if name == crafting_dictionary['backup']['cvar'][0]:
+                            index_num = crafting_dictionary['history'].index(name)
+                            crafting_dictionary['history'][index_num] = f"{crafting_dictionary['history'][index_num]} <- Stored in backup"
+                            found = True
+
+                    else:
+                        pass
+
+            else:
+                pass
+
+        # No backup
+        except:
+            pass
+
+        # Joins results
+        result_string = "\n".join(crafting_dictionary['history'])
+
+        # Tries to pull a color
         try:
             color = crafting_dictionary['color']
 
+        # Random color
         except:
             color = ""
 
         return [f'({ctx.author.display_name}) {name} checks their crafting history', result_string, "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/history.png", color]
 
+    # If the crafting dictionary does not exist
     else:
         return [f'{ctx.author.display_name} has encountered an error', 'Crafting cvar not found', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
 
@@ -37,3 +89,4 @@ output_list = main()
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
 -color "{{output_list[3]}}"
+-footer "!craft history | Updated 7/19/2023 | ShadowsStride"

@@ -2,10 +2,14 @@ embed
 
 <drac2>
 
+input_list = &ARGS&
+
+args = argparse(" ".join(input_list))
+
+
 
 
 
 
 </drac2>
--f "test"
--color "#FEA227"
+-f "{{}}"

@@ -531,6 +531,39 @@ def get_spell_slot(ch: character, spell_slot_bool: bool) -> str:
         else:
             return "None"
 
+def get_crafting_integration(ch: character) -> str:
+
+    settings_test = get_svar('crafting_settings', default="None")
+
+    if settings_test == "None":
+        return ""
+
+    else:
+        settings_dictionary = load_json(settings_test)
+
+        try:
+            if not settings_dictionary['lfg_integration']:
+                return ""
+
+            else:
+                crafting_test = ch.get_cvar('crafting_dict', default="None")
+
+                if crafting_test != "None":
+                    crafting_dictionary = load_json(crafting_test)
+
+                    if time() >= crafting_dictionary['time'] + settings_dictionary[crafting_dictionary['category']][crafting_dictionary['type']][6]:
+                        return ""
+
+                    else:
+                        return "`This character's crafting cooldown has not expired`"
+
+
+                else:
+                    return ""
+
+        except:
+            return ""
+
 
 def main(input_string):
     """
@@ -746,6 +779,9 @@ def main(input_string):
             pass
     
 
+    # Crafting integration
+    result_list.append(get_crafting_integration(ch))
+
     return [title, image_url, "\n".join(result_list)]
 
 
@@ -764,4 +800,4 @@ left_arrow = "<"
 -title "{{title}}"
 -f "{{result_string}}"
 -thumb "{{image_url}}"
--footer "!lfg {{left_arrow}}optional phrase> | Updated 7/8/23 | ShadowsStride"
+-footer "!lfg {{left_arrow}}optional phrase> | Updated 7/15/23 | ShadowsStride"

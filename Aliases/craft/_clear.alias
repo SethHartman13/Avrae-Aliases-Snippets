@@ -53,7 +53,7 @@ def grab_settings_dict() -> dict:
         return load_json(get_gvar("d2daf66a-dce2-481b-ab28-f37ffe072de7"))
 
 
-def check_channel(settings_dict: dict = grab_settings_dict()) -> list[str]:
+def check_channel(crafting_dictionary, settings_dict: dict = grab_settings_dict()) -> list[str]:
     """
     Verifies that channel is in whitelist
     
@@ -114,10 +114,10 @@ def check_channel(settings_dict: dict = grab_settings_dict()) -> list[str]:
 
                 # Inherit rules are on
                 else:
-                    return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.parent.name} is not a valid channel nor is {ctx.channel.name} a valid thread to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+                    return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.parent.name} is not a valid channel nor is {ctx.channel.name} a valid thread to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", crafting_dictionary, "#CC0202"]
             
             except:
-                return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.name} is not a valid channel to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+                return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.name} is not a valid channel to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", crafting_dictionary, "#CC0202"]
 
 
 def add_funds(cost: str, ch: character) -> bool:
@@ -180,7 +180,7 @@ def main(ch = character()) -> list[str]:
         success_counter = ch.cc('Crafting: Successes')
         failure_counter = ch.cc('Crafting: Failures')
 
-        result_list = check_channel(settings_dictionary)
+        result_list = check_channel(crafting_dictionary, settings_dictionary)
 
         if result_list[0] == 'Success':
             pass
@@ -263,6 +263,12 @@ def main(ch = character()) -> list[str]:
     else:
         money_back = 0
 
+    try:
+        crafting_dictionary['stat']
+
+    except:
+        crafting_dictionary['stat'] = ""
+
     # Grabs counter values and creates backups
     crafting_dictionary['backup'] = {
         'cvar': [
@@ -270,9 +276,9 @@ def main(ch = character()) -> list[str]:
             crafting_dictionary['category'], 
             crafting_dictionary['type'], 
             crafting_dictionary['time'], 
-            crafting_dictionary['cooldown'], 
-            crafting_dictionary['history'], 
-            crafting_dictionary['crafting_cost']
+            crafting_dictionary['cooldown'],  
+            crafting_dictionary['crafting_cost'],
+            crafting_dictionary['stat']
         ],
         'success_cc': [
             success_counter.value, 
@@ -322,7 +328,7 @@ except:
     pass
 
 try:
-    output_list[3]
+    output_list[4]
 
 except:
     output_list.append("#CC0202")
@@ -332,5 +338,5 @@ except:
 -title "{{output_list[0]}}"
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
--color "{{output_list[3]}}"
--footer "!craft clear | Updated 7/12/2023 | ShadowsStride"
+-color "{{output_list[4]}}"
+-footer "!craft clear | Updated 7/18/2023 | ShadowsStride"

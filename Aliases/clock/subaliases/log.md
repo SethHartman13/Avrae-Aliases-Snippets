@@ -1,4 +1,4 @@
-<h1>Log Subalias<img align="right" src="image.png" width="100px"></h1>
+<h1>Log Subalias<img align="right" src="../image.png" width="100px"></h1>
 
 Subalias that checks the time log of a tracker on a server.
 

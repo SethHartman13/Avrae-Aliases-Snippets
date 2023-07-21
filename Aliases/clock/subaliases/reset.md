@@ -1,4 +1,4 @@
-<h1>Reset Subalias<img align="right" src="image.png" width="100px"></h1>
+<h1>Reset Subalias<img align="right" src="../image.png" width="100px"></h1>
 
 Subalias that resets the time on a tracker on a server.
 

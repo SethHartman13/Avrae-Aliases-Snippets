@@ -1,0 +1,72 @@
+embed
+<drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International 
+# * License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
+input_list = &ARGS&
+
+try:
+    if int(input_list[0]) >= 2:
+        list_num = 2
+
+    else:
+        list_num = 1
+
+except:
+    list_num = 1
+
+result_string = []
+# Header
+result_string.append(f"Sounds like you need someone to provide the help action. Here is list ({list_num}/2) for the subaliases used for this library.")
+result_string.append("")
+
+if list_num == 1:
+
+    # Help/main
+    result_string.append("`!craft help #`: This subalias")
+    result_string.append("`!craft <item_name> <item_category> <item_type/cost> <-b #> <-c #> <-s skill_name> <eadv/adv/dis> <-i>`: Starts/continues crafting session.")
+    result_string.append("`<item_name>*`: Name of the item being crafted. Reminder: Use quotation marks for multi-word items.")
+    result_string.append("`<item_category>*`: Name of the category.")
+    result_string.append("`<item_type/cost>*`: If the category selected is not a cost-based category, name of the type. Otherwise, cost of the item.")
+    result_string.append("`-b*`: Adds a misc bonus to the check.")
+    result_string.append("`-s skill_name`: This tells the crafting alias to use a skill modifier of the name given.")
+    result_string.append("`eadv/adv/dis`: Applies double advantage/advantage/disadvantage.")
+    result_string.append("`-i`: Ignores training cooldown (DO NOT USE EXCEPT WHEN TOLD BY AN ADMIN).")
+    result_string.append("")
+    result_string.append("*Only is used when starting to craft a new item.")
+
+else:
+
+    # Clear/restore
+    result_string.append("`!craft clear`: Clears Crafting CCs so that a new item can be crafted, if `pro_rated_refund` is turned on, you will receive a refund.")
+    result_string.append("`!craft restore`: Restores Crafting CCs so that you undo a previous `!craft clear` or `!craft restore` (when you accidentally overwrite a crafting in progress).")
+    result_string.append("If you recieved a refund on the item you cleared, it will try to take back that refund.")
+    result_string.append("")
+
+    # Log/History/List
+    result_string.append("`!craft log`: Checks crafting progress and lists any items that are in backup.")
+    result_string.append("`!craft history`: Lists crafting history.")
+    result_string.append("`!craft list <category_name/setting>`: `!craft list` lists all the crafting categories (and their types) along with settings.")
+    result_string.append("`<category_name/setting>` Pulls up the specific details of a category/setting")
+    result_string.append("")
+
+    # Edit
+    result_string.append("`!craft edit [success/failure] [#]`: Edits the crafting counters by the value given so that values can be changed manually.")
+
+# Random image
+img_name = randchoice(['coin_bag', 'error', 'fail', 'hammer', 'history', 'list'])
+
+hex_list = []
+
+for _ in range(0,6):
+    hex_list.append(randchoice(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G']))
+
+
+</drac2>
+-title "{{f"{ctx.author.display_name} needs help!"}}"
+-f "{{'\n'.join(result_string)}}"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/{{img_name}}.png"
+-color "#{{''.join(hex_list)}}"
+-footer "!craft help # | Updated 7/19/23 | ShadowsStride"

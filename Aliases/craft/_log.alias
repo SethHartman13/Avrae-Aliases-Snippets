@@ -56,6 +56,17 @@ def main(ch = character()):
         except:
             color = ""
 
+
+        try:
+            if crafting_dictionary['backup']['success_cc'][0] != crafting_dictionary['backup']['success_cc'][1] and crafting_dictionary['backup']['failure_cc'][0] != crafting_dictionary['backup']['failure_cc'][1]:
+                result_string.append(f"`Item in backup: {crafting_dictionary['backup']['cvar'][0]}`")
+
+            else:
+                pass
+
+        except:
+            pass
+
         return [f'({ctx.author.display_name}) {name} checks their Crafting progress with their {crafting_dictionary["name"]}', "\n".join(result_string), img_url, color]
 
     else:
@@ -71,4 +82,4 @@ output_list = main()
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
 -color "{{output_list[3]}}"
--footer "!craft log | Updated 7/12/23 | ShadowsStride"
+-footer "!craft log | Updated 7/19/23 | ShadowsStride"
