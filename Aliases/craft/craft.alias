@@ -1356,11 +1356,11 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
     # Tries to give it the color
     try:
-        return [f"({ctx.author.display_name}) {name}'s Crafting Session: {crafting_dictionary['name']}", "\n".join(result_string), img_url, crafting_dictionary['color']]
+        return [f"{name}'s ({ctx.author.display_name}) Crafting Session: {crafting_dictionary['name']}", "\n".join(result_string), img_url, crafting_dictionary['color']]
 
     # "" if it fails
     except:
-        return [f"({ctx.author.display_name}) {name}'s Crafting Session: {crafting_dictionary['name']}", "\n".join(result_string), img_url, ""]
+        return [f"{name}'s ({ctx.author.display_name}) Crafting Session: {crafting_dictionary['name']}", "\n".join(result_string), img_url, ""]
 
            
 # Main program

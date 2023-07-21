@@ -158,6 +158,73 @@ def deal_money(money: float, ch: character) -> list[str]:
             return ["Error"]
 
 
+def check_channel(settings_dict: dict = grab_settings_dict()) -> list[str]:
+    """
+    Verifies that channel is in whitelist
+    
+    Args:
+        settings_dict (dict): Settings dictionary (default: grab_settings_dict())
+
+    Return:
+        (list[str]): Return
+    """
+
+    channel_id = 0
+    
+    # If there are no channels that this has to be run in
+    if len(settings_dict["whitelisted_channel_ids"]) == 0:
+        return ['Success']
+
+    # If there are channels that this needs to be run in
+    else:
+        
+        # For each channel id
+        for id_num in settings_dict["whitelisted_channel_ids"]:
+
+            # If this is a channel (not a thread)
+            if int(id_num) == ctx.channel.id:
+                channel_id = int(id_num)
+
+            else:
+
+                # Inherit rules are off
+                if not settings_dict["parent_channel_inherit"]:
+                    pass
+
+                # Inherit rules are on
+                else:
+
+                    # If this is a thread
+                    try:
+                        if int(id_num) == ctx.channel.parent.id:
+                            channel_id = int(id_num)
+
+                        else:
+                            pass
+                    
+                    except:
+                        pass
+
+        # If a match was found
+        if channel_id != 0:
+            return ['Success']
+
+        # If a match was not found
+        else:
+            try:
+
+                # Inherit rules are off
+                if not settings_dict["parent_channel_inherit"]:
+                    int('boop')
+
+                # Inherit rules are on
+                else:
+                    return ['Error', f'{ctx.channel.parent.name} is not a valid channel nor is {ctx.channel.name} a valid thread to run this alias (please consult server staff for more details)']
+            
+            except:
+                return ['Error', f'{ctx.channel.name} is not a valid channel to run this alias (please consult server staff for more details)']
+
+
 def main(ch = character()) -> list[str]:
     """
     Main program function
@@ -169,9 +236,22 @@ def main(ch = character()) -> list[str]:
         (list[str]): Result    
     """
 
+    # Image urls
+    error_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/error.png"
+    hammer_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/hammer.png"
+
     # Settings and crafting dictionary
     settings_dictionary = grab_settings_dict()
     crafting_test = ch.get_cvar('crafting_dict', default="None")
+
+    # Check channel
+    result_list = check_channel(settings_dictionary)
+
+    if result_list[0] != "Error":
+        pass
+
+    else:
+        return [f'{ctx.author.display_name} has encountered an error', result_list[1], error_img, '#CC0202']
 
     # If the crafting dictionary exists
     if crafting_test != 'None':
@@ -181,11 +261,11 @@ def main(ch = character()) -> list[str]:
             crafting_dictionary['backup']
 
         except:
-            return [f'{ctx.author.display_name} has encountered an error', 'Backup not found', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", '#CC0202']
+            return [f'{ctx.author.display_name} has encountered an error', 'Backup not found', error_img, '#CC0202']
 
     # If the crafting dictionary does not exist
     else:
-        return [f'{ctx.author.display_name} has encountered an error', 'Crafting cvar does not exist', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", '#CC0202']
+        return [f'{ctx.author.display_name} has encountered an error', 'Crafting cvar does not exist', error_img, '#CC0202']
 
     # If the item that they are trying to restore is not 'completed'
     if crafting_dictionary['backup']['success_cc'][0] != crafting_dictionary['backup']['success_cc'][1] and crafting_dictionary['backup']['failure_cc'][0] != crafting_dictionary['backup']['failure_cc'][1]:
@@ -193,7 +273,7 @@ def main(ch = character()) -> list[str]:
 
     # If the item that they are trying to restore is 'completed'
     else:
-        return [f'{ctx.author.display_name} has encountered an error', 'You cannot restore a failed/completed item', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", '#CC0202']
+        return [f'{ctx.author.display_name} has encountered an error', 'You cannot restore a failed/completed item', error_img, '#CC0202']
 
     # If the CCs already exist (aka a restore during a current crafting session)
     if ch.cc_exists('Crafting: Successes') and ch.cc_exists('Crafting: Failures'):
@@ -215,7 +295,7 @@ def main(ch = character()) -> list[str]:
 
                 # Player does not have the money
                 else:
-                    return [f'{ctx.author.display_name} has encountered an error', f"You do not have enough funds to do a restore. You need {abs(crafting_dictionary['backup']['money_back'])}gp total", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", '#CC0202']
+                    return [f'{ctx.author.display_name} has encountered an error', f"You do not have enough funds to do a restore. You need {abs(crafting_dictionary['backup']['money_back'])}gp total", error_img, '#CC0202']
 
             # Money back is 0
             else:
@@ -254,7 +334,7 @@ def main(ch = character()) -> list[str]:
                     else:
                         pass
 
-                    return [f'{ctx.author.display_name} has encountered an error', result_list[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", '#CC0202']
+                    return [f'{ctx.author.display_name} has encountered an error', result_list[1], error_img, '#CC0202']
                 
         else:
             money_back = 0
@@ -352,7 +432,7 @@ def main(ch = character()) -> list[str]:
 
             # If the players does not have the funds
             else:
-                return [f'{ctx.author.display_name} has encountered an error', f"You do not have enough funds to do a restore. You need {abs(crafting_dictionary['backup']['money_back'])}gp total", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", '#CC0202']
+                return [f'{ctx.author.display_name} has encountered an error', f"You do not have enough funds to do a restore. You need {abs(crafting_dictionary['backup']['money_back'])}gp total", error_img, '#CC0202']
 
         # No refund
         else:
@@ -428,7 +508,13 @@ def main(ch = character()) -> list[str]:
     else:
         result_string.append(ch.cc_str('Crafting: Failures'))
 
-    return [f"({ctx.author.display_name}) has restored their crafting progress for a {crafting_dictionary['name']}", "\n".join(result_string), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/hammer.png", crafting_dictionary['color']]
+    try:
+        color = crafting_dictionary['color']
+
+    except:
+        color = ""
+
+    return [f"{name} ({ctx.author.display_name}) has restored their crafting progress for a {crafting_dictionary['name']}", "\n".join(result_string), hammer_img, color]
 
 
 # Main program
@@ -440,4 +526,4 @@ output_list = main()
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
 -color "{{output_list[3]}}"
--footer "!craft restore | Updated 7/19/23 | ShadowsStride"
+-footer "!craft restore | Updated 7/21/23 | ShadowsStride"

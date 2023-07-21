@@ -4,6 +4,12 @@ embed
 def main(ch = character()):
 
 
+    # Image urls
+    error_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/error.png"
+    fail_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/fail.png"
+    hammer_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/hammer.png"
+    main_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/image.png"
+
     if ch.cc_exists('Crafting: Successes') and ch.cc_exists('Crafting: Failures'):
         crafting_dictionary = load_json(ch.get_cvar('crafting_dict'))
 
@@ -32,16 +38,16 @@ def main(ch = character()):
         if failure_counter.value == failure_counter.max:
             result_string.append("")
             result_string.append(f"Maximum failures reached for a {crafting_dictionary['name']}! Please run `!craft clear` as you have ruined your materials.")
-            img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/fail.png"
+            img_url = fail_img
 
         # If success counter at max
         elif success_counter.value == success_counter.max:
             result_string.append("")
             result_string.append(f"You have finished crafting a {crafting_dictionary['name']}! Please run `!craft clear` as you have finished your item.")
-            img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/hammer.png"
+            img_url = hammer_img
 
         else:
-            img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/image.png"
+            img_url = main_img
 
         # If bypass was used
         if crafting_dictionary['bypass']:
@@ -70,7 +76,7 @@ def main(ch = character()):
         return [f'({ctx.author.display_name}) {name} checks their Crafting progress with their {crafting_dictionary["name"]}', "\n".join(result_string), img_url, color]
 
     else:
-        return [f'({ctx.author.display_name}) {name} checks their Crafting progress', 'No crafting project in-progress', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", '#CC0202']
+        return [f'({ctx.author.display_name}) {name} checks their Crafting progress', 'No crafting project in-progress', error_img, '#CC0202']
         
 
 # Main program
@@ -82,4 +88,4 @@ output_list = main()
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
 -color "{{output_list[3]}}"
--footer "!craft log | Updated 7/19/23 | ShadowsStride"
+-footer "!craft log | Updated 7/21/23 | ShadowsStride"

@@ -114,10 +114,10 @@ def check_channel(crafting_dictionary, settings_dict: dict = grab_settings_dict(
 
                 # Inherit rules are on
                 else:
-                    return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.parent.name} is not a valid channel nor is {ctx.channel.name} a valid thread to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", crafting_dictionary, "#CC0202"]
+                    return ["Error", f'{ctx.channel.parent.name} is not a valid channel nor is {ctx.channel.name} a valid thread to run this alias (please consult server staff for more details)']
             
             except:
-                return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.name} is not a valid channel to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", crafting_dictionary, "#CC0202"]
+                return ['Error', f'{ctx.channel.name} is not a valid channel to run this alias (please consult server staff for more details)']
 
 
 def add_funds(cost: str, ch: character) -> bool:
@@ -170,7 +170,11 @@ def main(ch = character()) -> list[str]:
         (list[str]): Result    
     """
 
-
+    # Image urls
+    coin_bag_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/coin_bag.png"
+    error_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/error.png"
+    fail_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/fail.png"
+    hammer_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/hammer.png"
 
     # If the crafting CCs exist
     if ch.cc_exists('Crafting: Successes') and ch.cc_exists('Crafting: Failures'):
@@ -182,15 +186,15 @@ def main(ch = character()) -> list[str]:
 
         result_list = check_channel(crafting_dictionary, settings_dictionary)
 
-        if result_list[0] == 'Success':
+        if result_list[0] != 'Error':
             pass
 
         else:
-            return result_list
+            return [f'{ctx.author.display_name} has encountered an error', result_list[1], error_img, "#CC0202"]
 
     # If the crafting CCs don't exist
     else:
-        return [f'{ctx.author.display_name} has encountered an error', "Crafting CCs don't exist", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+        return [f'{ctx.author.display_name} has encountered an error', "Crafting CCs don't exist", error_img, "#CC0202"]
 
     # If pro_rate_refund is true and that counters have not reached their limts
     if settings_dictionary['pro_rate_refund'] and (success_counter.value != success_counter.max) and (failure_counter.value != failure_counter.max) and crafting_dictionary['crafting_cost'] != 0:
@@ -256,7 +260,7 @@ def main(ch = character()) -> list[str]:
                     add_funds(f"-{good_dict[money]}", ch)
 
                 else:
-                    return [f'{ctx.author.display_name} has encountered an error', f"Prorated refund was not added to your coin purse properly", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+                    return [f'{ctx.author.display_name} has encountered an error', f"Prorated refund was not added to your coin purse properly", error_img, "#CC0202"]
                 
 
     # If pro_rate_refund is false or the counters have reached their limits   
@@ -300,43 +304,45 @@ def main(ch = character()) -> list[str]:
     ch.delete_cc('Crafting: Successes')
     ch.delete_cc('Crafting: Failures')
 
-    
+    ch.set_cvar('crafting_dict', dump_json(crafting_dictionary))
+
+    try:
+        color = settings_dictionary[crafting_dictionary['backup']['svar'][1]][crafting_dictionary['backup']['svar'][2]][-1]
+
+    except:
+        color = ""
+
     # If money was given back
     if money_back > 0:
-        return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", f"Prorated refund: {' '.join(money_list)}", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/image.png", crafting_dictionary, "#FFD700"]
+        return [f"{name} ({ctx.author.display_name}) cleared their crafting progress for a {crafting_dictionary['name']}", f"Prorated refund: {' '.join(money_list)}", coin_bag_img, color]
 
     else:
         # Successfully finished the item
         if crafting_dictionary['backup']['success_cc'][0] == crafting_dictionary['backup']['success_cc'][1]:
-           return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", "", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/hammer.png", crafting_dictionary, "#ffffff"]
+           return [f"{name} ({ctx.author.display_name}) cleared their crafting progress for a {crafting_dictionary['name']}", "", hammer_img, color]
 
         # Max failures
         elif crafting_dictionary['backup']['failure_cc'][0] == crafting_dictionary['backup']['failure_cc'][1]:
-            return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", "", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/fail.png", crafting_dictionary, "#CC0202"]
+            return [f"{name} ({ctx.author.display_name}) cleared their crafting progress for a {crafting_dictionary['name']}", "", fail_img, color]
 
         # Quitting early
         else:
-            return [f"({ctx.author.display_name}) {name} cleared their crafting progress for a {crafting_dictionary['name']}", "", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/image.png", crafting_dictionary, "#CC0202"]
+            return [f"{name} ({ctx.author.display_name}) cleared their crafting progress for a {crafting_dictionary['name']}", "", fail_img, color]
     
-# Runs main program alias
+
+# Runs main program
 output_list = main()
 
 try:
-    character().set_cvar('crafting_dict', dump_json(output_list[3]))
+    output_list[3]
 
 except:
-    pass
-
-try:
-    output_list[4]
-
-except:
-    output_list.append("#CC0202")
+    output_list.append("")
 
 
 </drac2>
 -title "{{output_list[0]}}"
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
--color "{{output_list[4]}}"
--footer "!craft clear | Updated 7/18/2023 | ShadowsStride"
+-color "{{output_list[3]}}"
+-footer "!craft clear | Updated 7/21/2023 | ShadowsStride"

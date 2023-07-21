@@ -58,15 +58,9 @@ else:
 # Random image
 img_name = randchoice(['coin_bag', 'error', 'fail', 'hammer', 'history', 'list'])
 
-hex_list = []
-
-for _ in range(0,6):
-    hex_list.append(randchoice(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G']))
-
 
 </drac2>
 -title "{{f"{ctx.author.display_name} needs help!"}}"
 -f "{{'\n'.join(result_string)}}"
--thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/{{img_name}}.png"
--color "#{{''.join(hex_list)}}"
--footer "!craft help # | Updated 7/19/23 | ShadowsStride"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/{{img_name}}.png"
+-footer "!craft help # | Updated 7/21/23 | ShadowsStride"

@@ -18,6 +18,10 @@ def main(ch = character()) -> list[str]:
         (list[str]): Result
     """
 
+    # Image urls
+    error_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/error.png"
+    history_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/history.png"
+
     # Tries to check if the crafting dictionary exists
     crafting_test = ch.get_cvar('crafting_dict', default="None")
 
@@ -73,11 +77,11 @@ def main(ch = character()) -> list[str]:
         except:
             color = ""
 
-        return [f'({ctx.author.display_name}) {name} checks their crafting history', result_string, "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/history.png", color]
+        return [f'({ctx.author.display_name}) {name} checks their crafting history', result_string, history_img, color]
 
     # If the crafting dictionary does not exist
     else:
-        return [f'{ctx.author.display_name} has encountered an error', 'Crafting cvar not found', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+        return [f'{ctx.author.display_name} has encountered an error', 'Crafting cvar not found', error_img, "#CC0202"]
 
 
 # Main program
@@ -89,4 +93,4 @@ output_list = main()
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
 -color "{{output_list[3]}}"
--footer "!craft history | Updated 7/19/2023 | ShadowsStride"
+-footer "!craft history | Updated 7/21/2023 | ShadowsStride"

@@ -103,10 +103,10 @@ def check_channel(settings_dict: dict = grab_settings_dict()) -> list[str]:
 
                 # Inherit rules are on
                 else:
-                    return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.parent.name} is not a valid channel nor is {ctx.channel.name} a valid thread to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+                    return ['Error', f'{ctx.channel.parent.name} is not a valid channel nor is {ctx.channel.name} a valid thread to run this alias (please consult server staff for more details)']
             
             except:
-                return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.name} is not a valid channel to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+                return ['Error', f'{ctx.channel.name} is not a valid channel to run this alias (please consult server staff for more details)']
 
 
 def main(input_list: list[str], ch = character()) -> list[str]:
@@ -120,16 +120,23 @@ def main(input_list: list[str], ch = character()) -> list[str]:
     Return:
         (list[str]): Result    
     """
+
+    # Image urls
+    error_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/error.png"
+    fail_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/fail.png"
+    hammer_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/hammer.png"
+    main_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/image.png"
+
     # If there are two or more arguments
     if len(input_list) > 1:
 
         result_list = check_channel()
 
-        if result_list[0] == "Success":
+        if result_list[0] != "Error":
             pass
 
         else:
-            return result_list
+            return [f'{ctx.author.display_name} has encountered an error', result_list[1], error_img]
 
         # Turns second argument into an integer
         try:
@@ -137,11 +144,11 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
         # If the second argument is actually a string
         except:
-            return [f'{ctx.author.display_name} has encountered an error', "Second argument is not an integer", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+            return [f'{ctx.author.display_name} has encountered an error', "Second argument is not an integer", error_img]
 
     # If there are not two or more arguments
     else:
-        return [f'{ctx.author.display_name} has encountered an error', "Expected two arguments", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+        return [f'{ctx.author.display_name} has encountered an error', "Expected two arguments", error_img]
 
     # If crafting CCs exist
     if ch.cc_exists('Crafting: Successes') and ch.cc_exists('Crafting: Failures'):
@@ -163,11 +170,11 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
         # Invalid input for first argument
         else:
-            return [f'{ctx.author.display_name} has encountered an error', "Invalid counter name entered. Valid names: Successes, Failures", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+            return [f'{ctx.author.display_name} has encountered an error', "Invalid counter name entered. Valid names: Successes, Failures", error_img]
 
     # Crafting CCs do not exist
     else:
-        return [f'{ctx.author.display_name} has encountered an error', "Crafting CCs do not exist", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"]
+        return [f'{ctx.author.display_name} has encountered an error', "Crafting CCs do not exist", error_img]
 
     # Pulls counters
     success_counter = ch.cc('Crafting: Successes')
@@ -199,18 +206,24 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
         # If a positive change
         if input_list[1] > 0:
-            return [f'({ctx.author.display_name}) {name} has increased their CC on their Crafting successes', '\n'.join(result_string), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/hammer.png"]
+            return [f'({ctx.author.display_name}) {name} has increased their CC on their Crafting successes', '\n'.join(result_string), hammer_img]
 
         # If a negative change
         elif input_list[1] < 0: 
-            return [f'({ctx.author.display_name}) {name} has decreased their CC on their Crafting successes', '\n'.join(result_string), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/fail.png"]
+            return [f'({ctx.author.display_name}) {name} has decreased their CC on their Crafting successes', '\n'.join(result_string), fail_img]
 
         # If no change
         else:
             result_string.append("")
             result_string.append("*pssssst* Run `!craft log` next time if you are going to not alter any CC")
 
-            return [f'({ctx.author.display_name}) {name} has checked on their CC on their Crafting progress', '\n'.join(result_string), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/fail.png"]
+            if image != "":
+                img_url = image
+
+            else:
+                img_url = main_img
+
+            return [f'({ctx.author.display_name}) {name} has checked on their CC on their Crafting progress', '\n'.join(result_string), img_url]
 
     # If failures was altered
     else:
@@ -231,18 +244,18 @@ def main(input_list: list[str], ch = character()) -> list[str]:
     
         # If a negative change
         if input_list[1] < 0:
-            return [f'({ctx.author.display_name}) {name} has decreased their CC on their Crafting failures', '\n'.join(result_string), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/hammer.png"]
+            return [f'({ctx.author.display_name}) {name} has decreased their CC on their Crafting failures', '\n'.join(result_string), hammer_img]
 
         # If a positive change
         elif input_list[1] > 0: 
-            return [f'({ctx.author.display_name}) {name} has increased their CC on their Crafting failures', '\n'.join(result_string), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/fail.png"]
+            return [f'({ctx.author.display_name}) {name} has increased their CC on their Crafting failures', '\n'.join(result_string), fail_img]
 
         # If no change
         else:
             result_string.append("")
             result_string.append("*pssssst* Run `!craft log` next time if you are going to not alter any CC")
 
-            return [f'({ctx.author.display_name}) {name} has checked on their CC on their Crafting progress', '\n'.join(result_string), "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/fail.png"]
+            return [f'({ctx.author.display_name}) {name} has checked on their CC on their Crafting progress', '\n'.join(result_string), fail_img]
 
 
 # Runs main program
@@ -259,4 +272,4 @@ except:
 -title "{{output_list[0]}}"
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
--footer "!craft edit [success|failure] [#] | Updated 7/10/2023 | ShadowsStride"
+-footer "!craft edit [success/failure] [#] | Updated 7/21/2023 | ShadowsStride"
