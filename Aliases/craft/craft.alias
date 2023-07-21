@@ -958,10 +958,10 @@ def check_channel(settings_dictionary: dict = grab_settings_dictionary()) -> lis
 
                 # Inherit rules are on
                 else:
-                    return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.parent.name} is not a valid channel nor is {ctx.channel.name} a valid thread to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+                    return ['Error', f'{ctx.channel.parent.name} is not a valid channel nor is {ctx.channel.name} a valid thread to run this alias (please consult server staff for more details)']
             
             except:
-                return [f'{ctx.author.display_name} has encountered an error', f'{ctx.channel.name} is not a valid channel to run this alias (please consult server staff for more details)', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+                return ['Error', f'{ctx.channel.name} is not a valid channel to run this alias (please consult server staff for more details)']
 
 
 def main(input_list: list[str], ch = character()) -> list[str]:
@@ -976,20 +976,34 @@ def main(input_list: list[str], ch = character()) -> list[str]:
         (list[str]): Result 
     """
 
+    # Grabs settings dictionary
+    settings_dictionary = grab_settings_dictionary()
+
+    # Image urls
+    error_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/error.png"
+    fail_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/fail.png"
+    hammer_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/hammer.png"
+    main_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/image.png"
+
     # Checks to see if both crafting CCs exist
     if ch.cc_exists("Crafting: Successes") and ch.cc_exists("Crafting: Failures"):
         success_counter = ch.cc("Crafting: Successes")
         failure_counter = ch.cc("Crafting: Failures")
+        crafting_dictionary = load_json(ch.get_cvar('crafting_dict'))
         
         # Checks to see if the failure counter is at max
         if failure_counter.value == failure_counter.max:
-            crafting_dictionary = load_json(ch.get_cvar('crafting_dict'))
-            return [f"{ctx.author.display_name} has encountered an error", f"Maximum failures already reached for a {crafting_dictionary['name']}! Please run `!craft clear` as you have already ruined your materials.", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png"] 
+            return [f"{ctx.author.display_name} has encountered an error", f"Maximum failures already reached for a {crafting_dictionary['name']}! Please run `!craft clear` as you have already ruined your materials.", fail_img, "#CC0202"] 
 
         # Checks to see if the success counter is at max
         elif success_counter.value == success_counter.max:
-            crafting_dictionary = load_json(ch.get_cvar('crafting_dict'))
-            return [f"{ctx.author.display_name} has encountered an error", f"You have already finished crafting a {crafting_dictionary['name']}! Please run `!craft clear` as you have already finished your item.", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/hammer.png"]
+            try:
+                color = settings_dictionary[crafting_dictionary['category']][crafting_dictionary['type']][-1]
+
+            except:
+                color = ""
+
+            return [f"{ctx.author.display_name} has encountered an error", f"You have already finished crafting a {crafting_dictionary['name']}! Please run `!craft clear` as you have already finished your item.", hammer_img, color]
 
         else:
             pass
@@ -997,19 +1011,16 @@ def main(input_list: list[str], ch = character()) -> list[str]:
     else:
         pass
 
-    # Grabs settings dictionary
-    settings_dictionary = grab_settings_dictionary()
-
     # Checks channel
     result_list = check_channel(settings_dictionary)
 
     # No errors checking channel
-    if result_list[0] == "Success":
+    if result_list[0] != "Error":
         pass
 
     # Incorrect channel
     else:
-        return result_list
+        return [f"{ctx.author.display_name} has encountered an error", result_list[1], error_img, "#CC0202"]
 
     # If length if inputs is not 0
     if len(input_list) != 0:
@@ -1033,7 +1044,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
                 pass
 
             else:
-                return [f'{ctx.author.display_name} has encountered an error', "Cost mod cannot be 0", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+                return [f'{ctx.author.display_name} has encountered an error', "Cost mod cannot be 0", error_img, "#CC0202"]
 
         else:
             pass
@@ -1046,10 +1057,10 @@ def main(input_list: list[str], ch = character()) -> list[str]:
                     pass
 
                 else:
-                    return [f'{ctx.author.display_name} has encountered an error', "If you are wanting to start a new crafting session, please input name, category, and type/cost.", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+                    return [f'{ctx.author.display_name} has encountered an error', "If you are wanting to start a new crafting session, please input name, category, and type/cost.", error_img, "#CC0202"]
             
             except:
-                return [f'{ctx.author.display_name} has encountered an error', "If you are wanting to start a new crafting session, please input name, category, and type/cost.", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+                return [f'{ctx.author.display_name} has encountered an error', "If you are wanting to start a new crafting session, please input name, category, and type/cost.", error_img, "#CC0202"]
 
             # Crafting CCs not active
             if not (ch.cc_exists("Crafting: Successes") and ch.cc_exists("Crafting: Failures")):
@@ -1058,7 +1069,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
                     result_list = find_rarity_type_settings(input_list[1], input_list[2], settings_dictionary)
 
                 except "IndexError":
-                    return [f'{ctx.author.display_name} has encountered an error', "If you are wanting to start a new crafting session, please input name, category, and type/cost.", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+                    return [f'{ctx.author.display_name} has encountered an error', "If you are wanting to start a new crafting session, please input name, category, and type/cost.", error_img, "#CC0202"]
 
                 # No errors getting rarity and type settings
                 if result_list[0] != "Error":
@@ -1069,11 +1080,11 @@ def main(input_list: list[str], ch = character()) -> list[str]:
                     input_list[2] = result_list[2]
 
                 else:
-                    return [f'{ctx.author.display_name} has encountered an error', result_list[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+                    return [f'{ctx.author.display_name} has encountered an error', result_list[1], error_img, "#CC0202"]
 
             # Crafting CCs are active
             else:
-                return [f'{ctx.author.display_name} has encountered an error', "Crafting CCs already exist", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+                return [f'{ctx.author.display_name} has encountered an error', "Crafting CCs already exist", error_img, "#CC0202"]
 
             # Grabs cost of item
             try:
@@ -1088,7 +1099,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
                     cost[1] = cost[1] / 2
 
                 else:
-                    return [f'{ctx.author.display_name} has encountered an error', cost[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+                    return [f'{ctx.author.display_name} has encountered an error', cost[1], error_img, "#CC0202"]
 
                 for key in settings_dictionary[input_list[1]]:
                     if cost[1] * 2 >= float(key):
@@ -1102,14 +1113,14 @@ def main(input_list: list[str], ch = character()) -> list[str]:
                     cost[1] = cost[1] / 2
 
                 else:
-                    return [f'{ctx.author.display_name} has encountered an error', cost[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+                    return [f'{ctx.author.display_name} has encountered an error', cost[1], error_img, "#CC0202"]
  
             # If they are of the proper level (or skipped that)
             if (ch.levels.total_level >= settings_dictionary[input_list[1]][input_list[2]][0]) or ignore_restrictions:
                 pass
                 
             else:
-                return [f'{ctx.author.display_name} has encountered an error', f'You need to be at least level {settings_dictionary[input_list[1]][input_list[2]][0]}', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+                return [f'{ctx.author.display_name} has encountered an error', f'You need to be at least level {settings_dictionary[input_list[1]][input_list[2]][0]}', error_img, "#CC0202"]
 
             # See if there is a crafting dictionary already
             crafting_test = ch.get_cvar('crafting_dict', default="None")
@@ -1124,7 +1135,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
                 # Cooldown is active and not skipped
                 else:
-                    return [f'{ctx.author.display_name} has encountered an error', f"You cannot have a crafting session until <t:{crafting_dictionary['time'] + crafting_dictionary['cooldown']}:f>", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+                    return [f'{ctx.author.display_name} has encountered an error', f"You cannot have a crafting session until <t:{crafting_dictionary['time'] + crafting_dictionary['cooldown']}:f>", error_img, "#CC0202"]
 
             # If crafting dictionary doesn't exist
             else:
@@ -1187,7 +1198,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
                 for money in good_dict.keys():
                     withdraw_funds(good_dict[money], ch)
 
-                return [f'{ctx.author.display_name} has encountered an error', f"Problems pulling money from coin purse, do you have enough funds?", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+                return [f'{ctx.author.display_name} has encountered an error', f"Problems pulling money from coin purse, do you have enough funds?", error_img, "#CC0202"]
              
             crafting_dictionary['first'] = True
 
@@ -1212,7 +1223,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
             # Crafting CC's don't exist
             else:
-                return [f'{ctx.author.display_name} has encountered an error', 'Crafting CCs not found', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+                return [f'{ctx.author.display_name} has encountered an error', 'Crafting CCs not found', error_img, "#CC0202"]
 
             # If not active cooldown (or skipped)
             if (settings_dictionary[crafting_dictionary['category']][crafting_dictionary['type']][6] + crafting_dictionary['time'] <= time()) or ignore_restrictions:
@@ -1220,7 +1231,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
             # Cooldown active and no skip
             else:
-                return [f'{ctx.author.display_name} has encountered an error', f"You cannot have a crafting session until <t:{crafting_dictionary['time'] + settings_dictionary[crafting_dictionary['category']][crafting_dictionary['type']][6]}:f>", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+                return [f'{ctx.author.display_name} has encountered an error', f"You cannot have a crafting session until <t:{crafting_dictionary['time'] + settings_dictionary[crafting_dictionary['category']][crafting_dictionary['type']][6]}:f>", error_img, "#CC0202"]
 
     else:
         settings_dictionary = grab_settings_dictionary()
@@ -1231,7 +1242,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
         # Crafting CC's don't exist
         else:
-            return [f'{ctx.author.display_name} has encountered an error', 'Crafting CCs not found', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+            return [f'{ctx.author.display_name} has encountered an error', 'Crafting CCs not found', error_img, "#CC0202"]
 
         # If not active cooldown
         if (settings_dictionary[crafting_dictionary['category']][crafting_dictionary['type']][6] + crafting_dictionary['time'] <= time()):
@@ -1239,7 +1250,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
         # Cooldown active
         else:
-            return [f'{ctx.author.display_name} has encountered an error', f"You cannot have a crafting session until <t:{crafting_dictionary['time'] + settings_dictionary[crafting_dictionary['category']][crafting_dictionary['type']][6]}:f>", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+            return [f'{ctx.author.display_name} has encountered an error', f"You cannot have a crafting session until <t:{crafting_dictionary['time'] + settings_dictionary[crafting_dictionary['category']][crafting_dictionary['type']][6]}:f>", error_img, "#CC0202"]
 
     # If there were no errors
     if result_list[0] != "Error":
@@ -1253,7 +1264,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
             failure_counter = cc_test[2]
 
         else:
-            return [f'{ctx.author.display_name} has encountered an error', cc_test[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+            return [f'{ctx.author.display_name} has encountered an error', cc_test[1], error_img, "#CC0202"]
 
         result_string = []
 
@@ -1333,7 +1344,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
     # If there was an error
     else:
-        return [f'{ctx.author.display_name} has encountered an error', result_list[1], "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/error.png", "#CC0202"]
+        return [f'{ctx.author.display_name} has encountered an error', result_list[1], error_img, "#CC0202"]
 
     # If there is a character picture
     if image != "":
@@ -1341,7 +1352,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
     # If there is not a character picture
     else:
-        img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/image.png"
+        img_url = main_img
 
     # Tries to give it the color
     try:
