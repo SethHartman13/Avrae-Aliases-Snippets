@@ -87,14 +87,29 @@ def to_celsius(degrees: int) -> float:
     return round((degrees - 32) * (5/9), 1)
 
 
-def get_season(season:str, dict_keys:list[str]) -> list[str]:
+def get_season(season:str, dict_keys: list[str], location_name: str) -> list[str]:
+    """
+    Searches for the season
+
+    Args:
+        season (str): Season to grab
+        dict_keys (list[str]): List of valid seasons
+        location_name (str): Name of location
+
+    Return:
+        (list[str]): Result    
+    """
 
     key_result = search_key(season, dict_keys)
 
+    # If there is at least one match
     if key_result != 'None':
-        if len(key_result) == 0:
+
+        # Exactly one match
+        if len(key_result) == 1:
             return ['Success', key_result[0]]
 
+        # If there are more than one match
         else:
             for key in key_result:
                 if season.lower() == key.lower():
@@ -103,12 +118,26 @@ def get_season(season:str, dict_keys:list[str]) -> list[str]:
                 else:
                     pass
 
-            return ['Error', f'Season not found!']
+            key_result.insert(0, f"**Multiple Seasons Found For {location_name}:**")
+            return ['Error', "\n".join(key_result)]
 
+    # No matches
     else:
-        return ['Error', f'Season not found!']
+        return ['Error', f'Season not found for {location_name}!']
+
 
 def get_temperature(temp_dice: str, temp_base: int, location_name: str) -> list[str]:
+    """
+    Grabs and rolls temperature
+    
+    Args:
+        temp_dice (str): String to roll the dice
+        temp_base (int): Base temperature
+        location_name (str): Name of location
+
+    Return:
+        (list[str]): Result
+    """
 
     try:
         results = roll_dice(temp_dice, temp_base)
@@ -120,11 +149,23 @@ def get_temperature(temp_dice: str, temp_base: int, location_name: str) -> list[
 
 
 def get_water(water_chance_dice: str, water_roll_thresholds: dict, location_name: str, temp: int) -> list[str]:
+    """
+    Rolls moisture conditions
+    
+    Args:
+        water_chance_dice (str): String to roll the dice
+        water_roll_thresholds (dict): Dictionary containing thresholds
+        location_name (str): Name of location
+        temp (int): Temperature
+
+    Return:
+        (list[str]): Result
+    """
 
     try: 
-
         results = roll_dice(water_chance_dice)
 
+        # Iterates through water thresholds
         for key in water_roll_thresholds.keys():
             if results[1] >= int(key):
                 water_result = water_roll_thresholds[key]
@@ -133,22 +174,27 @@ def get_water(water_chance_dice: str, water_roll_thresholds: dict, location_name
                 pass
         lower_water_result = water_result.lower()
 
+        # If heavy moisture
         if lower_water_result == "heavy":
             water_rate = randint(5, 20) / 10
             disadv = "Disadvantage on Wisdom (Perception) checks"
 
+        # Heavy fog
         elif lower_water_result == 'heavy fog':
             water_rate = 0
             disadv = "Disadvantage on sight-based Wisdom (Perception) checks"
 
+        # light moisture
         elif lower_water_result == 'light':
             water_rate = randint(1, 3) / 10
             disadv = "None"
 
+        # No moisture
         else:
             water_rate = 0
             disadv = "None"
 
+        # Determines ice or rain
         if lower_water_result == 'light' or lower_water_result == 'heavy':
             if temp > 32:
                 water_result = f"{results[0]}: `{water_result} Rain`  {water_rate} in/hr ({round(water_rate * 25.4,1)} mm/hr)"
@@ -156,26 +202,42 @@ def get_water(water_chance_dice: str, water_roll_thresholds: dict, location_name
             else:
                 water_result = f"{results[0]}: `{water_result} Snow`  {water_rate} in/hr ({round(water_rate * 25.4,1)} mm/hr)"
 
+        # No moisture
         else:
             water_result = f"{results[0]}: `{water_result}`"
 
+        # Adds disadvantage the joins
         if disadv != "None":
             water_result = "\n".join(["**Moisture:**", water_result, f"**{disadv}**", ""])
 
+        # Joins answer
         else:
             water_result = "\n".join(["**Moisture:**", water_result, ""])
 
         return ['Success', water_result]
 
+    # If there was an error
     except:
         return ['Error', f'Problems rolling water for {location_name}']
 
 
 def get_wind(wind_chance_dice: str, wind_roll_thresholds: dict, location_name: str) -> list[str]:
+    """
+    Rolls wind conditions
+    
+    Args:
+        wind_chance_dice (str): String to roll the dice
+        wind_roll_thresholds (dict): Dictionary containing thresholds
+        location_name (str): Name of location
+
+    Return:
+        (list[str]): Result
+    """
 
     try: 
         results = roll_dice(wind_chance_dice)
 
+        # Iterates through wind thresholds
         for key in wind_roll_thresholds.keys():
             if results[1] >= int(key):
                 wind_result = wind_roll_thresholds[key]
@@ -207,19 +269,32 @@ def get_wind(wind_chance_dice: str, wind_roll_thresholds: dict, location_name: s
             wind_result = f"{results[0]}: `{wind_result}`"
             disadv = "None"
 
+        # Add disadvantage, then join answer
         if disadv != "None":
             wind_result = '\n'.join(["**Wind:**", wind_result, f"**{disadv}**", ""])
 
+        # Join answer
         else:
             wind_result = '\n'.join(["**Wind:**", wind_result, ""])
 
         return ["Success", wind_result]
 
+    # If there was an error
     except:
         return ["Error", f'Problems rolling wind for {location_name}']
 
 
 def get_weather(season: str) -> list[str]:
+    """
+    Main driver function to grab weather conditions
+    
+    Args:
+        season: Season name
+
+    Return:
+        (list[str]): Result
+    """
+
     result_list = []
 
     weather_settings_test = get_svar("weather_location_list", default="None")
@@ -233,6 +308,7 @@ def get_weather(season: str) -> list[str]:
     for location in weather_settings_dict.values():
         location_test = get_svar(location, default="None")
 
+        # If it finds the locations svar
         if location_test != "None":
             location_dict = load_json(location_test)
 
@@ -242,7 +318,7 @@ def get_weather(season: str) -> list[str]:
             except:
                 return ['Error', f'svar `{location}` is missing a name property']
 
-            results = get_season(season, location_dict.keys())
+            results = get_season(season, location_dict.keys(), location_dict['name'])
 
             # Grabs season settings
             if results[0] != 'Error':
@@ -289,7 +365,8 @@ def get_weather(season: str) -> list[str]:
                 return results3
 
             result_list.append("")
-            
+        
+        # If it finds the location svar
         else:
             return ['Error', f'svar `{location}` does not exist']
 
@@ -297,41 +374,66 @@ def get_weather(season: str) -> list[str]:
 
 
 def main(input_list: list[str]) -> list[str]:
+    """
+    Main program function
+
+    Args:
+        input_list (list[str]): Input list
+
+    Return:
+        (list[str]): Result
+    """
+
+    # Defualt image
     img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/weather/image.png"
+
+    # If there is at least one input
     if len(input_list) >= 1:
+
+        # Grabs results
         results = get_weather(input_list[0])
 
-        if results[0] != "Error":
+        # If there was not an error
+        if results[0] != "Error"
+
             lower_input = input_list[0].lower()
+
+            # If season is fall/autumn
             if lower_input in "fall" or lower_input in "autumn":
                 color = randchoice(['#3c1518', '#69140e', '#a44200', '#d58936', '#f2f3ae'])
                 img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/weather/fall.png"
 
+            # If season is summer
             elif lower_input in "summer":
                 color = randchoice(["#e70c23", "#f1c0d6", "#fad808", "#e6ebf3", "#366290"])
                 img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/weather/summer.png"
 
+            # If season is spring
             elif lower_input in "spring":
                 color = randchoice(["#0C6301", "#60AF02", "#F8E27F", "#FEC900", "#850D52"])
                 img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/weather/spring.png"
 
+            # If season is winter
             elif lower_input in "winter":
                 color = randchoice(["#04b4fc", "#61cff8", "#165c96", "#56789f", "#8db2cd"])
                 img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/weather/winter.png"
 
+            # Other
             else:
                 color = ""
 
             return [f"The daily weather report by {ctx.author.display_name}", results[1], color, img_url]
 
+        # If there was an error
         else:
             return [f"{ctx.author.display_name} encountered an error running the daily weather report", results[1], "#CC0202", img_url]
 
+    # If there was not at least one input
     else:
         return [f"{ctx.author.display_name} encountered an error running the daily weather report", "Expected 1 argument", "#CC0202", img_url]
 
 
-# Calling main function
+# Main program function
 output = main(&ARGS&)
 
 
