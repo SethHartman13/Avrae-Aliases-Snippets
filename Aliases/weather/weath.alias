@@ -6,16 +6,9 @@ embed
 # * available at https://creativecommons.org/licenses/by/4.0/legalcode.
 # *******************************************************
 
-# Grabs cvar
-ch = character()
-
-# Sets up output
-title = f"{name} needs help!"
-string = f"Please run `!help weath` instead"
 
 </drac2>
-
--title "{{title}}"
--f "{{string}}"
+-title "{{ctx.author.display_name}} has encountered an error"
+-f "`!weath [season]` has been depreciated. Please use `!weather [season]` instead"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/weather/image.png"
--footer "!weather help | Updated 7/22/23 | ShadowsStride"
+-color "#CC0202"

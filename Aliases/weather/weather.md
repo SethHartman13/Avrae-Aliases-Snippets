@@ -8,7 +8,7 @@ Weather alias that handles weather with regions and locations.
 - None
 
 ## Help:
-`!weath [season]`
+`!weather [season]`
 
 In order to run this properly, you need to do the following:
 - Create a server variable for each location/region (i.e. Falkland Islands)
@@ -98,8 +98,6 @@ You will need to run `!svar weather_location_list` to copy over the previous set
 
 6/27/2023 - Optimization of dictionary searching code. UI update. Removal of wind/water weather validation, any weather types that do not fit the ones listed in [Location Server Variable](#location-server-variable).
 
-## License Notice
+7/22/2023 - Weath has been depreciated, use `!weather` instead
 
-This work includes material taken from the System Reference Document 5.1 (“SRD 5.1”) by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode.
-
-This work includes material written by Seth Hartman (aka ShadowsStride) and is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+7/22/2023 - Added custom colors and images for IRL seasons

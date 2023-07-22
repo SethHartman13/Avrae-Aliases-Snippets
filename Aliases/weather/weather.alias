@@ -297,30 +297,47 @@ def get_weather(season: str) -> list[str]:
 
 
 def main(input_list: list[str]) -> list[str]:
-    
+    img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/weather/image.png"
     if len(input_list) >= 1:
         results = get_weather(input_list[0])
 
         if results[0] != "Error":
-            return [f"The daily weather report by {ctx.author.display_name}", results[1]]
+            lower_input = input_list[0].lower()
+            if lower_input in "fall" or lower_input in "autumn":
+                color = randchoice(['#3c1518', '#69140e', '#a44200', '#d58936', '#f2f3ae'])
+                img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/weather/fall.png"
+
+            elif lower_input in "summer":
+                color = randchoice(["#e70c23", "#f1c0d6", "#fad808", "#e6ebf3", "#366290"])
+                img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/weather/summer.png"
+
+            elif lower_input in "spring":
+                color = randchoice(["#0C6301", "#60AF02", "#F8E27F", "#FEC900", "#850D52"])
+                img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/weather/spring.png"
+
+            elif lower_input in "winter":
+                color = randchoice(["#04b4fc", "#61cff8", "#165c96", "#56789f", "#8db2cd"])
+                img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/weather/winter.png"
+
+            else:
+                color = ""
+
+            return [f"The daily weather report by {ctx.author.display_name}", results[1], color, img_url]
 
         else:
-            return [f"{ctx.author.display_name} encountered an error running the daily weather report", results[1]]
+            return [f"{ctx.author.display_name} encountered an error running the daily weather report", results[1], "#CC0202", img_url]
 
     else:
-        return [f"{ctx.author.display_name} encountered an error running the daily weather report", "Expected 1 argument"]
+        return [f"{ctx.author.display_name} encountered an error running the daily weather report", "Expected 1 argument", "#CC0202", img_url]
 
 
 # Calling main function
 output = main(&ARGS&)
 
-# Prepares outputs for embed insert
-title = output[0]
-result_string = output[1]
 
 </drac2>
-
--title "{{title}}"
--f "{{result_string}}"
--thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/weather/image.png"
--footer "!weath [season] | Updated 7/8/2023 | ShadowsStride"
+-title "{{output[0]}}"
+-f "{{output[1]}}"
+-color "{{output[2]}}"
+-thumb "{{output[3]}}"
+-footer "!weather [season] | Updated 7/22/2023 | ShadowsStride"
