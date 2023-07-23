@@ -1,0 +1,109 @@
+embed
+<drac2>
+
+
+def search_key(query: str, key_list: list[str]) -> list[str]|str:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
+
+    # Creates list to store matches
+    key_results = []
+
+    # Checks each item if a match occurs
+    for key in key_list:
+
+        # If matches
+        if query.lower() in key.lower():
+            key_results.append(key)
+
+        else:
+            pass
+
+    # Finds at least 1 match
+    if len(key_results) > 0:
+        return key_results
+
+    # If it finds no matches
+    else:
+        return 'None'
+
+
+def grab_random_image(category: str = "None") -> str:
+
+    random_picture_dict = load_json(get_gvar("cb02c3ac-9ce0-4f00-b2a8-f7653eb5b9fa"))
+
+
+    if category != "None":
+        result_key = search_key(category, random_picture_dict.keys())
+        
+
+        if result_key != "None":
+
+            if len(result_key) == 1:
+                random_picture = False
+                category = result_key[0]
+
+            else:
+                for key in result_key:
+                    if category.lower() != key.lower():
+                        pass
+
+                    else:
+                        random_picture = False
+                        category = key
+
+                if category not in result_key:
+                    random_picture = True
+
+                else:
+                    pass
+
+        else:
+            random_picture = True
+
+    else:
+        random_picture = True
+
+
+    if random_picture:
+        category = randchoice(random_picture_dict.keys())
+
+        return 'https://'
+
+
+
+def main(input_list: list[str]) -> list[str]:
+
+
+    if len(input_list) > 1:
+
+
+
+    # If no url/category was given
+    elif len(input_list) > 0:
+
+
+
+    else:
+        return [f'{ctx.author.display_name} has encountered an error', 'Expected at least 1 argument', error_img, "#CC0202"]
+
+
+
+    
+
+
+
+
+
+
+
+
+</drac2>
