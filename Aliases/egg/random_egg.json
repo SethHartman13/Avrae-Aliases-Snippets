@@ -1,0 +1,5 @@
+{
+    "metal": ["metal1", "metal2", "metal3", "metal4"],
+    "glass": ["glass1", "glass2", "glass3", "glass4"],
+    "canvas": ["canvas1", "canvas2"]
+}
