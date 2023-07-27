@@ -155,7 +155,7 @@ def calc_time(time:int) -> str:
     # Seconds
     if seconds > 0:
         if seconds != 1:
-            result_list.append(f"{seconds} second(s)")
+            result_list.append(f"{seconds} seconds")
         
         else:
             result_list.append(f"{seconds} second")
@@ -405,4 +405,4 @@ except:
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
 -color "{{output_list[3]}}"
--footer "!craft settings {{l}}item_category> | Updated 7/19/2023 | ShadowsStride"
+-footer "!craft settings {{l}}item_category> | Updated 7/27/2023 | ShadowsStride"
