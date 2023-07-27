@@ -36,74 +36,165 @@ def search_key(query: str, key_list: list[str]) -> list[str]|str:
         return 'None'
 
 
-def grab_random_image(category: str = "None") -> str:
+def capitalize_name(name: str) -> str:
+    """
+    Capitalizes name.
+    
+    Args:
+        name: Name to capitalize.
 
-    random_picture_dict = load_json(get_gvar("cb02c3ac-9ce0-4f00-b2a8-f7653eb5b9fa"))
+    Return:
+        (str): Capitalized name
+    """
+
+    # For multi-word names
+    name_list_temp = name.split(" ")
+    name_list = []
+
+    # Each word gets lowercased and first letter capitalized
+    for temp_name in name_list_temp:
+        name_list.append(temp_name.lower().capitalize())
+
+    return " ".join(name_list)
 
 
-    if category != "None":
-        result_key = search_key(category, random_picture_dict.keys())
-        
+def get_settings_dictionary() -> dict:
+    settings_test = get_svar("egg_settings", default="None")
 
-        if result_key != "None":
 
-            if len(result_key) == 1:
-                random_picture = False
-                category = result_key[0]
+    if settings_test != "None":
+        settings_dictionary = load_json(settings_test)
+        try:
+            settings_dictionary['maximum_value']
+        except:
+            settings_dictionary['maxmium_value'] = 50
+
+        try:
+            settings_dictionary['display_type']
+        except:
+            settings_dictionary['display_type'] = 'star'
+
+        try:
+            randchoice(settings_dictionary['random_eggs']) 
+        except:
+            gvar_dict = load_json(get_gvar("956ab92e-5bdc-4f80-a49e-0e803c1820e8"))
+            settings_dictionary['random_eggs'] = gvar_dict['random_eggs']        
+
+        return settings_dictionary
+
+    else:
+        return load_json(get_gvar("956ab92e-5bdc-4f80-a49e-0e803c1820e8"))
+
+
+def main(input_list: list[str], ch = character()) -> list[str]:
+    settings_dictionary = get_settings_dictionary()
+    img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/egg/images/broken.png"
+
+    # If at least one input was given
+    if len(input_list) > 0:
+
+        # Checks to see if the first input was a URL
+        url_split = input_list[0].split('http')
+
+        # If it wasn't a URL
+        if len(url_split) == 1:
+
+            # Ensures that the egg name is not named 'active_egg'
+            if input_list[0].lower(0 != 'active_egg'):
+                pass
 
             else:
-                for key in result_key:
-                    if category.lower() != key.lower():
-                        pass
+                return [f'{ctx.author.display_name} has encountered an error', 'You cannot name your egg "active_egg"', img_url, "#CC0202"]
 
-                    else:
-                        random_picture = False
-                        category = key
+            # Captializes name
+            input_list[0] = capitalize_name(input_list[0])
 
-                if category not in result_key:
-                    random_picture = True
+            # Tries to check url for second argument
+            try:
+                url_split = input_list[1].split('http')
 
+                # If it does find a URL
+                if len(url_split) > 1:
+                    img_url = input_list[1]
+
+                # If it doesn't find a URL
                 else:
+                    img_url = randchoice(settings_dictionary['random_eggs'])
+
+            # If there was no second argument
+            except:
+                img_url = randchoice(settings_dictionary['random_eggs'])
+
+        # If it was a URL
+        else:
+            [f'{ctx.author.display_name} has encountered an error', 'First argument cannot be a URL', img_url, "#CC0202"]
+
+    # If no arguments were given
+    else:
+        return [f'{ctx.author.display_name} has encountered an error', 'Expected at least 1 argument', img_url, "#CC0202"]
+
+    # Tries to grab egg_dict cvar
+    egg_test = ch.get_cvar('egg_dict', default='None')
+
+    # If the cvar exists
+    if egg_test != "":
+
+        # Load dictionary and check for existing egg
+        egg_dictionary = load_json(egg_test)
+        result_key = search_key(input_list[0], egg_dictionary.keys())
+
+        # If it doesn't find an egg
+        if result_key == "None":
+            egg_dictionary[input_list[0]] = img_url
+            egg_dictionary['active_egg'] = input_list[0]
+
+        # If it finds at least 1 egg
+        else:
+            for key in result_key:
+                if key.lower() != input_list[0].lower():
                     pass
 
-        else:
-            random_picture = True
+                else:
 
+                    # Finds exact match
+                    return [f'{ctx.author.display_name} has encountered an error', 'That egg name already exists', "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/egg/images/broken.png", "#CC0202"]
+
+            egg_dictionary[input_list[0]] = img_url
+            egg_dictionary['active_egg'] = input_list[0]
+
+    # If cvar does not exist
     else:
-        random_picture = True
+        egg_dictionary = dict()
+        egg_dictionary[input_list[0]] = img_url
+        egg_dictionary['active_egg'] = input_list[0]
 
-
-    if random_picture:
-        category = randchoice(random_picture_dict.keys())
-
-        return 'https://'
-
-
-
-def main(input_list: list[str]) -> list[str]:
-
-
-    if len(input_list) > 1:
-
-
-
-    # If no url/category was given
-    elif len(input_list) > 0:
-
-
-
-    else:
-        return [f'{ctx.author.display_name} has encountered an error', 'Expected at least 1 argument', error_img, "#CC0202"]
-
-
-
+    # Creates egg cc
+    egg_counter = ch.create_cc(
+        name=input_list[0],
+        minVal="0",
+        maxVal=str(settings_dictionary['maximum_value']),
+        reset="None",
+        dispType=settings_dictionary['display_type'],
+        title=f"{name}'s egg: {input_list[0]}",
+        desc=f"Spend time with them each day and with enough love and warmth you can hatch {input_list[0]}.",
+        initial_value="0"
+    )
     
+    # Sets cvar and pops out the 'active egg' key
+    ch.set_cvar('egg_dict', dump_json(egg_dictionary))
+    egg_dictionary.pop('active_egg')
+
+    return [f'{name} ({ctx.author.display_name}) has added {input_list[0]} under their care', f"You now have {len(egg_dictionary.keys())} eggs", img_url, ""]
 
 
+# Main program
+output_list = main(&ARGS&)
 
-
-
-
-
+l = "<"
 
 </drac2>
+-title "{{output_list[0]}}"
+-f "{{output_list[1]}}"
+-thumb "{{output_list[2]}}"
+-color "{{output_list[3]}}"
+-footer "!egg add [name] {{l}}url> | Updated 7/26/23 | ShadowsStride

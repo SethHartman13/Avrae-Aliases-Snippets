@@ -1,0 +1,16 @@
+{
+    "maximum_value": 50,
+    "display_type": "star",
+    "random_eggs": [
+        "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/egg/images/random%20eggs/canvas1.png",
+        "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/egg/images/random%20eggs/canvas2.png", 
+        "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/egg/images/random%20eggs/glass1.png", 
+        "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/egg/images/random%20eggs/glass2.png", 
+        "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/egg/images/random%20eggs/glass3.png", 
+        "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/egg/images/random%20eggs/glass4.png", 
+        "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/egg/images/random%20eggs/metal1.png", 
+        "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/egg/images/random%20eggs/metal2.png", 
+        "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/egg/images/random%20eggs/metal3.png",
+        "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/egg/images/random%20eggs/metal4.png"
+    ]
+}

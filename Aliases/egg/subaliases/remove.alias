@@ -1,0 +1,136 @@
+embed
+<drac2>
+
+
+def search_key(query: str, key_list: list[str]) -> list[str]|str:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
+
+    # Creates list to store matches
+    key_results = []
+
+    # Checks each item if a match occurs
+    for key in key_list:
+
+        # If matches
+        if query.lower() in key.lower():
+            key_results.append(key)
+
+        else:
+            pass
+
+    # Finds at least 1 match
+    if len(key_results) > 0:
+        return key_results
+
+    # If it finds no matches
+    else:
+        return 'None'
+
+
+def main(input_list: list[str], ch = character()) -> list[str]:
+    img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/egg/images/broken.png"
+
+    # If there is at least 1 input
+    if len(input_list) != 0:
+
+        # Grabs egg_dict
+        egg_test = ch.get_cvar("egg_dict", default="None")
+
+        # If it exists
+        if egg_test != "None":
+            egg_dictionary = load_json(egg_test)
+
+        # If it does not exist
+        else:
+            return [f'{ctx.author.display_name} has encountered an error', 'Egg cvar does not exist', img_url, "#CC0202"]
+
+    # If no inputs were given
+    else:
+        return [f'{ctx.author.display_name} has encountered an error', 'Expected one argument', img_url, "#CC0202"]
+
+    # Searches for the egg
+    result_key = search_key(input_list[0], egg_dictionary.keys())
+
+    # If there is at least one match
+    if result_key != "None":
+
+        # If there is exactly one match
+        if len(result_key) == 1:
+            egg = result_key[0]
+            img_url = egg_dictionary.pop(egg)
+
+        # If there are multiple matches
+        else:
+            found = False
+            for key in result_key:
+                if key.lower() != input_list[0].lower():
+                    pass
+
+                else:
+                    found = True
+                    egg = key
+                    img_url = egg_dictionary.pop(egg)
+
+            if found:
+                pass
+
+            else:
+                result_key.insert(0, "**Multiple Eggs Found:**")
+                return [f'{ctx.author.display_name} has encountered an error', "\n".join(result_key), img_url, "#CC0202"]
+
+    else:
+        return [f'{ctx.author.display_name} has encountered an error', 'Egg not found', img_url, "#CC0202"]
+
+    # Tries to grab egg cc
+    try:
+        egg_cc = ch.cc(egg)
+
+        # If egg counter reached its max
+        if egg_cc.value == egg_cc.max:
+            adject = "hatched "
+
+        # If the egg did not reach its max
+        else:
+            adject = ""
+
+        ch.delete_cc(egg)
+
+    # If there were problems getting egg cc
+    except:
+        adject = ""
+        ch.delete_cc(egg)
+
+    # Sets cvar and temp drops active_egg
+    ch.set_cvar('egg_dict', dump_json(egg_dictionary))
+    egg_dictionary.pop('active_egg')
+
+    # If there are any eggs left in the dictionary
+    if len(egg_dictionary.keys()) > 0:
+        egg_list = "\n".join(egg_dictionary.keys())
+
+    # If there are no eggs left in the dictionary
+    else:
+        egg_list = "None"
+
+    return [f'{name} ({ctx.author.display_name}) has removed {egg} ({adject}egg) from their care', f'Egg list:\n{egg_list}', img_url, ""]
+
+
+# Main program
+output_list = main(&ARGS&)
+
+
+</drac2>
+-title "{{output_list[0]}}"
+-f "{{output_list[1]}}"
+-thumb "{{output_list[2]}}"
+-color "{{output_list[3]}}"
+-footer "!egg remove [name] | Updated 7/26/23 | ShadowsStride"

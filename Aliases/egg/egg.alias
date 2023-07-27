@@ -1,0 +1,279 @@
+embed
+<drac2>
+
+
+def search_key(query: str, key_list: list[str]) -> list[str]|str:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
+
+    # Creates list to store matches
+    key_results = []
+
+    # Checks each item if a match occurs
+    for key in key_list:
+
+        # If matches
+        if query.lower() in key.lower():
+            key_results.append(key)
+
+        else:
+            pass
+
+    # Finds at least 1 match
+    if len(key_results) > 0:
+        return key_results
+
+    # If it finds no matches
+    else:
+        return 'None'
+
+
+def get_settings_dictionary() -> dict:
+    settings_test = get_svar("egg_settings", default="None")
+
+
+    if settings_test != "None":
+        settings_dictionary = load_json(settings_test)
+        try:
+            settings_dictionary['maximum_value']
+        except:
+            settings_dictionary['maximum_value'] = 50
+
+        try:
+            settings_dictionary['display_type']
+        except:
+            settings_dictionary['display_type'] = 'star'
+
+        return settings_dictionary
+
+    else:
+        return load_json(get_gvar("956ab92e-5bdc-4f80-a49e-0e803c1820e8"))
+
+
+def main(input_list: list[str], ch= character()):
+    """
+    """
+    
+    settings_dictionary = get_settings_dictionary()
+    img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/egg/images/broken.png"
+
+    # Grabs egg_dict
+    egg_test = ch.get_cvar('egg_dict', default="None")
+
+    # If egg_dict exists
+    if egg_test != "None":
+        egg_dictionary = load_json(egg_test)
+
+    # If egg_dict does not exist
+    else:
+        return [f"{ctx.author.display_name} has encountered an error", "Did not find an existing cvar", img_url, "#CC0202"]
+
+    egg_list = [key for key in egg_dictionary.keys() if key != "active_egg"]
+    
+    # If there was at least one input
+    if len(input_list) != 0:
+
+        # If there was only one input
+        if len(input_list) == 1:
+
+            # If the input is a integer
+            try:
+                int(input_list[0])
+
+                # Checks to see if active egg still exists
+                result_key = search_key(egg_dictionary['active_egg'], egg_list)
+
+                # If active egg still exists
+                if result_key != "None":
+                    egg_cc = ch.cc(result_key[0])
+                    mod_val = int(input_list[0])
+
+                # If active egg does not exist
+                else:
+
+                    # If there is only one egg left
+                    if len(egg_list) == 1:
+                        egg_cc = ch.cc(egg_list[0])
+                        egg_dictionary['active_egg'] = egg_list[0]
+                        mod_val = int(input_list[0])
+
+                    # If there are multiple eggs left
+                    else:
+                        return [f"{ctx.author.display_name} has encountered an error", "Active egg has not been selected", img_url, "#CC0202"]
+
+            # If the input is not an integer
+            except:
+
+                # Tries to find egg
+                result_key = search_key(input_list[0], egg_list)
+
+                # If there is at least one match
+                if result_key != "None":
+
+                    # If there is exactly one match
+                    if len(result_key) == 1:
+                        egg_cc = ch.cc(result_key[0])
+                        egg_dictionary['active_egg'] = result_key[0]
+                        mod_val = 1
+
+                    # If there are multiple matches
+                    else:
+                        found = False
+                        for key in result_key:
+                            if input_list[0].lower() != key.lower():
+                                pass
+
+                            else:
+                                found = True
+                                egg_cc = ch.cc(key)
+                                egg_dictionary['active_egg'] = key
+                                mod_val = 1
+
+                        if not found:
+                            result_key.insert(0, "**Multiple Eggs Found:**")
+                            return [f"{ctx.author.display_name} has encountered an error", "\n".join(result_key), img_url, "#CC0202"]
+
+                        else:
+                            pass
+
+                else:
+                    return [f"{ctx.author.display_name} has encountered an error", "Egg not found", img_url, "#CC0202"]
+
+        # If there are more than one input
+        else:
+            
+            # Tries to find egg
+            result_key = search_key(input_list[0], egg_list)
+
+            # If there is at least one match
+            if result_key != "None":
+
+                # If there is exactly one match
+                if len(result_key) == 1:
+                    egg_cc = ch.cc(result_key[0])
+                    egg_dictionary['active_egg'] = result_key[0]
+
+                    try:
+                        mod_val = int(input_list[1])
+
+                    except:
+                        return [f"{ctx.author.display_name} has encountered an error", "Invalid second argument", img_url, "#CC0202"]
+
+                # If there are multiple matches
+                else:
+                    found = False
+                    for key in result_key:
+                        if input_list[0].lower() != key.lower():
+                            pass
+
+                        else:
+                            found = True
+                            egg_cc = ch.cc(key)
+                            egg_dictionary['active_egg'] = key
+
+                            try:
+                                mod_val = int(input_list[1])
+
+                            except:
+                                return [f"{ctx.author.display_name} has encountered an error", "Invalid second argument", img_url, "#CC0202"]
+
+                    if not found:
+                        result_key.insert(0, "**Multiple Eggs Found:**")
+                        return [f"{ctx.author.display_name} has encountered an error", "\n".join(result_key), img_url, "#CC0202"]
+
+                    else:
+                        pass
+
+            else:
+                return [f"{ctx.author.display_name} has encountered an error", "Egg not found", img_url, "#CC0202"]
+            
+    # If there were no inputs
+    else:
+
+        # Checks to see if active egg still exists
+        result_key = search_key(egg_dictionary['active_egg'], egg_list)
+
+        if result_key != "None":
+            egg_cc = ch.cc(result_key[0])
+            mod_val = 1
+
+        # If active egg does not exist
+        else:
+
+            # If there is only one egg left
+            if len(egg_list) == 1:
+                egg_cc = ch.cc(egg_list[0])
+                egg_dictionary['active_egg'] = egg_list[0]
+                mod_val = 1
+
+            # If there are multiple eggs left
+            else:
+                return [f"{ctx.author.display_name} has encountered an error", "Active egg has not been selected", img_url, "#CC0202"]
+
+    # Grabs image url
+    img_url = egg_dictionary[egg_cc.name]
+    new_value = egg_cc.mod(mod_val)
+
+    # Checks if settings have been changed since creation
+    if egg_cc.max == settings_dictionary["maximum_value"] and egg_cc.display_type == settings_dictionary["display_type"]:
+        pass
+
+    else:
+        egg_cc = ch.edit_cc(
+            name=egg_cc.name,
+            maxVal=settings_dictionary["maximum_value"],
+            dispType=settings_dictionary["display_type"]
+            )
+
+    # If max value was achieved
+    if new_value == egg_cc.max:
+        adject = "hatched "
+        result_list = [f'{egg_cc.name} has hatched! Please run `!egg remove {egg_cc.name}` to clear your CC', ""]
+
+    # If max value was not achieved
+    else:
+        adject = ""
+        result_list = []
+
+    # Positive mod
+    if mod_val > 0:
+        verb = 'spent'
+        sign = '+'
+
+    # Negative mod
+    else:
+        verb = 'removed'
+        sign = '-'
+
+    # If double string
+    if f"{new_value}/{egg_cc.max}" == ch.cc_str(egg_cc.name):
+        result_list.append(f"{new_value}/{egg_cc.max} ({sign}{abs(mod_val)})")
+
+    # If not double string
+    else:
+        result_list.append(f"{new_value}/{egg_cc.max} ({sign}{abs(mod_val)})")
+        result_list.append(ch.cc_str(egg_cc.name))
+
+    # Updates egg dictionary
+    ch.set_cvar('egg_dict', dump_json(egg_dictionary))
+
+    return [f'{name} ({ctx.author.display_name}) has {verb} time with {egg_cc.name} ({adject}egg)', '\n'.join(result_list), img_url, ""]
+
+
+# Main program
+output_list = main(&ARGS&)
+
+
+</drac2>
+-title "{{output_list[0]}}"
+-f "{{output_list[1]}}"
+-thumb "{{output_list[2]}}"
+-color "{{output_list[3]}}"
