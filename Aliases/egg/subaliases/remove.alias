@@ -37,6 +37,16 @@ def search_key(query: str, key_list: list[str]) -> list[str]|str:
 
 
 def main(input_list: list[str], ch = character()) -> list[str]:
+    """
+    Main program function
+
+    Args:
+        input_list (list[str]): List of inputs
+        ch = character(): Character object
+
+    Return:
+        (list[str]): Result    
+    """
     img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/egg/images/broken.png"
 
     # If there is at least 1 input

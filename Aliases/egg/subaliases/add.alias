@@ -59,21 +59,33 @@ def capitalize_name(name: str) -> str:
 
 
 def get_settings_dictionary() -> dict:
+    """
+    Grabs settings dictionary
+    
+    Return:
+        (dict): Settings dictionary
+    """
+
+    # Grabs svar settings dictionary
     settings_test = get_svar("egg_settings", default="None")
 
-
+    # If the svar does exist
     if settings_test != "None":
         settings_dictionary = load_json(settings_test)
+
+        # Checks to see if the maximum_value key exists (and is a number)
         try:
-            settings_dictionary['maximum_value']
+            int(settings_dictionary['maximum_value'])
         except:
             settings_dictionary['maxmium_value'] = 50
 
+        # Checks to see if the display_type key exists
         try:
             settings_dictionary['display_type']
         except:
             settings_dictionary['display_type'] = 'star'
 
+        # Checks to see if the random_eggs key exists (and is an iterable)
         try:
             randchoice(settings_dictionary['random_eggs']) 
         except:
@@ -82,11 +94,23 @@ def get_settings_dictionary() -> dict:
 
         return settings_dictionary
 
+    # If the svar doesn't exist
     else:
         return load_json(get_gvar("956ab92e-5bdc-4f80-a49e-0e803c1820e8"))
 
 
 def main(input_list: list[str], ch = character()) -> list[str]:
+    """
+    Main program function
+
+    Args:
+        input_list (list[str]): List of inputs
+        ch = character(): Character object
+
+    Return:
+        (list[str]): Result   
+    """
+    
     settings_dictionary = get_settings_dictionary()
     img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/egg/images/broken.png"
 

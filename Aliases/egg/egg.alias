@@ -37,16 +37,27 @@ def search_key(query: str, key_list: list[str]) -> list[str]|str:
 
 
 def get_settings_dictionary() -> dict:
+    """
+    Grabs settings dictionary
+    
+    Return:
+        (dict): Settings dictionary
+    """
+
+    # Grabs svar settings dictionary
     settings_test = get_svar("egg_settings", default="None")
 
-
+    # If the svar does exist
     if settings_test != "None":
         settings_dictionary = load_json(settings_test)
-        try:
-            settings_dictionary['maximum_value']
-        except:
-            settings_dictionary['maximum_value'] = 50
 
+        # Checks to see if the maximum_value key exists (and is a number)
+        try:
+            int(settings_dictionary['maximum_value'])
+        except:
+            settings_dictionary['maxmium_value'] = 50
+
+        # Checks to see if the display_type key exists
         try:
             settings_dictionary['display_type']
         except:
@@ -54,6 +65,7 @@ def get_settings_dictionary() -> dict:
 
         return settings_dictionary
 
+    # If the svar doesn't exist
     else:
         return load_json(get_gvar("956ab92e-5bdc-4f80-a49e-0e803c1820e8"))
 
