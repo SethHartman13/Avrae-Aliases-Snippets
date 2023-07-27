@@ -194,12 +194,47 @@ def calc_time(time:int) -> str:
         (str): Result
     """
 
+    result_list = []
+
     # Converts time into hours, minutes, seconds
     hours = time // 3600
     minutes = (time % 3600) // 60
     seconds = (time % 3600) % 60
 
-    return f"{hours} hour(s), {minutes} minute(s), {seconds} second(s)"
+    # Hours
+    if hours > 0:
+        if hours != 1:
+            result_list.append(f"{hours} hours")
+        
+        else:
+            result_list.append(f"{hours} hour")
+    
+    else:
+        pass
+
+    # Minutes
+    if minutes > 0:
+        if minutes != 1:
+            result_list.append(f"{minutes} minutes")
+        
+        else:
+            result_list.append(f"{minutes} minute")
+    
+    else:
+        pass
+
+    # Seconds
+    if seconds > 0:
+        if seconds != 1:
+            result_list.append(f"{seconds} seconds")
+        
+        else:
+            result_list.append(f"{seconds} second")
+    
+    else:
+        pass
+
+    return ", ".join(result_list)
 
 
 def main(input_list: list) -> list:
@@ -254,4 +289,4 @@ left_arrow = "<"
 -title "{{output_list[0]}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/clock/image.png"
 -f "{{output_list[1]}}"
--footer "!clock out {{left_arrow}}tracker name> | Updated 7/3/23 | ShadowsStride"
+-footer "!clock out {{left_arrow}}tracker name> | Updated 7/27/23 | ShadowsStride"
