@@ -57,10 +57,11 @@ else:
 
 # Random image
 img_name = randchoice(['coin_bag', 'error', 'fail', 'hammer', 'history', 'list'])
+l = "<"
 
 
 </drac2>
 -title "{{f"{ctx.author.display_name} needs help!"}}"
 -f "{{'\n'.join(result_string)}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/{{img_name}}.png"
--footer "!craft help # | Updated 7/21/23 | ShadowsStride"
+-footer "!craft help {{l}}#> | Updated 7/21/23 | ShadowsStride"
