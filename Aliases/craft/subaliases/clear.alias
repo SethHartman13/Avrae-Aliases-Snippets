@@ -456,7 +456,7 @@ def main(ch = character()) -> list[str]:
 
                                 # If there was a crafting_cost associated with the item
                                 if crafting_dictionary['backup']['cvar'][5] != 0:
-                                    result_list = add_xp(crafting_dictionary['backup']['cvar'][5])
+                                    result_list = add_xp(crafting_dictionary['backup']['cvar'][5], ch)
 
                                 # If there was not a crafting_cost associated with the item
                                 else:
@@ -470,7 +470,7 @@ def main(ch = character()) -> list[str]:
 
                                     # If there was a crafting_cost associated with the item
                                     if crafting_dictionary['backup']['cvar'][5] != 0:
-                                        result_list = add_xp(crafting_dictionary['backup']['cvar'][5])
+                                        result_list = add_xp(crafting_dictionary['backup']['cvar'][5], ch)
 
                                     # If there was not a crafting_cost associated with the item
                                     else:
@@ -497,7 +497,7 @@ def main(ch = character()) -> list[str]:
 
                                         # If there was a crafting_cost associated with the item
                                         if crafting_dictionary['backup']['cvar'][5] != 0:
-                                            result_list = add_xp(crafting_dictionary['backup']['cvar'][5])
+                                            result_list = add_xp(crafting_dictionary['backup']['cvar'][5], ch)
 
                                         # If there was not a crafting_cost associated with the item
                                         else:
@@ -538,7 +538,7 @@ def main(ch = character()) -> list[str]:
 
                                 # If there was a crafting_cost associated with the item
                                 if crafting_dictionary['backup']['cvar'][5] != 0:
-                                    result_list = add_xp(crafting_dictionary['backup']['cvar'][5])
+                                    result_list = add_xp(crafting_dictionary['backup']['cvar'][5], ch)
 
                                 # If there was not a crafting_cost associated with the item
                                 else:
@@ -560,7 +560,7 @@ def main(ch = character()) -> list[str]:
 
                         # If there was a crafting_cost associated with the item
                         if crafting_dictionary['backup']['cvar'][5] != 0:
-                            result_list = add_xp(crafting_dictionary['backup']['cvar'][5])
+                            result_list = add_xp(crafting_dictionary['backup']['cvar'][5], ch)
 
                         # If there was not a crafting_cost associated with the item
                         else:
