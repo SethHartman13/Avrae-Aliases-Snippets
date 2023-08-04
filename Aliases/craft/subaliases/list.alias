@@ -106,6 +106,11 @@ def grab_settings_dict() -> dict:
         except:
             settings_dict['parent_channel_inherit'] = False
 
+        try:
+            settings_dict['xp_categories']
+        except:
+            settings_dict['xp_categories'] = False
+
         return settings_dict
 
     else:
@@ -238,7 +243,7 @@ def main(input_list: list, settings_dictionary: dict = grab_settings_dict()) -> 
         for key in settings_dictionary.keys():
 
             # If it is not a setting
-            if typeof(settings_dictionary[key]) == "SafeDict" and key != "success_mod_threshold":
+            if typeof(settings_dictionary[key]) == "SafeDict" and (key != "success_mod_threshold" and key != "xp_categories"):
                 result_list.append(f'**{key}:**')
 
                 # Uses a float to check to see that it is able to 
@@ -289,9 +294,12 @@ def main(input_list: list, settings_dictionary: dict = grab_settings_dict()) -> 
 
         # Figures out what keys are settings and item categories
         for key in settings_dictionary.keys():
-            if typeof(settings_dictionary[key]) == "SafeDict" and key != "success_mod_threshold":
+
+            # Item category
+            if typeof(settings_dictionary[key]) == "SafeDict" and (key != "success_mod_threshold" and key != "xp_categories"):
                 full_settings[0].append(key)
 
+            # Settings
             else:
                 full_settings[1].append(key)
 
@@ -381,9 +389,29 @@ def main(input_list: list, settings_dictionary: dict = grab_settings_dict()) -> 
                     result_list.append("Off")
 
             # If it is a dictionary value
-            else:
+            elif typeof(settings_dictionary[input_list[0]]) == 'SafeDict':
                 for key in settings_dictionary[input_list[0]].keys():
-                    result_list.append(f"**{key}:** {settings_dictionary[input_list[0]][key]}")
+
+                    # If it is a string value
+                    if typeof(key) == "str":
+                        result_list.append(f"**{key}:** {settings_dictionary[input_list[0]][key]}")
+
+                    # If it is a list value
+                    elif typeof(key) != "SafeDict":
+                        result_list.append(f"**{key}:**")
+                        for item in settings_dictionary[input_list[0]][key]:
+                            result_list.append(item)
+
+                        result_list.append("")
+
+                    # If it is a dict value
+                    else:
+                        result_list.append("Shadow has not setup this yet as there is not a usecase for dict value, message him to address this")
+
+            # If it is a list value:
+            else:
+                for item in settings_dictionary[input_list[0]]:
+                    result_list.append(item)
 
             return [f'{ctx.author.display_name} views settings for {input_list[0]}', '\n'.join(result_list), list_img, ""]    
 
@@ -400,9 +428,9 @@ except:
     output_list.append("#CC0202")
 
 
-</drac2>
+</drac2>a
 -title "{{output_list[0]}}"
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
 -color "{{output_list[3]}}"
--footer "!craft list {{l}}item_category/setting> | Updated 7/31/2023 | ShadowsStride"
+-footer "!craft list {{l}}item_category/setting> | Updated 8/4/2023 | ShadowsStride"

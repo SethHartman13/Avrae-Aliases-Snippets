@@ -121,5 +121,23 @@ Default: "hex"
 
 `parent_channel_inherit`: This determines if threads of whitelisted channels inherit the whitelisted status. This is not recommended as this does not stop players from creating threads within channels and running commands without staff knowledge. Default: false
 
+`xp_categories`: This determines if players get xp for finishing items. Category names need to match those setup, otherwise players will not receive xp. If the xp_categories is turned on, the subalias will add xp to xp tracker (recommended to use the [New XP](https://avrae.io/dashboard/workshop/618b77bd5c51fd18fe5356a0) library made by bryonius, otherwise it shows up in cvars). These are the valid input types:
+- string (singular category or all categories):
+    - Name of a single category i.e. `"common"`
+    - `"all"`, will allow all categories
+- list (singular category or selective categories):
+    - `["category 1", "category 2", "category 3"]`
+        - If `"all"` is a string in the list, it will allow all categories
+- dictionary (selective types and categories):
+    - `{"category 1": "all", "category 2": ["perm", "all"], "category 3": "perm"}`
+        - If `"all"` is a value (either as a string or a string within a list), it will allow all item types within that category.
+- boolean (true or false):
+    - `true`, will act like `"all"`
+    - `false`, does not give xp at all
+
+Default: false
+
 ## Changelog:
 7/31/2023 - Alias created with documentation
+
+6/4/2023 - Added xp support

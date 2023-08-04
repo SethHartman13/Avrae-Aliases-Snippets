@@ -12,6 +12,40 @@ embed
 # *******************************************************
 
 
+def search_key(query: str, key_list: list[str]) -> list[str]|str:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
+
+    # Creates list to store matches
+    key_results = []
+
+    # Checks each item if a match occurs
+    for key in key_list:
+
+        # If matches
+        if query.lower() in key.lower():
+            key_results.append(key)
+
+        else:
+            pass
+
+    # Finds at least 1 match
+    if len(key_results) > 0:
+        return key_results
+
+    # If it finds no matches
+    else:
+        return 'None'
+
+
 def grab_settings_dict() -> dict:
     """
     Grabs the settings dictionary, prioritizes svar, but falls back on gvar just in case.
@@ -46,6 +80,13 @@ def grab_settings_dict() -> dict:
             settings_dict["parent_channel_inherit"]
         except:
             settings_dict["parent_channel_inherit"] = False
+
+        # Checks to see if xp_categories exists, otherwise defaults to standard settings
+        try:
+            settings_dict["xp_categories"]
+
+        except:
+            settings_dict["xp_categories"] = False
 
         return settings_dict
 
@@ -157,6 +198,65 @@ def add_funds(cost: str, ch: character) -> bool:
         # If there was an error
         else:
             return False
+
+def add_xp(amount: float, ch: character) -> str[list]:
+    """
+    Adds xp to cvars
+
+    Args:
+        amount (float): Amount of xp to give
+        ch (character): Character object
+    
+    Return:
+        (list[str]): Result
+    """
+
+    # Imports xp module
+    using(
+        xplib="bd5e6af1-55e9-4c5b-b814-8f9b447091e7"
+    )
+
+    # Confirms it is a positive float
+    try:
+        amount = float(abs(amount))
+
+    except:
+        return ['Error', 'Non-number detected with adding xp']
+
+    # Add xp
+    xplib.modify_xp(amount)
+
+    # Reformat if an integer
+    if floor(amount) == amount:
+        amount = int(amount)
+
+    else:
+        pass
+
+    return ["Success", f"{amount}xp rewarded"]
+
+
+def cost_hunt(item_category: str, item_type:str, settings_dictionary: dict, ch: character) -> str[list]:
+    """
+    Function to track down item cost to give xp
+
+    Args:
+        item_category (str): Name of category
+        item_type (str): Name of type
+        settings_dictionary (dict): Settings dictionary
+        ch (character): Character object
+
+    Return:
+        (str[list]): Result
+    """
+
+    # Digs into the settings dictionary to try to find the crafting_cost
+    try:
+        return add_xp(round(float(settings_dictionary[item_category][item_type][7]) / 2, 2), ch)
+
+    # If there is a problem grabbing the crafting_cost
+    except:
+        return ["Error", "Invalid item cost detected"]
 
 
 def main(ch = character()) -> list[str]:
@@ -319,7 +419,169 @@ def main(ch = character()) -> list[str]:
     else:
         # Successfully finished the item
         if crafting_dictionary['backup']['success_cc'][0] == crafting_dictionary['backup']['success_cc'][1]:
-           return [f"{name} ({ctx.author.display_name}) cleared their crafting progress for a {crafting_dictionary['name']}", "", hammer_img, color]
+
+            # For use cases where crafting cost is not half the retail cost
+            crafting_dictionary['backup']['cvar'][5] = round(float(settings_dictionary[crafting_dictionary['backup']['cvar'][1]][crafting_dictionary['backup']['cvar'][2]][7]) / 2, 2)
+
+            # If xp reward is enabled
+            if settings_dictionary["xp_categories"]:
+
+                # If it is "True", turn it into "all"
+                if typeof(settings_dictionary["xp_categories"]) == 'bool':
+                    settings_dictionary["xp_categories"] = 'all'
+
+                # If it is not "True"
+                else:
+                    pass
+
+                # If it is a dictionary
+                if typeof(settings_dictionary['xp_categories']) == "SafeDict":
+
+                    # Tries to find category within the settings
+                    try:
+                        result_key = search_key(crafting_dictionary['backup']['cvar'][1], settings_dictionary['xp_categories'].keys())
+
+                    # If there is an error
+                    except:
+                        result_key = "None"
+
+                    # If the category is found (and no errors)
+                    if result_key != "None":
+
+                        # If the type_setting is a string
+                        if typeof(settings_dictionary["xp_categories"][result_key[0]]) == "str":
+
+                            # If the type_setting is "all"
+                            if settings_dictionary["xp_categories"][result_key[0]].lower() == "all":
+
+                                # If there was a crafting_cost associated with the item
+                                if crafting_dictionary['backup']['cvar'][5] != 0:
+                                    result_list = add_xp(crafting_dictionary['backup']['cvar'][5])
+
+                                # If there was not a crafting_cost associated with the item
+                                else:
+                                    result_list = cost_hunt(crafting_dictionary['backup']['cvar'][1], crafting_dictionary['backup']['cvar'][2], settings_dictionary, ch)
+
+                            # If the type_setting is not "all"
+                            else:
+
+                                # If the type is defined in the type_setting string
+                                if crafting_dictionary['backup']['cvar'][2].lower() in settings_dictionary["xp_categories"][result_key[0]].lower():
+
+                                    # If there was a crafting_cost associated with the item
+                                    if crafting_dictionary['backup']['cvar'][5] != 0:
+                                        result_list = add_xp(crafting_dictionary['backup']['cvar'][5])
+
+                                    # If there was not a crafting_cost associated with the item
+                                    else:
+                                        result_list = cost_hunt(crafting_dictionary['backup']['cvar'][1], crafting_dictionary['backup']['cvar'][2], settings_dictionary, ch)
+
+                                # If the type is not defined in the type_setting string
+                                else:
+                                    result_list = ["Success", "No xp rewarded"]
+
+                        # If the type_setting is not a string
+                        else:
+
+                            # Set default behavior
+                            result_list = False
+
+                            # Tries to pull an item from the list
+                            for item in settings_dictionary["xp_categories"][result_key[0]]:
+
+                                # If it has not found an item
+                                if not result_list:
+
+                                    # If the item found is the item or the item is "all"
+                                    if crafting_dictionary['backup']['cvar'][2].lower() in item.lower() or item.lower() == 'all':
+
+                                        # If there was a crafting_cost associated with the item
+                                        if crafting_dictionary['backup']['cvar'][5] != 0:
+                                            result_list = add_xp(crafting_dictionary['backup']['cvar'][5])
+
+                                        # If there was not a crafting_cost associated with the item
+                                        else:
+                                            result_list = cost_hunt(crafting_dictionary['backup']['cvar'][1], crafting_dictionary['backup']['cvar'][2], settings_dictionary, ch)
+                                            
+                                    # If the item is not in the list
+                                    else:
+                                        pass
+                                
+                                # If it has already been found
+                                else:
+                                    pass
+
+                            # If it did not find the item from the list
+                            if not result_list:
+                                result_list = ["Success", "No xp rewarded"]
+
+                            # If it did find the item from the list
+                            else:
+                                pass
+
+                    # If the category is not found
+                    else:
+                        result_list = ["Success", "No xp rewarded"]
+
+                # If it is a list
+                elif typeof(settings_dictionary['xp_categories']) != "str" or typeof(settings_dictionary['xp_categories']) != "bool":
+                    result_list = False
+
+                    # Tries to pull an item from the list
+                    for item in settings_dictionary['xp_categories']:
+
+                        # If it has not found an item
+                        if not result_list:
+
+                            # If the item found is the item or the item is "all"
+                            if crafting_dictionary['backup']['cvar'][1].lower() in item.lower() or item.lower() == 'all':
+
+                                # If there was a crafting_cost associated with the item
+                                if crafting_dictionary['backup']['cvar'][5] != 0:
+                                    result_list = add_xp(crafting_dictionary['backup']['cvar'][5])
+
+                                # If there was not a crafting_cost associated with the item
+                                else:
+                                    result_list = cost_hunt(crafting_dictionary['backup']['cvar'][1], crafting_dictionary['backup']['cvar'][2], settings_dictionary, ch)
+
+                    # If it did not find the item from the list
+                    if not result_list:
+                        result_list = ["Success", "No xp rewarded"]
+
+                    # If it did find the item from the list
+                    else:
+                        pass
+
+                # If it is a string
+                else:
+
+                    # If the item found is the item or the item is "all"
+                    if crafting_dictionary['backup']['cvar'][1].lower() in settings_dictionary['xp_categories'].lower() or settings_dictionary['xp_categories'].lower() == 'all':
+
+                        # If there was a crafting_cost associated with the item
+                        if crafting_dictionary['backup']['cvar'][5] != 0:
+                            result_list = add_xp(crafting_dictionary['backup']['cvar'][5])
+
+                        # If there was not a crafting_cost associated with the item
+                        else:
+                            result_list = cost_hunt(crafting_dictionary['backup']['cvar'][1], crafting_dictionary['backup']['cvar'][2], settings_dictionary, ch)
+
+                    else:
+                        result_list = ["Success", "No xp rewarded"]
+
+            # If xp reward is not enabled
+            else:
+                result_list = ["Success", ""]
+
+            # If there was not an error
+            if result_list[0] != "Error":
+                result_string = result_list[1]
+
+            # If there was an error, show it as a warning (not a full error)
+            else:
+                result_string = f"**Warning:\n{result_list[1]}**"
+
+            return [f"{name} ({ctx.author.display_name}) cleared their crafting progress for a {crafting_dictionary['name']}", result_string, hammer_img, color]
 
         # Max failures
         elif crafting_dictionary['backup']['failure_cc'][0] == crafting_dictionary['backup']['failure_cc'][1]:
@@ -345,4 +607,4 @@ except:
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
 -color "{{output_list[3]}}"
--footer "!craft clear | Updated 7/21/2023 | ShadowsStride"
+-footer "!craft clear | Updated 8/4/2023 | ShadowsStride"

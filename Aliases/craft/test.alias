@@ -1,0 +1,15 @@
+embed
+<drac2>
+using(
+    logtools="11743454-0aca-46a6-ad73-9b902a65fbeb",
+    xplib="bd5e6af1-55e9-4c5b-b814-8f9b447091e7"
+    )
+
+input_list = &ARGS&
+
+xplib.modify_xp(float(input_list[0]))
+
+
+
+
+</drac2>

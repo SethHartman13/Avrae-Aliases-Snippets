@@ -1,0 +1,36 @@
+embed
+<drac2>
+
+
+def main(input_list: list[str]) -> list[str]:
+    """
+    
+    """
+
+    if len(input_list) > 0:
+
+
+
+
+
+    else:
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</drac2>
