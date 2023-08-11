@@ -1,0 +1,12 @@
+embed
+<drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride) 
+# * and is licensed under the Creative Commons Attribution 4.0 International 
+# * License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# ********************************************************
+</drac2>
+-title "{{ctx.author.display_name}} has encountered an error"
+-f "`!crime list` has been depreciated. Please use `!crime`"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/ce0f79ad19956141a48567cfae15cfc4bd8ace26/Aliases/crime/image.png"
+-footer "!crime list | Updated 8/11/23 | ShadowsStride"

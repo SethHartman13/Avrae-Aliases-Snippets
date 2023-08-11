@@ -1,5 +1,5 @@
-<h1>List Subalias<img align="right" src="../image.png" width="100px"></h1>
-Subalias that lists all criminals, organized by player.
+<h1>List Subalias<img align="right" src="image.png" width="100px"></h1>
+Depreciated subalias
 
 ## Owner(s):
 - Me (ShadowsStride)
@@ -9,10 +9,3 @@ Subalias that lists all criminals, organized by player.
 
 ## Help:
 `!crime list`
-
-## Changelog:
-6/17/2023 - Subalias created
-
-6/22/2023 - Copyright/License Update
-
-7/4/2023 - Alias rewrite

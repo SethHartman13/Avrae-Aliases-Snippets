@@ -1,0 +1,260 @@
+embed
+<drac2>
+# *******************************************************
+# * This work includes material taken from the System Reference Document 5.1 
+# * (“SRD 5.1”) by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. 
+# * The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License 
+# * available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# * 
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International License 
+# * available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
+
+
+def search_key(query: str, key_list: list[str]) -> list[str]|str:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
+
+    # Creates list to store matches
+    key_results = []
+
+    # Checks each item if a match occurs
+    for key in key_list:
+
+        # If matches
+        if query.lower() in key.lower():
+            key_results.append(key)
+
+        else:
+            pass
+
+    # Finds at least 1 match
+    if len(key_results) > 0:
+        return key_results
+
+    # If it finds no matches
+    else:
+        return 'None'
+
+def find_player(player_search: str, crime_dictionary: dict) -> list[str]:
+    """
+    Function that tries to find a player within the crime_dict.
+
+    Args:
+        player_search (str): Name of the player
+        crime_dictionary (dict): Crime dictionary
+
+    Return:
+        (list[str]): Result
+    """
+
+    # Checks to see if the player is in the svar
+    key_result = search_key(player_search, crime_dictionary.keys())
+
+    # If it finds at least one key
+    if key_result != "None":
+
+        # If it only finds one
+        if len(key_result) == 1:
+
+            # Returns player dictionary
+            return ["Success", crime_dictionary[key_result[0]], key_result[0]]
+
+        # If it finds multiple keys
+        else:
+            for key in key_result:
+                if name.lower() == key.lower():
+                    return ['Success', crime_dictionary[key], key]
+
+                else:
+                    pass
+
+            key_result.insert(0, "**Multiple players found:**")
+
+            return ["Error", "\n".join(key_result)]
+
+    # If it does not find a key
+    else:
+        return ["Error", "Player not found"]
+
+
+def find_character(character_search: str, player_dictionary: dice) -> list[str]:
+    """
+    Function that tries to find a character within the player_dictionary
+
+    Args:
+        player_search (str): Name of the player
+
+    Return:
+        (list[str]): Result
+    """
+
+    # Checks to see if the character is in the svar
+    key_result = search_key(character_search, player_dictionary.keys())
+
+    # If it finds at least one key
+    if key_result != "None":
+
+        # If it only finds one
+        if len(key_result) == 1:
+
+            # Returns character list
+            return ["Success", player_dictionary[key_result[0]], key_result[0]]
+
+        # If it finds multiple keys
+        else:
+            for key in key_result:
+                if name.lower() == key.lower():
+                    return ['Success', player_dictionary[key], key]
+
+                else:
+                    pass
+
+            key_result.insert(0, "**Multiple characters found:**")
+
+            return ["Error", "\n".join(key_result)]
+
+    # If it does not find a key
+    else:
+        return ["Error", "Character not found"]
+
+
+def main(input_list: list[str]) -> list:
+    """
+    Main program function
+
+    Args:
+        input_list (list[str]): List of inputs
+
+    Return:
+        (list): Results
+
+    """
+
+    result_string = []
+
+    # Checks to see if the svar exists
+    crime_test = get_svar("crime_dict", default="None")
+
+    # If it exists
+    if crime_test != "None":
+        crime_dictionary = load_json(crime_test)
+
+    # If it does not exist
+    else:
+        return [f'{ctx.author.display_name} checks the crime records', "None (svar does not exist)", ""]
+
+    if len(crime_dictionary.keys()) > 0:
+        pass
+
+    else:
+        return [f'{ctx.author.display_name} checks the crime records', "None", ""]
+
+    # If there is more than one input
+    if len(input_list) > 0:
+
+        # Searches for player 
+        result_list = find_player(input_list[0], crime_dictionary)
+
+        # If it finds the player
+        if result_list[0] != "Error":
+            pass
+
+        # If it does not find the player
+        else:
+            return [f"{ctx.author.display_name} has encountered an error", result_list[1], "#CC0202"]
+
+        # If there is only the player name
+        if len(input_list) == 1:
+
+            # If there is at least one character under the player name
+            if len(result_list[1].keys()) != 0:
+
+                # For each character name
+                for key in result_list[1].keys():
+
+                    # Header containing character name
+                    result_string.append(f"**{key}:**")
+                    
+                    # For each crime
+                    for crime_tuple in result_list[1][key]:
+
+                        # List crime and bounty/cost
+                        result_string.append(f"{crime_tuple[0]}: {crime_tuple[1]}gp")
+
+                    result_string.append("")
+
+                return [f'{ctx.author.display_name} checks the crime records for {result_list[2]}', "\n".join(result_string), ""]
+
+            # If there are no characters under the player name
+            else:
+                return [f'{ctx.author.display_name} checks the crime records for {result_list2[2]}', "None", ""]
+
+        # If there is a character name provided
+        else:
+            result_list2 = find_character(input_list[1], result_list[1])
+
+            # If it finds a character
+            if result_list2[0] != "Error":
+
+                # Header containing character name
+                result_string.append(f"**{result_list2[2]}:**")
+
+                # For each crime
+                for crime_tuple in result_list2[1]:
+
+                    # List crime and bounty/cost
+                    result_string.append(f"{crime_tuple[0]}: {crime_tuple[1]}gp")
+
+                return [f'{ctx.author.display_name} checks the crime records for {result_list2[2]} ({result_list[2]})', "\n".join(result_string), ""]
+                
+            # If it does not find a character
+            else:
+                return [f"{ctx.author.display_name} has encountered an error", result_list2[1], "#CC0202"]
+
+    # If there are no inputs
+    else:
+
+        # For each player
+        for player_name in crime_dictionary.keys():
+            result_string.append(f"**{player_name}:**")
+
+            # If there is at least one character
+            if len(crime_dictionary[player_name].keys()) != 0:
+
+                # List each character
+                for key in crime_dictionary[player_name].keys():
+                    result_string.append(f"{key}")
+
+            # No characters
+            else:
+                result_string.append("None")
+
+            result_string[-1] = result_string[-1] + "\n"
+
+        result_string.append("")
+        result_string.append("")
+
+        return [f'{ctx.author.display_name} checks the crime records', "\n".join(result_string), ""]
+   
+
+# Main program
+output_list = main(&ARGS&)
+l = "<"
+
+
+</drac2>
+-title "{{output_list[0]}}"
+-f "{{output_list[1]}}"
+-color "{{output_list[2]}}"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/ce0f79ad19956141a48567cfae15cfc4bd8ace26/Aliases/crime/image.png"
+-footer "!crime {{l}}player name> {{l}}character name> | Updated 8/11/23 | ShadowsStride"

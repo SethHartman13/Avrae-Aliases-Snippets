@@ -1,0 +1,30 @@
+embed
+<drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride) 
+# * and is licensed under the Creative Commons Attribution 4.0 International 
+# * License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# ********************************************************
+
+# Header
+result_string = []
+result_string.append("Sounds like you need someone to provide the help action. Here is a list of the subaliases used for this library.")
+result_string.append("")
+
+# Help
+result_string.append("`!crime help`: Pulls up this subalias")
+result_string.append("")
+
+# Main
+result_string.append("`!crime <player name> <character name>`: Lists players, characters, and crimes")
+result_string.append("`player name`: Name of the player requested")
+result_string.append("`character name`: Name of the character requested (requires player name)")
+result_string.append("")
+result_string.append("Note: `character name` requires a valid `player name`. If no arguments are passed then it will list players and characters (no crimes)")
+
+
+</drac2>
+-title "{{f"{ctx.author.display_name} needs help!"}}"
+-f "{{"\n".join(result_string)}}"
+-thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/clock/image.png"
+-footer "!crime help | Updated 8/11/23 | ShadowsStride"

@@ -5,7 +5,7 @@ Crime alias that handles court records for criminals.
 - Me (ShadowsStride)
 
 ## Current Plans:
-- Potentially add additional images for the alias for variety.
+- None
 
 ## Help:
 `!crime [player_name] [character_name]`
@@ -54,10 +54,12 @@ You will need to run `!svar crime_dict` to copy over the previous settings befor
 ## Changelog:
 6/16/2023 - Alias created
 
-6/17/2023 - Documentation and [list](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/crime/list/list.md) subalias has been created. Check the markdown file within the folder marked with their names for additional details.
+6/17/2023 - Documentation and list subalias has been created. Check the markdown file within the folder marked with their names for additional details.
 
-6/17/2023 - Subalias [help](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/crime/help/help.md) has been created. Check the markdown file within the folder marked with their names for additional details.
+6/17/2023 - Subalias help has been created. Check the markdown file within the folder marked with their names for additional details.
 
 6/22/2023 - Copyright/License Update
 
 7/4/2023 - Alias rewrite
+
+8/11/2023 - Depreciated list subalias, rewrote alias
