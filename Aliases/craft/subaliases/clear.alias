@@ -417,12 +417,16 @@ def main(ch = character()) -> list[str]:
         return [f"{name} ({ctx.author.display_name}) cleared their crafting progress for a {crafting_dictionary['name']}", f"Prorated refund: {' '.join(money_list)}", coin_bag_img, color]
 
     else:
+
         # Successfully finished the item
         if crafting_dictionary['backup']['success_cc'][0] == crafting_dictionary['backup']['success_cc'][1]:
+            try:
+                # For use cases where crafting cost is not half the retail cost
+                crafting_dictionary['backup']['cvar'][5] = round(float(settings_dictionary[crafting_dictionary['backup']['cvar'][1]][crafting_dictionary['backup']['cvar'][2]][7]) / 2, 2)
 
-            # For use cases where crafting cost is not half the retail cost
-            crafting_dictionary['backup']['cvar'][5] = round(float(settings_dictionary[crafting_dictionary['backup']['cvar'][1]][crafting_dictionary['backup']['cvar'][2]][7]) / 2, 2)
-
+            except:
+                pass
+            
             # If xp reward is enabled
             if settings_dictionary["xp_categories"]:
 
@@ -607,4 +611,4 @@ except:
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
 -color "{{output_list[3]}}"
--footer "!craft clear | Updated 8/4/2023 | ShadowsStride"
+-footer "!craft clear | Updated 8/6/2023 | ShadowsStride"
