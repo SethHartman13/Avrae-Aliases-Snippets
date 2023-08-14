@@ -4,15 +4,15 @@
         "consumable": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Retail Item Cost in GP (int or float)", "Hex code (with or without #)"],
         "0": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Hex code (with or without #)"]
     },
-    "nonmagical": {
+    "nonmagical": { // This is an example of a cost-based item category
         "0": [5, 8, -1, 5, 1, 1, 7200, "#242528"],
         "101": [9, 13, -2, 5, 5, 2, 14400, "#242528"],
         "501": [13, 18, -3, 5, 8, 3, 21600, "#242528"],
         "5001": [17, 23, -4, 5, 13, 4, 28800, "#242528"],
         "50001": [20, 25, -5, 5, 20, 5, 36000, "#242528"]
     },
-    "common": {
-        "permanent": [5, 10, -1, 5, 8, 2, 7200, 100, "#242528"],
+    "common": { // This is an example of a type-based item category
+        "permanent": [5, 10, -1, 5, 8, 2, 7200, 100, "#242528"], // This is an example of an item type
         "consumable": [5, 10, -1, 5, 1, 2, 7200, 50, "#242528"]
     },
     "uncommon": {
