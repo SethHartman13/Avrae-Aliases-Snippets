@@ -29,9 +29,9 @@ if list_num == 1:
     result_string.append("`!craft <item_name> <item_category> <item_type/cost> <-b #> <-c #> <-s skill_name> <eadv/adv/dis> <-i>`: Starts/continues crafting session.")
     result_string.append("`<item_name>*`: Name of the item being crafted. Reminder: Use quotation marks for multi-word items.")
     result_string.append("`<item_category>*`: Name of the category.")
-    result_string.append("`<item_type/cost>*`: If the category selected is not a cost-based category, name of the type. Otherwise, cost of the item.")
-    result_string.append("`-b*`: Adds a misc bonus to the check.")
-    result_string.append("`-s skill_name`: This tells the crafting alias to use a skill modifier of the name given.")
+    result_string.append("`<item_type/cost>*`: If the category selected is not a cost-based category, name of the type. Otherwise, cost of the item in GP.")
+    result_string.append("`-b`: Adds a misc bonus to the check.")
+    result_string.append('`-s skill_name`: This tells the crafting alias to use a skill modifier of the name given. (This is retained item to item, `-s ""` to clear skill)')
     result_string.append("`eadv/adv/dis`: Applies double advantage/advantage/disadvantage.")
     result_string.append("`-i`: Ignores training cooldown (DO NOT USE EXCEPT WHEN TOLD BY AN ADMIN).")
     result_string.append("")
@@ -64,4 +64,4 @@ l = "<"
 -title "{{f"{ctx.author.display_name} needs help!"}}"
 -f "{{'\n'.join(result_string)}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/{{img_name}}.png"
--footer "!craft help {{l}}#> | Updated 7/21/23 | ShadowsStride"
+-footer "!craft help {{l}}#> | Updated 8/14/23 | ShadowsStride"
