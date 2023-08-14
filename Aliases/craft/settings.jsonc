@@ -1,8 +1,8 @@
 {
     "examples": {
-        "permanent": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Retail Item Cost in GP (int or float)", "Hex code (with or without #)"],
-        "consumable": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Retail Item Cost in GP (int or float)", "Hex code (with or without #)"],
-        "0": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Hex code (with or without #)"]
+        "permanent": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Retail Item Cost in GP (int or float)", "Hex code (with or without #)"], // Explanation list for a item type within an item-based category
+        "consumable": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Retail Item Cost in GP (int or float)", "Hex code (with or without #)"], // Explanation list for a item type within an item-based category
+        "0": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Hex code (with or without #)"] // Explanation list for a cost threshold within a cost-based item category
     },
     "nonmagical": { // This is an example of a cost-based item category
         "0": [5, 8, -1, 5, 1, 1, 7200, "#242528"],

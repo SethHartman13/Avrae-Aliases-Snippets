@@ -10,13 +10,13 @@ input_list = &ARGS&
 try:
     input_list[0] = int(input_list[0])
     if input_list[0] >= 3:
-        input_list[0] = 3
+        input_list = [3]
 
     else:
         pass
 
 except:
-    input_list[0] = 1
+    input_list = [1]
 
 result_string = []
 # Header
@@ -31,13 +31,14 @@ if input_list[0] == 1:
     result_string.append("`!craft <item_name> <item_category> <item_type/cost> <-b #> <-c #> <-s skill_name> <eadv/adv/dis> <-i>`: Starts/continues crafting session.")
     result_string.append("`<item_name>*`: Name of the item being crafted. Reminder: Use quotation marks for multi-word items.")
     result_string.append("`<item_category>*`: Name of the category. `!craft help 3` for more details")
-    result_string.append("`<item_type/cost>*`: If the category selected is not a cost-based category, name of the type. Otherwise, cost of the item in GP.")
-    result_string.append("`-b`: Adds a misc bonus to the check.")
+    result_string.append("`<item_type/cost>*`: If the category selected is not a cost-based category, name of the type. Otherwise, cost of the item in GP. `!craft help 3` for more details")
+    result_string.append("`-b`: Adds a misc bonus to the check. ")
     result_string.append('`-s skill_name`: This tells the crafting alias to use a skill modifier of the name given. (This is retained item to item, `-s ""` to clear skill)')
     result_string.append("`eadv/adv/dis`: Applies double advantage/advantage/disadvantage.")
     result_string.append("`-i`: Ignores training cooldown (DO NOT USE EXCEPT WHEN TOLD BY AN ADMIN).")
     result_string.append("")
     result_string.append("*Only is used when starting to craft a new item.")
+    img_name = randchoice(['coin_bag', 'error', 'fail', 'hammer', 'history', 'list'])
 
 elif input_list[0] == 2:
 
@@ -56,17 +57,19 @@ elif input_list[0] == 2:
 
     # Edit
     result_string.append("`!craft edit [success/failure] [#]`: Edits the crafting counters by the value given so that values can be changed manually.")
+    img_name = randchoice(['coin_bag', 'error', 'fail', 'hammer', 'history', 'list'])
 
 else:
 
     # More detailed category stuff
-    result_string.append("Below is an image of the settings file located at [GitHub](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/craft/settings.jsonc)")
-    result_string.append("Item categories are collections of item types. Typically, categories are magic item rarities. However, they can be whatever server staff sets them to be. One use case could be potions as the item category and item types being potion rarity. This allows server staff to create exceptions to established crafting rules. If, using potions as an example, you wanted to make potions have different crafting rules than other magic items this would allow you to do such.")
+    result_string.append("Below is an image of the settings file located on [GitHub](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/craft/settings.jsonc)\n")
+    result_string.append("Item categories are collections of item types. Typically, categories are magic item rarities. However, they can be whatever server staff sets them to be.\n")
+    result_string.append("One use case could be potions as the item category and item types being potion rarity. This allows server staff to create exceptions to established crafting rules. If, using potions as an example, you wanted to make potions have different crafting rules than other magic items this would allow you to do such.")
 
     photo = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/doc_help.png"
+    img_name = ""
 
 # Random image
-img_name = randchoice(['coin_bag', 'error', 'fail', 'hammer', 'history', 'list'])
 l = "<"
 
 
