@@ -5,7 +5,7 @@
         "0": ["Level Requirement (int)", "DC (int)", "Nat1 Penalty (int)", "Nat20 Bonus (int)", "Total Successes (int)", "Total Failures Allowed (int)", "Cooldown In Seconds (int)", "Hex code (with or without #)"] // Explanation list for a cost threshold within a cost-based item category
     },
     "nonmagical": { // This is an example of a cost-based item category
-        "0": [5, 8, -1, 5, 1, 1, 7200, "#242528"],
+        "0": [5, 8, -1, 5, 1, 1, 7200, "#242528"], // This is an example of a cost threshold
         "101": [9, 13, -2, 5, 5, 2, 14400, "#242528"],
         "501": [13, 18, -3, 5, 8, 3, 21600, "#242528"],
         "5001": [17, 23, -4, 5, 13, 4, 28800, "#242528"],
