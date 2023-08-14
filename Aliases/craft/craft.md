@@ -11,7 +11,7 @@ Alias that handles the main functions of starting and continuing crafting sessio
 - `item_name*`: Name of the item being crafted. Reminder: Use quotation marks for multi-word items.
 - `item_category*`: Name of the category.
 - `item_type/cost*`: If the category selected is not a cost-based category, name of the type. Otherwise, cost of the item.
-- `-s skill_name`: This tells the crafting alias to use a skill modifier of the name given.
+- `-s skill_name`: This tells the crafting alias to use a skill modifier of the name given. (is retained crafting session to crafting session)
 - `eadv/adv/dis`: Applies double advantage/advantage/disadvantage.
 - `-i`: Ignores training cooldown (DO NOT USE EXCEPT WHEN TOLD BY AN ADMIN).
 
