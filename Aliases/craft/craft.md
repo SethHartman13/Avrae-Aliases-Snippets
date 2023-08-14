@@ -19,7 +19,7 @@ Alias that handles the main functions of starting and continuing crafting sessio
 
 ## Settings:
 
-[settings.json](settings.json) is an example file as to what settings you can setup for your server. If you do not have a svar named `crafting_settings`, then it will turn to default settings.
+[settings.jsonc](settings.jsonc) is an example file as to what settings you can setup for your server. If you do not have a svar named `crafting_settings`, then it will turn to default settings.
 
 ### Item Categories:
 
