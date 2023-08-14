@@ -7,13 +7,12 @@ def main(input_list: list[str]) -> list[str]:
     
     """
 
-    if len(input_list) > 0:
 
 
 
-
-
-    else:
+    # Need to dynamically adjust for length of guide so that it does not reach a character limit (break at subtopics)
+    # Need to adjust for gvars and svars (maybe uvars?)
+    
         
 
 
