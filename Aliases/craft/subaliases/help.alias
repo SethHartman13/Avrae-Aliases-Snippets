@@ -36,6 +36,7 @@ if list_num == 1:
     result_string.append("`-i`: Ignores training cooldown (DO NOT USE EXCEPT WHEN TOLD BY AN ADMIN).")
     result_string.append("")
     result_string.append("*Only is used when starting to craft a new item.")
+    photo = 
 
 else:
 
