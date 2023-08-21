@@ -105,7 +105,7 @@ Default: "hex"
 
 `jack_of_trades`: Whether or not Jack of All Trades applies to the crafting check. Default: true
 
-`reliable_talent`: Whether or not Reliable Talent applies to the crafting check. Default: false
+`reliable_talent`: Whether or not Reliable Talent applies to the crafting check. Default: false (I would highly recommend that this left disabled, as rogues are already powerful. Giving them reliable talent could lead to guaranteed successes.)
 
 `success_mod_threshold`: The thresholds above the DC for additional successes. Default (don't forget to remove the comments, otherwise it will throw an error):
 
