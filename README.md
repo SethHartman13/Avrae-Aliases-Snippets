@@ -20,7 +20,7 @@ This is a repository of all the snippets and aliases I have either worked on or 
 ### In Progress:
 - egg - Egg alias that allows players to keep track of eggs that they may have to hatch.
 - guide - Guide alias that allows server staff to put together guides for players.
-
+- general utilities - Library that contains numerous utility aliases and snippets
 
 ## License Notice
 

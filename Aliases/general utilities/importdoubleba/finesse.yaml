@@ -1,0 +1,26 @@
+_v: 2
+name: Double-Bladed Scimitar BA (Finesse) 
+automation: 
+ - type: condition
+   condition: strengthMod > dexterityMod
+   onTrue:
+    - type: variable
+      name: weapmod
+      value: strengthMod
+   onFalse:
+    - type: variable
+      name: weapmod
+      value: dexterityMod
+   errorBehavior: "false"
+ - type: target 
+   target: all 
+   effects: 
+    - type: attack 
+      hit: 
+        - type: damage 
+          damage: 1d4 + {weapmod} [slashing] 
+      miss: [] 
+      attackBonus: "{weapmod+proficiencyBonus}" 
+ - type: text 
+   text: If you attack with a double-bladed scimitar as part of the Attack action on your turn, you can use a bonus action immediately after to make a melee attack with it. This attack deals 1d4 slashing damage on a hit, instead of 2d4. 
+activation_type: 3
