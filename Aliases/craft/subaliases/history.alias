@@ -137,11 +137,11 @@ def main(input_list: list[str], ch = character(), settings_dictionary = grab_set
         except:
             color = ""
 
-        return [f'({ctx.author.display_name}) {name} checks their crafting history', result_string, history_img, color]
+        return [f'({ctx.author.nickname}) {ch.name} checks their crafting history', result_string, history_img, color]
 
     # If the crafting dictionary does not exist
     else:
-        return [f'{ctx.author.display_name} has encountered an error', 'Crafting cvar not found', error_img, "#CC0202"]
+        return [f'{ctx.author.nickname} has encountered an error', 'Crafting cvar not found', error_img, "#CC0202"]
 
 
 # Main program

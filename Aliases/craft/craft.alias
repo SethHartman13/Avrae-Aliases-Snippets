@@ -1506,4 +1506,4 @@ except:
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
 -color "{{output_list[3]}}"
--footer "!craft {{l}}item_name> {{l}}item_category> {{l}}magic_type | cost> {{l}}{{d}}s skill> {{l}}eadv/adv/dis> {{l}}succ #>{{"\n"}}Updated 8/21/2023 | ShadowsStride"
+-footer "!craft {{l}}item_name> {{l}}item_category> {{l}}magic_type | cost> {{l}}{{d}}s skill> {{l}}eadv/adv/dis> {{l}}{{d}}succ #>{{"\n"}}Updated 8/21/2023 | ShadowsStride"
