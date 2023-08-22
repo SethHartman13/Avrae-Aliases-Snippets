@@ -14,6 +14,7 @@ Alias that handles the main functions of starting and continuing crafting sessio
 - `-s skill_name`: - `-s skill_name`: This tells the crafting alias to use a skill modifier of the name given. (This is retained item to item, `-s ""` to clear skill)
 - `eadv/adv/dis`: Applies double advantage/advantage/disadvantage.
 - `-i`: Ignores training cooldown (DO NOT USE EXCEPT WHEN TOLD BY AN ADMIN).
+- `-succ*`: Success multiplier (multiplies the number of successes by this)
 
 *Only is used when starting to craft a new item
 
@@ -139,9 +140,13 @@ Default: "hex"
 
 Default: false
 
+`Max_history`: Max number of items that show up in history per list. Default: 15
+
 ## Changelog:
 7/31/2023 - Alias created with documentation
 
 6/4/2023 - Added xp support
 
-8/21/2023 - Documentation update. Added reliable talent functionality
+8/21/2023 - Documentation update. Added reliable talent functionality.
+
+8/21/2023 - Added -succ functionality and added display restrictions on `history` (limit number of items per list)

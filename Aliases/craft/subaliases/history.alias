@@ -7,16 +7,63 @@ embed
 # *******************************************************
 
 
-def main(ch = character()) -> list[str]:
+def grab_settings_dictionary() -> dict:
+    """
+    Grabs the settings dictionary, prioritizes svar, but falls back on gvar just in case.
+
+    Return:
+        (dict): Settings dictionary
+    """
+
+    # Tries to grab the svar
+    setting_test = get_svar("crafting_settings", default="None")
+
+    # If the svar exists
+    if setting_test != "None":
+
+        # Load dictionary
+        settings_dictionary = load_json(setting_test)
+
+        # Checks if max_history exists, otherwise defaults to standard settings
+        try:
+            settings_dictionary['max_history']
+        except:
+            settings_dictionary['max_history'] = 15
+
+        return settings_dictionary
+
+    else:
+        return load_json(get_gvar("d2daf66a-dce2-481b-ab28-f37ffe072de7"))
+
+
+def main(input_list: list[str], ch = character(), settings_dictionary = grab_settings_dictionary()) -> list[str]:
     """
     Main program function
 
     Args:
+        input_list (list[str]): List of inputs
         ch = character(): Character object
+        settings_dictionary = grab_settings_dictionary(): Settings dictionary
 
     Return:
         (list[str]): Result
     """
+    
+    # Tries to make first input a number
+    try:
+        list_num = int(input_list[0])
+
+        # If the number is below 1
+        if list_num < 1:
+            list_num = 1
+
+        # If the number is not below 1
+        else:
+            pass
+
+    # If it cannot make it a number
+    except:
+        list_num = 1
 
     # Image urls
     error_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/error.png"
@@ -66,8 +113,21 @@ def main(ch = character()) -> list[str]:
         except:
             pass
 
+        # Splits the items into seperate lists
+        sep_list = [crafting_dictionary['history'][i:i+settings_dictionary['max_history']] for i in range (0, len(crafting_dictionary['history']), settings_dictionary['max_history'])]
+
+        # If number given goes above list size
+        if list_num > len(sep_list):
+            list_num = len(sep_list)
+
+        # If number given does not go above list size
+        else:
+            pass
+
+        sep_list[list_num - 1].insert(0, f"**List {list_num}/{len(sep_list)}**")
+
         # Joins results
-        result_string = "\n".join(crafting_dictionary['history'])
+        result_string = "\n".join(sep_list[list_num - 1])
 
         # Tries to pull a color
         try:
@@ -85,7 +145,8 @@ def main(ch = character()) -> list[str]:
 
 
 # Main program
-output_list = main()
+output_list = main(&ARGS&)
+l = "<"
 
 
 </drac2>
@@ -93,4 +154,4 @@ output_list = main()
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
 -color "{{output_list[3]}}"
--footer "!craft history | Updated 7/21/2023 | ShadowsStride"
+-footer "!craft history  {{l}}#> | Updated 8/21/2023 | ShadowsStride"

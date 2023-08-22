@@ -1,5 +1,15 @@
 embed
 <drac2>
+# *******************************************************
+# * This work includes material taken from the System Reference Document 5.1 
+# * (“SRD 5.1”) by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. 
+# * The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License 
+# * available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# * 
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International License 
+# * available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
 
 
 def add_remove_funds(cost: str, ch: character) -> bool:
@@ -56,9 +66,33 @@ def grab_settings_dict() -> dict:
     if setting_test != "None":
 
         # Load dictionary
-        settings_dict = load_json(setting_test)
+        settings_dictionary = load_json(setting_test)
 
-        return settings_dict
+        try:
+            settings_dictionary["parent_channel_inherit"]
+
+        except:
+            settings_dictionary["parent_channel_inherit"] = False
+
+        try:
+            settings_dictionary['pro_rate_refund']
+
+        except:
+            settings_dictionary['pro_rate_refund'] = True
+
+        try:
+            settings_dictionary['success_dispType']
+
+        except:
+            settings_dictionary['success_dispType'] = "star"
+
+        try:
+            settings_dictionary['failure_dispType']
+
+        except:
+            settings_dictionary['failure_dispType'] = "hex"
+
+        return settings_dictionary
 
     else:
         return load_json(get_gvar("d2daf66a-dce2-481b-ab28-f37ffe072de7"))
@@ -358,6 +392,13 @@ def main(ch = character()) -> list[str]:
         except:
             crafting_dictionary['backup']['cvar'][6] = ""
 
+        try:
+            crafting_dictionary['backup']['cvar'][7] = crafting_dictionary['succ_mult']
+
+        except:
+            crafting_dictionary['backup']['cvar'][7] = 1.0
+        
+
         crafting_dictionary['backup']['money_back'] = money_back
 
         # Puts the counter values into backup
@@ -386,6 +427,12 @@ def main(ch = character()) -> list[str]:
 
         except:
             crafting_dictionary['stat'] = ""
+
+        try:
+            crafting_dictionary['succ_mult'] = temp_dictionary['cvar'][7]
+
+        except:
+            crafting_dictionary['succ_mult'] = 1.0
         
         # Stores disptypes so that I don't have to pull from the settings dictionary
         success_dispType = success_counter.display_type
@@ -526,4 +573,4 @@ output_list = main()
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
 -color "{{output_list[3]}}"
--footer "!craft restore | Updated 7/21/23 | ShadowsStride"
+-footer "!craft restore | Updated 8/21/23 | ShadowsStride"

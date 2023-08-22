@@ -373,6 +373,12 @@ def main(ch = character()) -> list[str]:
     except:
         crafting_dictionary['stat'] = ""
 
+    try:
+        crafting_dictionary['succ_mult']
+
+    except:
+        crafting_dictionary['succ_mult'] = 1.0
+
     # Grabs counter values and creates backups
     crafting_dictionary['backup'] = {
         'cvar': [
@@ -382,7 +388,8 @@ def main(ch = character()) -> list[str]:
             crafting_dictionary['time'], 
             crafting_dictionary['cooldown'],  
             crafting_dictionary['crafting_cost'],
-            crafting_dictionary['stat']
+            crafting_dictionary['stat'],
+            crafting_dictionary['succ_mult']
         ],
         'success_cc': [
             success_counter.value, 
@@ -399,7 +406,6 @@ def main(ch = character()) -> list[str]:
         'money_back': money_back
     }
 
-    
     # Deletes CCs
     ch.delete_cc('Crafting: Successes')
     ch.delete_cc('Crafting: Failures')
@@ -611,4 +617,4 @@ except:
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
 -color "{{output_list[3]}}"
--footer "!craft clear | Updated 8/6/2023 | ShadowsStride"
+-footer "!craft clear | Updated 8/21/2023 | ShadowsStride"

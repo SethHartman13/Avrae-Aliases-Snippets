@@ -40,5 +40,6 @@
     "success_mod_threshold": {"-999": 1, "5": 2, "10": 3, "15": 4, "20": 5},
     "whitelisted_channel_ids": [],
     "parent_channel_inherit": false,
-    "xp_categories": false
+    "xp_categories": false,
+    "max_history": 15
 }

@@ -341,7 +341,7 @@ def capitalize_name(name: str) -> str:
     return " ".join(name_list)
 
 
-def create_cc_and_dict(item_name: str, craft_category: str, craft_type: str, settings_dictionary: dict, crafting_dict: dict, ch: character, crafting_cost: float) -> list[str]:
+def create_cc_and_dict(item_name: str, craft_category: str, craft_type: str, settings_dictionary: dict, crafting_dict: dict, ch: character, crafting_cost: float, succ_mult: float) -> list[str]:
     """
     Creates/updates a crafting dictionary to refer to constantly
 
@@ -352,6 +352,8 @@ def create_cc_and_dict(item_name: str, craft_category: str, craft_type: str, set
         settings_dictionary (dict): Settings dictionary
         crafting_dict (dict): Old crafting dictionary
         ch (character): Character object
+        crafting_cost (float): Cost of crafting
+        succ_mult (float): Success multiplier
 
     Return:
         crafting_dict (dict): Updated crafting dictionary
@@ -384,11 +386,17 @@ def create_cc_and_dict(item_name: str, craft_category: str, craft_type: str, set
         except:
             crafting_dict['color'] = ""
 
+    try:
+        crafting_dict['succ_mult'] = float(succ_mult)
+
+    except:
+        crafting_dict['succ_mult'] = 1.0
+
     # Create success CC
     ch.create_cc(
         name="Crafting: Successes", 
         minVal="0", 
-        maxVal=str(settings_dictionary[craft_category][craft_type][4]), 
+        maxVal=str(ceil(settings_dictionary[craft_category][craft_type][4] * crafting_dict['succ_mult'])), 
         reset="none", 
         dispType=settings_dictionary["success_dispType"], 
         title=f"{item_name}'s Successes", 
@@ -411,7 +419,7 @@ def create_cc_and_dict(item_name: str, craft_category: str, craft_type: str, set
     return crafting_dict
 
 
-def update_cc_settings(settings_dictionary: dict, item_category: str, item_type: str, ch: character) -> list[str]:
+def update_cc_settings(settings_dictionary: dict, item_category: str, item_type: str, ch: character, succ_mult: float) -> list[str]:
     """
     Updates CC settings
 
@@ -419,12 +427,13 @@ def update_cc_settings(settings_dictionary: dict, item_category: str, item_type:
         settings_dictionary (dict): Settings dictionary
         item_category (str): Item category
         item_type (str): Item type
+        succ_mult (float): Success multiplier
 
     Return:
         (list[str]): Result
     """
 
-    success_counter = ch.edit_cc(name="Crafting: Successes", maxVal=str(settings_dictionary[item_category][item_type][4]), dispType=settings_dictionary["success_dispType"])
+    success_counter = ch.edit_cc(name="Crafting: Successes", maxVal=str(ceil(settings_dictionary[item_category][item_type][4] * succ_mult)), dispType=settings_dictionary["success_dispType"])
     failure_counter = ch.edit_cc(name="Crafting: Failures", maxVal=str(settings_dictionary[item_category][item_type][5]), dispType=settings_dictionary["failure_dispType"])
 
     return ["Success", success_counter, failure_counter]
@@ -1141,6 +1150,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
         ignore_restrictions = args.last('i', default=False)
         settings_dictionary = grab_settings_dictionary()
         cost_mod = args.last('c', default=1.0)
+        succ_mod = args.last('succ', default=1.0)
 
         # Grabs skill, if any.
         stat = args.last("s", default=False)
@@ -1300,7 +1310,7 @@ def main(input_list: list[str], ch = character()) -> list[str]:
             if len(good_dict.keys()) == len(money_dict.keys()) or ignore_restrictions:
 
                 # Update crafting dictionary with updated details
-                crafting_dictionary = create_cc_and_dict(input_list[0], input_list[1], input_list[2], settings_dictionary, crafting_dictionary, ch, cost[1])
+                crafting_dictionary = create_cc_and_dict(input_list[0], input_list[1], input_list[2], settings_dictionary, crafting_dictionary, ch, cost[1], succ_mod)
 
             # If at least one key did not work, put money back that we took
             else:
@@ -1366,7 +1376,13 @@ def main(input_list: list[str], ch = character()) -> list[str]:
 
         crafting_dictionary = load_json(result_list[4])
 
-        cc_test = update_cc_settings(settings_dictionary, crafting_dictionary['category'], crafting_dictionary['type'], ch)
+        try:
+            crafting_dictionary['succ_mult']
+
+        except:
+            crafting_dictionary['succ_mult'] = 1.0
+
+        cc_test = update_cc_settings(settings_dictionary, crafting_dictionary['category'], crafting_dictionary['type'], ch, crafting_dictionary['succ_mult'])
 
         if cc_test[0] != "Error":
             success_counter = cc_test[1]
@@ -1490,4 +1506,4 @@ except:
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
 -color "{{output_list[3]}}"
--footer "!craft {{l}}item_name> {{l}}item_category> {{l}}magic_type | cost> {{l}}{{d}}s skill> {{l}}eadv/adv/dis>{{"\n"}}Updated 8/21/2023 | ShadowsStride"
+-footer "!craft {{l}}item_name> {{l}}item_category> {{l}}magic_type | cost> {{l}}{{d}}s skill> {{l}}eadv/adv/dis> {{l}}succ #>{{"\n"}}Updated 8/21/2023 | ShadowsStride"

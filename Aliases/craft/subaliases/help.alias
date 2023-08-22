@@ -36,6 +36,7 @@ if input_list[0] == 1:
     result_string.append('`-s skill_name`: This tells the crafting alias to use a skill modifier of the name given. (This is retained item to item, `-s ""` to clear skill)')
     result_string.append("`eadv/adv/dis`: Applies double advantage/advantage/disadvantage.")
     result_string.append("`-i`: Ignores training cooldown (DO NOT USE EXCEPT WHEN TOLD BY AN ADMIN).")
+    result_string.append("`-succ*`: Success multiplier (multiplies the number of successes by this)")
     result_string.append("")
     result_string.append("*Only is used when starting to craft a new item.")
     img_name = randchoice(['coin_bag', 'error', 'fail', 'hammer', 'history', 'list'])
@@ -78,4 +79,4 @@ l = "<"
 -f "{{'\n'.join(result_string)}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/{{img_name}}.png"
 -image "{{photo}}"
--footer "!craft help {{l}}#> | Updated 8/14/23 | ShadowsStride"
+-footer "!craft help {{l}}#> | Updated 8/21/23 | ShadowsStride"

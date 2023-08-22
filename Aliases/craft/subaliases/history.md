@@ -6,4 +6,4 @@ Subalias that allows players to look at their crafting history
 - Seth Hartman (ShadowsStride)
 
 ## Help:
-`!craft history`
+`!craft history <#>`
