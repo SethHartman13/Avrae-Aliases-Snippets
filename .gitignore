@@ -6,3 +6,4 @@ Aliases/clock/*.json
 /templates
 line.py
 /Private
+Aliases/guide/poc.py
