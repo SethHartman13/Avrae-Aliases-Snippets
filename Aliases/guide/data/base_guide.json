@@ -1,14 +1,20 @@
 {
-    "topic":[
-        "Some sort of header paragraph",
-        "**subtopic**\nDetails spelled out in a paragraph of sorts",
-        "**subtopic2**\nDetails spelled out in a paragraph of sorts",
-        "**Subtopic3**\nDetails spelled out in a paragraph of sorts"
-    ],
-    "topic2":[
-        "Some sort of header paragraph",
-        "**subtopic**\nDetails spelled out in a paragraph of sorts",
-        "**subtopic2**\nDetails spelled out in a paragraph of sorts",
-        "**Subtopic3**\nDetails spelled out in a paragraph of sorts"
-    ]
+    "Guide 1": {
+        "Section 1": "Some singular paragraph (does not have a caption)",
+        "Section 2": {
+            "Header": "Header paragraph of heading 2 (does not have a caption, optional)",
+            "Sub-section 1": "Contents of sub-section 1",
+            "Sub-section 2": "Contents of sub-section 2",
+            "Sub-section 3": "Contents of sub-section 3"
+        }
+    },
+    "Guide 2": {
+        "gvar": "gvar GUID string"
+    },
+    "Guide 3": {
+        "svar": "name of svar"
+    },
+    "Guide 4": {
+        "uvar": "name of uvar"
+    }
 }

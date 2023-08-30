@@ -1,35 +1,417 @@
 embed
 <drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International License 
+# * available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
 
 
-def main(input_list: list[str]) -> list[str]:
+def search_key(query: str, key_list: list[str]) -> list[str]|str:
     """
-    
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
     """
 
+    # Creates list to store matches
+    key_results = []
+
+    # Checks each item if a match occurs
+    for key in key_list:
+
+        # If matches
+        if query.lower() in key.lower():
+            key_results.append(key)
+
+        else:
+            pass
+
+    # Finds at least 1 match
+    if len(key_results) > 0:
+        return key_results
+
+    # If it finds no matches
+    else:
+        return 'None'
 
 
-
-    # Need to dynamically adjust for length of guide so that it does not reach a character limit (break at subtopics)
-    # Need to adjust for gvars and svars (maybe uvars?)
+def capitalize_name(name: str) -> str:
+    """
+    Capitalizes name.
     
-        
+    Args:
+        name: Name to capitalize.
+
+    Return:
+        (str): Capitalized name
+    """
+
+    # For multi-word names
+    name_list_temp = name.split(" ")
+    name_list = []
+
+    # Each word gets lowercased and first letter capitalized
+    for temp_name in name_list_temp:
+        name_list.append(temp_name.lower().capitalize())
+
+    return " ".join(name_list)
 
 
+def split_string(message_list: list[str], list_num: int) -> str:
+    """
+    Function that dynamically splits up large messages into several lists. Current limit is 300 characters.
+    
+    Args:
+        message_list (list[str]): List of messages that need to be dynamically stitched together
+        list_num (int): List number. Dynamically fits to number of lists if out of range.
+    
+    Return:
+        (str): Stitched message (that was requested)
+    """
+
+    split_list = [message_list.pop(0), []]
+
+    i = 1
+    for guide in message_list:
+
+        split_list[i].append(guide)
+        test_string =  f'{split_list[0]}' + "\n\n".join(split_list[i])
+
+        if len(test_string) < 300:
+            pass
+
+        else:
+            i += 1
+            split_list.append([])
+    
+    if list_num < 1:
+        list_num = 1
+
+    elif list_num > len(split_list) - 1:
+        list_num = len(split_list) - 1
+
+    else:
+        pass
+
+    if len(split_list) == 1:
+        list_addon = ""
+
+    else:
+        list_addon = f"List {list_num}/{len(split_list) - 1}\n"
+
+    return f"{list_addon}{split_list[0]}\n" + "\n\n".join(split_list[list_num])
 
 
+def grab_general(general_dictionary: dict, list_num: int) -> str:
+    """
+    Function that handles grabbing message for general (Names of guides and subsections)
+    
+    Args:
+        general_dictionary (dict): General dictionary containing all the different guides
+        list_num (int): List number
+
+    Return:
+        (str): Stitched message (that was requested)
+    """
+
+    result_list = ["## Guides"]
+
+    for guide_key, guide_value in general_dictionary.items():
+        temp_list = [f"**{capitalize_name(str(guide_key))}**"]
+
+        for section_key in general_dictionary[guide_key].keys():
+            temp_list.append(capitalize_name(str(section_key)))
+
+        result_list.append("\n".join(temp_list))
+
+    return split_string(result_list, list_num)
 
 
+def grab_guide(general_dictionary: dict, guide_name: str, list_num: int) -> str:
+    """
+    Function that handles grabbing message for guide (Sections and all their contents)
+    
+    Args:
+        general_dictionary (dict): General dictionary containing all the different guides
+        guide_name (str): Name of guide requested
+        list_num (num): List number
+
+    Return:
+        (str): Stitched message (that was requested)
+    """
+
+    result_list = [f'#{guide_name}']
+
+    for section_key, section_value in general_dictionary[guide_name].items():
+        result_list.append(f"## {capitalize_name(str(section_key))}")
+
+        if typeof(section_value) == "str":
+            result_list.append(section_value)
+
+        else:
+            try:
+                result_list.append(f"{section_value.pop('Header')}\n")
+
+            except:
+                pass
+
+            for subsection_key, subsection_value in section_value.items():
+                result_list.append(f'**{capitalize_name(str(subsection_key))}**\n{subsection_value}\n')
+
+    return split_string(result_list, list_num)
 
 
+def grab_section(general_dictionary: dict, guide_name: str, section_name: str, list_num: int) -> str:
+    """
+    Function that handles grabbing message for section (Section and its content)
+    
+    Args:
+        general_dictionary (dict): General dictionary containing all the different guides
+        guide_name (str): Name of guide over section requested
+        section_name (str): Name of section requested
+        list_num (num): List number
+
+    Return:
+        (str): Stitched message (that was requested)
+    """
+
+    result_list = [f"## {section_name}"]
+    
+    if typeof(general_dictionary[guide_name][section_name]) == "str":
+        result_list.append(general_dictionary[guide_name][section_name])
+
+    else:
+        try:
+            result_list.append(general_dictionary[guide_name][section_name].pop('Header'))
+
+        except:
+            pass
+
+        for subsection_key, subsection_value in general_dictionary[guide_name][section_name]:
+            result_list.append(f"**{subsection_key}**\n{subsection_value}\n")
+
+    return split_string(result_list, list_num)
+    
+
+def grab_subsection(general_dictionary: dict, guide_name: str, section_name: str, subsection_name: int) -> str:
+    """
+    Function that handles grabbing message for sub-section (Sub-section and its content)
+    
+    Args:
+        general_dictionary (dict): General dictionary containing all the different guides
+        guide_name (str): Name of guide over subsection requested
+        section_name (str): Name of section over subsection requested
+        subsection_namae (str): Name of subsection requested
+        list_num (num): List number
+
+    Return:
+        (str): Stitched message (that was requested)
+    """
+    result_list = [f"### {subsection_name}"]
+
+    result_list.append(general_dictionary[guide_name][section_name][subsection_name])
+
+    return split_string(result_list, list_num)
 
 
+def search_dictionary(search_name: str, dictionary: dict) -> list[str]:
+    """
+    Function that handles the searching of keys within dictionaries
+    
+    Args:
+        search_name (str): Name of key being searched
+        dictionary (dict): Dictionary being searched
+
+    Return:
+        (list[str]): Result   
+    """
+    result_key = search_key(search_name, dictionary.keys())
+
+    # If there was at least one match
+    if result_key != "None":
+
+        # If there was exactly one match
+        if len(result_key) == 1:
+            return ["Success", result_key[0]]
+
+        # If there was more than one match
+        else:
+            for key in result_key:
+                if input_list[1].lower() != key.lower():
+                    pass
+
+                else:
+                    return ["Success", key]
+
+            return ["Failure"]
+
+    # If there were no matches
+    else:
+        return ["Failure"]
 
 
+def main(input_list: list[str], date: str) -> list[str]:
+    """
+    Main program function
 
+    Args:
+        input_list (list[str]): List of inputs
+        date (str): Date modified, allows so that I don't have to change numerous pieces of information when I can just change it in one place
 
+    Return:
+        (list[str]): Result
+    """
 
+    # Tries to grab a uvar and svar
+    guide_uvar = get_uvar("guide_dict", default=None)
+    guide_svar = get_svar("guide_dict", default=None)
 
+    # If there is a uvar
+    if guide_uvar:
+        guide_uvar_dict = load_json(guide_uvar)
+
+    # If there is not a uvar
+    else:
+        pass
+
+    # If there is a svar
+    if guide_svar:
+        guide_svar_dict = load_json(guide_svar_test)
+
+    # If there is a uvar
+    else:
+        pass
+
+    # If there was at least one of uvar/svar
+    if guide_svar or guide_uvar:
+        pass
+
+    # If thre was not at least one of uvar/svar
+    else:
+        return [f'{ctx.author.display_name} has encountered an error', "guide_dict was not found", f"!guide | {date} | ShadowsStride", error_img, "#CC0202"]
+
+    # If there is a uvar, but no svar
+    if not guide_svar and guide_uvar:
+        general_dictionary = {(key.lower(), value) for key, value in guide_uvar_dict.items()}
+
+    # If there is a svar
+    else:
+
+        general_dictionary = {(key.lower(), value) for key, value in guide_svar_dict.items()}
+
+        # If there is not a uvar
+        if not guide_uvar:
+            pass
+
+        # If there is a uvar
+        else:
+            for key in guide_uvar_dict.keys():
+                general_dictionary[key.lower()] = guide_uvar_dict[key.lower()]
+
+    # Goes through and grabs content (svars -> gvars -> uvars) and replaces it within the general dictionary.
+    for guide_key, guide_value in general_dictionary.items():
+        try:
+            general_dictionary[guide_key] = load_json(get_svar(guide_value.pop('svar')))
+
+        except:
+            try:
+                general_dictionary[guide_key] = load_json(get_gvar(guide_value.pop('gvar')))
+
+            except:
+                try:
+                    general_dictionary[guide_key] = load_json(get_uvar(guide_value.pop('uvar')))
+
+                except:
+                    pass  
+
+    # If there is any inputs
+    if len(input_list) > 0:
+
+        # Try to make the last input an integer
+        try:
+            list_num = int(input_list[-1])
+            input_list.pop(-1)
+
+        # Last input is not a number
+        except:
+            list_num = 1
+
+    # If there are no inputs 
+    else:
+        list_num = 1
+            
+# General
+# ----------------------------------------------------------------------------------------------------------------
+    # If no inputs are given, lists guides and sections
+    if len(input_list) == 0:
+        return [f'{ctx.author.display_name} looks up guides', grab_general(general_dictionary, list_num), f"!guide <#> | {date} | ShadowsStride", general_img, ""]
+
+    # If at least one input is given
+    else:
+        result_list = search_dictionary(input_list[0], general_dictionary)
+
+        # If it does find the guide requested
+        if result_list[0].lower() != "failure":
+            input_list[0] = capitalize_name(result_list[1])
+
+        # If it does find the guide requested
+        else:
+            return [f'{ctx.author.display_name} looks up guides', grab_general(general_dictionary, list_num), f"!guide <#> | {date} | ShadowsStride", general_img, ""]
+
+# Guide
+# ----------------------------------------------------------------------------------------------------------------
+    # If one input is given
+    if len(input_list) == 1:
+        return [f'{ctx.author.display_name} views a guide: {input_list[0]}', grab_guide(general_dictionary, input_list[0], list_num), f"!guide [guide_name] <#> | {date} | ShadowsStride", guide_img, ""]
+
+    # If at least two inputs are given
+    else:
+        result_list = search_dictionary(input_list[1], general_dictionary[input_list[0]])
+
+        # If it does find the section requested
+        if result_list[0].lower() != "failure":
+            input_list[1] = capitalize_name(result_list[1])
+
+        # If it does not find the section requested
+        else:
+            return [f'{ctx.author.display_name} views a guide: {input_list[0]}', grab_guide(general_dictionary, input_list[0], list_num), f"!guide [guide_name] <#> | {date} | ShadowsStride", guide_img, ""]
+
+# Section
+# ----------------------------------------------------------------------------------------------------------------
+    # If two inputs are given
+    if len(input_list) == 2:
+        return [f'{ctx.author.display_name} views a section: {input_list[0]} > {input_list[1]}', grab_section(general_dictionary, input_list[0], input_list[1], list_num), f"!guide [guide_name] [section_name] <#> | {date} | ShadowsStride", section_img, ""]
+
+    # If at least three inputs are given
+    else:
+        result_list = search_dictionary(input_list[2], general_dictionary[input_list[0]][input_list[1]])
+
+        # If it does find the subsection requested
+        if result_list[0].lower() != "failure":
+            input_list[2] = capitalize_name(result_list[1])
+
+        # If it does not find the subsection requested
+        else:
+           return [f'{ctx.author.display_name} views a section: {input_list[0]} > {input_list[1]}', grab_section(general_dictionary, input_list[0], input_list[1], list_num), f"!guide [guide_name] [section_name] <#> | {date} | ShadowsStride", section_img, ""]
+
+# Sub-section
+# ----------------------------------------------------------------------------------------------------------------
+    return [f"{ctx.author.display_name} views a subsection: {input_list[0]} > {input_list[1]} > {input_list[2]}", grab_subsection(general_dictionary, input_list[0], input_list[1], input_list[2], list_num), f"!guide [guide_name] [section_name] [subsection_name] <#> | {date} | ShadowsStride", subsection_img, ""]
+
+    
+# Main program function        
+output_list = main(&ARGS&, "8/28/23")
 
 
 </drac2>
+-title "{{output_list[0]}}"
+-f "{{output_list[1]}}"
+-footer "{{output_list[2]}}"
+-thumb "{{output_list[3]}}"
+-color "{{output_list[4]}}"

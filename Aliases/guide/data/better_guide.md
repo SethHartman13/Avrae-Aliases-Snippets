@@ -48,15 +48,15 @@ In "Section 2," you'll find more detailed content structured with multiple level
 
 ### Guide 2
 
-"Guide 2" introduces a different type of content structure. It includes a GUID string of a gvar. The content under "Guide 2" follows a similar pattern to "Guide 1," but with different content.
+"Guide 2" introduces a different type of content structure. It includes a GUID string of a gvar (global variable). The content under "Guide 2" follows a similar pattern to "Guide 1," but with different content.
 
 ### Guide 3
 
-"Guide 3" presents yet another variation. It includes the name of a svar (a server variable). Like the previous titles, the content here is structured similarly to "Guide 1."
+"Guide 3" presents yet another variation. It includes the name of a svar (server variable). Like the previous titles, the content here is structured similarly to "Guide 1."
 
 ### Guide 4
 
-"Guide 4" presents one last variation. It includes the name of a uvar (a user variable). Like the previous titles, the content here is structured similarly to "Guide 1."
+"Guide 4" presents one last variation. It includes the name of a uvar (user variable). Like the previous titles, the content here is structured similarly to "Guide 1."
 
 ## Accessing Guide Sections
 
