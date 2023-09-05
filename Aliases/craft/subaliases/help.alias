@@ -24,21 +24,22 @@ result_string.append(f"Sounds like you need someone to provide the help action. 
 result_string.append("")
 photo = "" 
 
+quote = '"'
+
 if input_list[0] == 1:
 
     # Help/main
-    result_string.append("`!craft help #`: This subalias")
     result_string.append("`!craft <item_name> <item_category> <item_type/cost> <-b #> <-c #> <-s skill_name> <eadv/adv/dis> <-i>`: Starts/continues crafting session.")
     result_string.append("`<item_name>*`: Name of the item being crafted. Reminder: Use quotation marks for multi-word items.")
-    result_string.append("`<item_category>*`: Name of the category. `!craft help 3` for more details")
-    result_string.append("`<item_type/cost>*`: If the category selected is not a cost-based category, name of the type. Otherwise, cost of the item in GP. `!craft help 3` for more details")
+    result_string.append("`<item_category>*`: Name of category. `!craft help 3` for more details")
+    result_string.append("`<item_type/cost>*`: If a cost-based category, name of the type. Otherwise, cost of the item in GP. `!craft help 3` for more details")
     result_string.append("`-b`: Adds a misc bonus to the check. ")
-    result_string.append('`-s skill_name`: This tells the crafting alias to use a skill modifier of the name given. (This is retained item to item, `-s ""` to clear skill)')
+    result_string.append(f'`-s skill_name`: Adds skill modifier of the name given. (This is retained item to item, `-s \{quote}\{quote}` to clear skill)')
     result_string.append("`eadv/adv/dis`: Applies double advantage/advantage/disadvantage.")
-    result_string.append("`-i`: Ignores training cooldown (DO NOT USE EXCEPT WHEN TOLD BY AN ADMIN).")
-    result_string.append("`-succ*`: Success multiplier (multiplies the number of successes by this)")
+    result_string.append("`-i`: Ignores training cooldown and cost (if first crafting session). DO NOT USE EXCEPT WHEN TOLD BY AN ADMIN.")
+    result_string.append("`-succ*`: Success multiplier (multiplies the number of successes required)")
     result_string.append("")
-    result_string.append("*Only is used when starting to craft a new item.")
+    result_string.append("*Only is used when starting a new item.")
     img_name = randchoice(['coin_bag', 'error', 'fail', 'hammer', 'history', 'list'])
 
 elif input_list[0] == 2:
@@ -47,6 +48,8 @@ elif input_list[0] == 2:
     result_string.append("`!craft clear`: Clears Crafting CCs so that a new item can be crafted, if `pro_rated_refund` is turned on, you will receive a refund.")
     result_string.append("`!craft restore`: Restores Crafting CCs so that you undo a previous `!craft clear` or `!craft restore` (when you accidentally overwrite a crafting in progress).")
     result_string.append("If you recieved a refund on the item you cleared, it will try to take back that refund.")
+    result_string.append("")
+    result_string.append("`!craft help #`: This subalias")
     result_string.append("")
 
     # Log/History/List
@@ -79,4 +82,4 @@ l = "<"
 -f "{{'\n'.join(result_string)}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/{{img_name}}.png"
 -image "{{photo}}"
--footer "!craft help {{l}}#> | Updated 8/21/23 | ShadowsStride"
+-footer "!craft help {{l}}#> | Updated 8/30/23 | ShadowsStride"

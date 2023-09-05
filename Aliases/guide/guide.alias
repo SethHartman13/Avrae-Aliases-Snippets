@@ -7,7 +7,7 @@ embed
 # *******************************************************
 
 
-def search_key(query: str, key_list: list[str]) -> list[str]|str:
+def search_key(query: str, key_list: list[str]) -> list[str]|None:
     """
     Searches for dictionary key.
 
@@ -16,7 +16,7 @@ def search_key(query: str, key_list: list[str]) -> list[str]|str:
         key_list (list): List of keys
 
     Return:
-        (str): If it finds it, it returns the key, otherwise it returns 'None'
+        (list[str]|None): If it finds it, it returns the key, otherwise it returns None
     """
 
     # Creates list to store matches
@@ -38,7 +38,7 @@ def search_key(query: str, key_list: list[str]) -> list[str]|str:
 
     # If it finds no matches
     else:
-        return 'None'
+        return None
 
 
 def capitalize_name(name: str) -> str:
@@ -62,211 +62,364 @@ def capitalize_name(name: str) -> str:
 
     return " ".join(name_list)
 
-
-def split_string(message_list: list[str], list_num: int) -> str:
+def guide_variable_find(guide_value: any) -> dict|list|str:
     """
-    Function that dynamically splits up large messages into several lists. Current limit is 300 characters.
-    
+    Tries to find variable contents (uvar -> svar -> gvar)
+
     Args:
-        message_list (list[str]): List of messages that need to be dynamically stitched together
-        list_num (int): List number. Dynamically fits to number of lists if out of range.
-    
+        guide_value (any): Value of a guide (likely string, but can potentially be anything)
+
+
     Return:
-        (str): Stitched message (that was requested)
+        (dict|list|str): New value of the guide
     """
 
-    split_list = [message_list.pop(0), []]
+    # Searches for uvar
+    uvar = get_uvar(str(guide_value), default=None)
 
-    i = 1
-    for guide in message_list:
+    # If uvar exists, return uvar value
+    if uvar:
+        return load_json(uvar)
 
-        split_list[i].append(guide)
-        test_string =  f'{split_list[0]}' + "\n\n".join(split_list[i])
+    # If uvar does not exist, search for svar
+    else:
+        svar = get_svar(str(guide_value), default=None)
 
-        if len(test_string) < 300:
-            pass
+        # If svar exists, return svar value
+        if svar:
+            return load_json(svar)
 
+        # If svar does not exist, search for gvar
         else:
-            i += 1
-            split_list.append([])
-    
-    if list_num < 1:
-        list_num = 1
+            gvar = get_gvar(str(guide_value))
 
-    elif list_num > len(split_list) - 1:
-        list_num = len(split_list) - 1
+            # If gvar exists, return gvar value
+            if gvar:
+                return load_json(gvar)
 
-    else:
-        pass
-
-    if len(split_list) == 1:
-        list_addon = ""
-
-    else:
-        list_addon = f"List {list_num}/{len(split_list) - 1}\n"
-
-    return f"{list_addon}{split_list[0]}\n" + "\n\n".join(split_list[list_num])
+            # If gvar does not exist, return existing value
+            else:
+                return str(guide_value)
 
 
-def grab_general(general_dictionary: dict, list_num: int) -> str:
+def parse_output_string(list_of_lists: list[list[str]], list_num: int, max_char: int = 300) -> str:
     """
-    Function that handles grabbing message for general (Names of guides and subsections)
-    
+    Dynamically splits up content from request.
+
     Args:
-        general_dictionary (dict): General dictionary containing all the different guides
-        list_num (int): List number
-
-    Return:
-        (str): Stitched message (that was requested)
-    """
-
-    result_list = ["## Guides"]
-
-    for guide_key, guide_value in general_dictionary.items():
-        temp_list = [f"**{capitalize_name(str(guide_key))}**"]
-
-        for section_key in general_dictionary[guide_key].keys():
-            temp_list.append(capitalize_name(str(section_key)))
-
-        result_list.append("\n".join(temp_list))
-
-    return split_string(result_list, list_num)
-
-
-def grab_guide(general_dictionary: dict, guide_name: str, list_num: int) -> str:
-    """
-    Function that handles grabbing message for guide (Sections and all their contents)
+        list_of_lists (list[list[str]]): List of collections of data to be strung together
+        list_num (int): Collection # requested
+        max_char (int): Maximum characters per output (Default 300 characters)
     
-    Args:
-        general_dictionary (dict): General dictionary containing all the different guides
-        guide_name (str): Name of guide requested
-        list_num (num): List number
-
     Return:
-        (str): Stitched message (that was requested)
+        (str): Result
     """
 
-    result_list = [f'#{guide_name}']
+    # Setup test_list with empty collection
+    test_list = [[]]
 
-    for section_key, section_value in general_dictionary[guide_name].items():
-        result_list.append(f"## {capitalize_name(str(section_key))}")
+    # Select first collection to place information
+    i = 0
 
-        if typeof(section_value) == "str":
-            result_list.append(section_value)
+    # For each list of information
+    for item_list in list_of_lists:
 
-        else:
-            try:
-                result_list.append(f"{section_value.pop('Header')}\n")
-
-            except:
-                pass
-
-            for subsection_key, subsection_value in section_value.items():
-                result_list.append(f'**{capitalize_name(str(subsection_key))}**\n{subsection_value}\n')
-
-    return split_string(result_list, list_num)
-
-
-def grab_section(general_dictionary: dict, guide_name: str, section_name: str, list_num: int) -> str:
-    """
-    Function that handles grabbing message for section (Section and its content)
-    
-    Args:
-        general_dictionary (dict): General dictionary containing all the different guides
-        guide_name (str): Name of guide over section requested
-        section_name (str): Name of section requested
-        list_num (num): List number
-
-    Return:
-        (str): Stitched message (that was requested)
-    """
-
-    result_list = [f"## {section_name}"]
-    
-    if typeof(general_dictionary[guide_name][section_name]) == "str":
-        result_list.append(general_dictionary[guide_name][section_name])
-
-    else:
         try:
-            result_list.append(general_dictionary[guide_name][section_name].pop('Header'))
+            # Add data within list to collection in item_list
+            test_list[i].append("\n".join(item_list))
 
+            # If data in current collection is larger than max_char 
+            if len("\n".join(test_list[i])) > max_char:
+
+                # Move on to new collection
+                i += 1
+
+            # If data in current collection is not larger than max_char
+            else:
+
+                # Stay on current collection
+                pass
+        
         except:
             pass
 
-        for subsection_key, subsection_value in general_dictionary[guide_name][section_name]:
-            result_list.append(f"**{subsection_key}**\n{subsection_value}\n")
+    # If list_num is greater than bounds
+    if list_num > len(test_list):
+        list_num = len(test_list)
 
-    return split_string(result_list, list_num)
-    
+    # If list_num is lesser than bounts
+    elif list_num < 1:
+        list_num = 1
 
-def grab_subsection(general_dictionary: dict, guide_name: str, section_name: str, subsection_name: int) -> str:
-    """
-    Function that handles grabbing message for sub-section (Sub-section and its content)
-    
-    Args:
-        general_dictionary (dict): General dictionary containing all the different guides
-        guide_name (str): Name of guide over subsection requested
-        section_name (str): Name of section over subsection requested
-        subsection_namae (str): Name of subsection requested
-        list_num (num): List number
-
-    Return:
-        (str): Stitched message (that was requested)
-    """
-    result_list = [f"### {subsection_name}"]
-
-    result_list.append(general_dictionary[guide_name][section_name][subsection_name])
-
-    return split_string(result_list, list_num)
-
-
-def search_dictionary(search_name: str, dictionary: dict) -> list[str]:
-    """
-    Function that handles the searching of keys within dictionaries
-    
-    Args:
-        search_name (str): Name of key being searched
-        dictionary (dict): Dictionary being searched
-
-    Return:
-        (list[str]): Result   
-    """
-    result_key = search_key(search_name, dictionary.keys())
-
-    # If there was at least one match
-    if result_key != "None":
-
-        # If there was exactly one match
-        if len(result_key) == 1:
-            return ["Success", result_key[0]]
-
-        # If there was more than one match
-        else:
-            for key in result_key:
-                if input_list[1].lower() != key.lower():
-                    pass
-
-                else:
-                    return ["Success", key]
-
-            return ["Failure"]
-
-    # If there were no matches
+    # If list_num is within bounds
     else:
-        return ["Failure"]
+        pass
+
+    if len(test_list) == 1:
+        list_str = ""
+
+    else:
+        list_str = f"{list_num}/{len(test_list)}"
 
 
-def main(input_list: list[str], date: str) -> list[str]:
+    # Return requested collection of data
+    return f"{list_str}\n" + "\n".join(test_list[list_num - 1])
+        
+
+def grab_general(general_dictionary: dict, list_num: int) -> str:
+    """
+    Grabs guides and their contents. Displays guides, guide paragraphs, and section names. Groups by guide.
+
+    Args:
+        general_dictionary (dict): General dictionary containing guides
+        list_num (int): Collection # requested
+
+    Return:
+        (str): Result
+    """
+
+    # Create list and select first list to start
+    result_list = []
+    i = 0
+
+    # For each key and value within the general_dictionary
+    for guide_key, guide_value in general_dictionary.items():
+
+        # Create new list with guide name as first entry
+        result_list.append([f"**{capitalize_name(guide_key)}**"])
+
+        # If the value is a dictionary
+        if typeof(guide_value) == "SafeDict":
+
+            # For each section within that guide add a section name
+            for section_key in guide_value.keys():
+                result_list[i].append(capitalize_name(section_key))
+
+        # If the value is a list
+        elif typeof(guide_value) == "SafeList":
+
+            # For each paragraph within that guide, add paragraph
+            for paragraph in guide_value:
+                result_list[i].append(str(paragraph))
+
+        # If the value is not a dictionary or list, add paragraph
+        else:
+            result_list[i].append(str(guide_value))
+
+        result_list.append([""])
+
+        # Go onto next list
+        i += 2
+
+
+    # Sends [[guide_key1, guide_value1, guide_value2], [guide_key2, guide_value1, guide_value2]] to parse_output_string()
+    return parse_output_string(result_list, list_num)
+
+
+def grab_guide(guide_value: dict|list|str, list_num: int) -> str:
+    """
+    Grabs contents of guide, section name, section value, subsection name, and subsection value. Groups by section/paragraph
+
+    Args:
+        guide_value (dict|list|str): Value of guide requested
+        list_num (int): Collection # requested
+
+    Return:
+        (str): Result
+    """
+
+    # Create list and select first collection to start
+    result_list = []
+    i = 0
+
+    # If the guide_value is a dictionary
+    if typeof(guide_value) == "SafeDict":
+
+        # For each key and value within the guide_value
+        for section_key, section_value in guide_value.items():
+
+            # Create a new list with section name as first entry
+            result_list.append([f"**{capitalize_name(section_key)}**"])
+
+            # If the section_value is a dictionary
+            if typeof(section_value) == "SafeDict":
+
+                # For each key and value within the section_value
+                for subsection_key, subsection_value in section_value.items():
+
+                    # Add subsection name
+                    result_list[i].append(capitalize_name(subsection_key))
+
+                    # If the subsection_value is a list:
+                    if typeof(subsection_value) == "SafeList":
+
+                        # For each paragraph in list, add paragraph
+                        for paragraph in subsection_value:
+                            result_list[i].append(f"*{str(paragraph)}*")
+                            result_list[i].append("")
+
+                    # If the subsection_value is a dictionary, add error
+                    elif typeof(subsection_value) == "SafeDict":
+                        result_list[i].append("*Error: Subsection value cannot be a dictionary*")
+
+
+                    # If the subsection_value is not a dictionary or list, add paragraph
+                    else:
+                        result_list[i].append(f"*{str(subsection_value)}*")
+                        result_list[i].append("")
+
+            # If the section_value is a list
+            elif typeof(section_value) == "SafeList":
+
+                # For each paragraph in list, add paragraph
+                for paragraph in section_value:
+                    result_list[i].append(str(paragraph))
+
+            # If the section_value is not a dictionary or list, add paragraph
+            else:
+
+                result_list[i].append(str(section_value))
+
+            result_list.append([""])
+
+            # Go onto next collection
+            i += 2
+
+    # If the guide_value is a list
+    elif typeof(guide_value) == "SafeList":
+
+        # For each paragraph, add paragraph to each new collection
+        for paragraph in guide_value:
+            result_list.append([str(paragraph)])
+
+    # If the guide_value is not a dictionary or list, add paragraph to single collection
+    else:
+        result_list.append([str(guide_value)])
+
+    # Sends [[section_key1, section_value1, section_value2], [guide_paragraph1, guide_paragraph2], [guide_paragraph]] to parse_output_string()
+    return parse_output_string(result_list, list_num)
+
+
+def grab_section(section_value: list|dict|str, list_num: int) -> str:
+    """
+    Grabs contents of section value, subsection name, and subsection value. Groups by subsection/paragraph
+
+    Args:
+        section_value (dict|list|str): Value of section requested
+        list_num (int): Collection # requested
+
+    Return:
+        (str): Result
+    """
+
+    # Create collection within list and select first collection to start
+    result_list = []
+    i = 0
+
+    # If section_value is a dictionary
+    if typeof(section_value) == "SafeDict":
+
+        # For each key and value within the section_value
+        for subsection_key, subsection_value in section_value.items():
+            
+            # Add subsection name
+            result_list.append([f"**{subsection_key}**"])
+
+            # If the subsection_value is a list:
+            if typeof(subsection_value) == "SafeList":
+
+                # For each paragraph in list, add paragraph
+                for paragraph in subsection_value:
+                    result_list[i].append(f"{str(paragraph)}")
+
+            # If the subsection_value is a dictionary, add error
+            elif typeof(subsection_value) == "SafeDict":
+                result_list[i].append("Error: Subsection value cannot be a dictionary")
+
+
+            # If the subsection_value is not a dictionary or list, add paragraph
+            else:
+                result_list[i].append(f"{str(subsection_value)}")
+
+            result_list.append([""])
+
+            # Go onto next collection
+            i += 2
+
+    # If the section_value is a dictionary
+    elif typeof(section_value) == "SafeList":
+
+        # For each paragraph in list, add paragraph
+        for paragraph in section_value:
+            result_list.append([f"{str(paragraph)}"])
+
+            # Go onto next collection
+            i += 1
+
+    # If the section_value is not a dictionary or list, add paragraph:
+    else:
+        result_list.append([str(section_value)])
+
+        # Go onto next collection
+        i += 1
+
+    # Sends [[subsection_key 1, subsection_value1, subsection_value2], [subsection_value1, subsection_value2], [subsection_value]] to parse_output_string()
+    return parse_output_string(result_list, list_num)
+
+    
+def grab_subsection(subsection_value: list|str, list_num: int) -> str:
+    """
+    Grabs contents of subsection. Groups by paragraph
+
+    Args:
+        subsection_value (dict|list|str): Value of subsection requested
+        list_num (int): Collection # requested
+
+    Return:
+        (str): Result
+    """
+
+    # Groups by paragraph
+
+    # Create collection within list and select first collection to start
+    result_list = []
+    i = 0
+
+    # If the subsection_value is a list
+    if typeof(subsection_value) == "SafeList":
+
+        # For each paragraph in the list, add paragraph within a collection
+        for paragraph in subsection_value:
+            result_list.append([str(paragraph)])
+
+    # If somehow the subsection_value is a dictionary, add error within a collection
+    elif typeof(subsection_value) == "SafeDict":
+        result_list.append(["Error: Subsection value cannot be a dictionary"])
+
+    # If the subsection_value is not a dictionary or list, add paragraph within collection:
+    else:
+        result_list.append([str(subsection_value)])
+
+    # Sends [[subsection_value1, subsection_value2], [subsection_value]] to parse_output_string()
+    return parse_output_string(result_list, list_num)
+
+
+def main(input_list: list[str]) -> list[str]:
     """
     Main program function
 
     Args:
         input_list (list[str]): List of inputs
-        date (str): Date modified, allows so that I don't have to change numerous pieces of information when I can just change it in one place
 
     Return:
         (list[str]): Result
     """
+    
+    error_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/guide/images/fail.png"
+    general_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/guide/images/general.png"
+    guide_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/guide/images/guide.png"
+    section_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/guide/images/section.png"
+    subsection_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/guide/images/subsection.png"
 
     # Tries to grab a uvar and svar
     guide_uvar = get_uvar("guide_dict", default=None)
@@ -282,7 +435,7 @@ def main(input_list: list[str], date: str) -> list[str]:
 
     # If there is a svar
     if guide_svar:
-        guide_svar_dict = load_json(guide_svar_test)
+        guide_svar_dict = load_json(guide_svar)
 
     # If there is a uvar
     else:
@@ -294,16 +447,15 @@ def main(input_list: list[str], date: str) -> list[str]:
 
     # If thre was not at least one of uvar/svar
     else:
-        return [f'{ctx.author.display_name} has encountered an error', "guide_dict was not found", f"!guide | {date} | ShadowsStride", error_img, "#CC0202"]
+        return [f'{ctx.author.display_name} has encountered an error', "guide_dict was not found", error_img, "#CC0202"]
 
     # If there is a uvar, but no svar
     if not guide_svar and guide_uvar:
-        general_dictionary = {(key.lower(), value) for key, value in guide_uvar_dict.items()}
+        general_dictionary = {key:value for (key, value) in guide_uvar_dict.items()}
 
     # If there is a svar
     else:
-
-        general_dictionary = {(key.lower(), value) for key, value in guide_svar_dict.items()}
+        general_dictionary = {key:value for (key, value) in guide_svar_dict.items()}
 
         # If there is not a uvar
         if not guide_uvar:
@@ -312,23 +464,36 @@ def main(input_list: list[str], date: str) -> list[str]:
         # If there is a uvar
         else:
             for key in guide_uvar_dict.keys():
-                general_dictionary[key.lower()] = guide_uvar_dict[key.lower()]
+                general_dictionary[key] = guide_uvar_dict[key]
 
-    # Goes through and grabs content (svars -> gvars -> uvars) and replaces it within the general dictionary.
+    # If the dictionary is not empty
+    if len(general_dictionary.keys()) > 0:
+        pass
+
+    # If the dictionary is empty
+    else:
+        return [f"{ctx.author.display_name} looks up available guides", "None", general_img, ""]
+
+    # For key, value in general_dictionary
     for guide_key, guide_value in general_dictionary.items():
-        try:
-            general_dictionary[guide_key] = load_json(get_svar(guide_value.pop('svar')))
 
-        except:
-            try:
-                general_dictionary[guide_key] = load_json(get_gvar(guide_value.pop('gvar')))
+        # If guide_value is a dictionary, do nothing
+        if typeof(guide_value) == "SafeDict":
+            pass
 
-            except:
-                try:
-                    general_dictionary[guide_key] = load_json(get_uvar(guide_value.pop('uvar')))
+        # If guide_value is a list
+        elif typeof(guide_value) == "SafeList":
+            i = 0
 
-                except:
-                    pass  
+            # For each item in guide_value, check variables
+            for item in guide_value:
+                general_dictionary[guide_key][i] = guide_variable_find(item)
+                i += 1
+
+
+        # If the guide_value is not a dictionary or list, check variables
+        else:
+            general_dictionary[guide_key] = guide_variable_find(guide_value)
 
     # If there is any inputs
     if len(input_list) > 0:
@@ -345,73 +510,119 @@ def main(input_list: list[str], date: str) -> list[str]:
     # If there are no inputs 
     else:
         list_num = 1
+
+    # Create capitalize_input_list
+    capitalize_input_list = []
             
-# General
-# ----------------------------------------------------------------------------------------------------------------
-    # If no inputs are given, lists guides and sections
+    # General
+    # ==========================================================================================
+
+    # If there were no inputs, return list of guides and their section names 
     if len(input_list) == 0:
-        return [f'{ctx.author.display_name} looks up guides', grab_general(general_dictionary, list_num), f"!guide <#> | {date} | ShadowsStride", general_img, ""]
+        return [f"{ctx.author.display_name} looks up available guides", grab_general(general_dictionary, list_num), general_img, ""]
 
-    # If at least one input is given
+    # If there was at least one input, search guide key
     else:
-        result_list = search_dictionary(input_list[0], general_dictionary)
+        result_key = search_key(input_list[0], general_dictionary.keys())
 
-        # If it does find the guide requested
-        if result_list[0].lower() != "failure":
-            input_list[0] = capitalize_name(result_list[1])
+    # If there was at least one match
+    if result_key:
 
-        # If it does find the guide requested
+        # If there was exactly one match, change input to result_key, add capitalized version to capitalize_input_list
+        if len(result_key) == 1:
+            input_list[0] = result_key[0]
+            capitalize_input_list.append(capitalize_name(input_list[0]))
+
+        # If there were multiple matches, return list of guides and their section names (with error message) 
         else:
-            return [f'{ctx.author.display_name} looks up guides', grab_general(general_dictionary, list_num), f"!guide <#> | {date} | ShadowsStride", general_img, ""]
+            return [f"{ctx.author.display_name} looks up available guides", "\n".join(["(Error: Multiple Matching Guides)", grab_general(general_dictionary, list_num)]), general_img, "#CC0202"]
 
-# Guide
-# ----------------------------------------------------------------------------------------------------------------
-    # If one input is given
+
+    # If there were no inputs, return list of guides and their section names (with error message)
+    else:
+        return [f"{ctx.author.display_name} looks up available guides", "\n".join(["(Error: Guide Not Found)", grab_general(general_dictionary, list_num)]), general_img, "#CC0202"]
+
+    # Guide
+    # ==========================================================================================
+
+    # If there was only one input, return list of sections, their values, subsection names, and subsection values
     if len(input_list) == 1:
-        return [f'{ctx.author.display_name} views a guide: {input_list[0]}', grab_guide(general_dictionary, input_list[0], list_num), f"!guide [guide_name] <#> | {date} | ShadowsStride", guide_img, ""]
+        return [f"{ctx.author.display_name} looks up {capitalize_input_list[0]}", grab_guide(general_dictionary[input_list[0]], list_num), guide_img, ""]
 
-    # If at least two inputs are given
+    # If there were more than one input
     else:
-        result_list = search_dictionary(input_list[1], general_dictionary[input_list[0]])
+        
+        # If guide_value is a dictionary, search section key
+        if typeof(general_dictionary[input_list[0]]) == "SafeDict":
+            result_key = search_key(input_list[1], general_dictionary[input_list[0]].keys())
 
-        # If it does find the section requested
-        if result_list[0].lower() != "failure":
-            input_list[1] = capitalize_name(result_list[1])
-
-        # If it does not find the section requested
+        # If guide_value is not a dictionary, return list of sections, their values, subsection names, and subsection values (with error message)
         else:
-            return [f'{ctx.author.display_name} views a guide: {input_list[0]}', grab_guide(general_dictionary, input_list[0], list_num), f"!guide [guide_name] <#> | {date} | ShadowsStride", guide_img, ""]
+            return [f"{ctx.author.display_name} looks up {capitalize_input_list[0]}", "\n".join(["(Error: Guide has no sections)", grab_guide(general_dictionary[input_list[0]], list_num)]), guide_img, "#CC0202"]
 
-# Section
-# ----------------------------------------------------------------------------------------------------------------
-    # If two inputs are given
+    # If there was at least one match
+    if result_key:
+
+        # If there was exactly one match, change input to result_key, add capitalized version to capitalize_input_list
+        if len(result_key) == 1:
+            input_list[1] = result_key[0]
+            capitalize_input_list.append(capitalize_name(input_list[1]))
+
+        # If there multiple matches, return list of sections, their values, subsection names, and subsection values (with error message)
+        else:
+            return [f"{ctx.author.display_name} looks up {capitalize_input_list[0]}", "\n".join(["(Error: Multiple Matching Sections)", grab_guide(general_dictionary[input_list[0]], list_num)]), guide_img, "#CC0202"]
+
+    # If there were no matches, return list of sections, their values, subsection names, and subsection values (with error message)
+    else:
+        return [f"{ctx.author.display_name} looks up {capitalize_input_list[0]}", "\n".join(["(Error: Section Not Found)", grab_guide(general_dictionary[input_list[0]], list_num)]), guide_img, "#CC0202"]
+
+    # Section
+    # ==========================================================================================
+
+    # If there were only two inputs, return section values, subsection names, and subsection values
     if len(input_list) == 2:
-        return [f'{ctx.author.display_name} views a section: {input_list[0]} > {input_list[1]}', grab_section(general_dictionary, input_list[0], input_list[1], list_num), f"!guide [guide_name] [section_name] <#> | {date} | ShadowsStride", section_img, ""]
+        return [f"{ctx.author.display_name} looks up {capitalize_input_list[0]} > {capitalize_input_list[1]}", grab_section(general_dictionary[input_list[0]][input_list[1]], list_num), section_img, ""]
 
-    # If at least three inputs are given
+    # If there were more than two inputs
     else:
-        result_list = search_dictionary(input_list[2], general_dictionary[input_list[0]][input_list[1]])
 
-        # If it does find the subsection requested
-        if result_list[0].lower() != "failure":
-            input_list[2] = capitalize_name(result_list[1])
+        # If section_value is a dictionary, search subsection key
+        if typeof(general_dictionary[input_list[0]][input_list[1]]) == "SafeDict":
+            result_key = search_key(input_list[2], general_dictionary[input_list[0]][input_list[1]].keys())
 
-        # If it does not find the subsection requested
+        # If section_value is not a dictionary, return section values, subsection names, and subsection values (with error message)
         else:
-           return [f'{ctx.author.display_name} views a section: {input_list[0]} > {input_list[1]}', grab_section(general_dictionary, input_list[0], input_list[1], list_num), f"!guide [guide_name] [section_name] <#> | {date} | ShadowsStride", section_img, ""]
+            return [f"{ctx.author.display_name} looks up {capitalize_input_list[0]} > {capitalize_input_list[1]}", "\n".join(["(Error: Section Has No Subsections)", grab_section(general_dictionary[input_list[0]][input_list[1]], list_num)]), section_img, "#CC0202"]
 
-# Sub-section
-# ----------------------------------------------------------------------------------------------------------------
-    return [f"{ctx.author.display_name} views a subsection: {input_list[0]} > {input_list[1]} > {input_list[2]}", grab_subsection(general_dictionary, input_list[0], input_list[1], input_list[2], list_num), f"!guide [guide_name] [section_name] [subsection_name] <#> | {date} | ShadowsStride", subsection_img, ""]
+    # If there was at least one match
+    if result_key:
 
-    
+        # If there was exactly one match, change input to result_key, add capitalized version to capitalize_input_list
+        if len(result_key) == 1:
+            input_list[2] = result_key[0]
+            capitalize_input_list.append(capitalize_name(input_list[2]))
+
+        # If there were multiple matches, return section values, subsection names, and subsection values (with error message)
+        else:
+            return [f"{ctx.author.display_name} looks up {capitalize_input_list[0]} > {capitalize_input_list[1]}", "\n".join(["(Error: Multiple Matching Subsections)", grab_section(general_dictionary[input_list[0]][input_list[1]], list_num)]), section_img, "#CC0202"]
+
+    # If there were no matches, return section values, subsection names, and subsection values (with error message)
+    else:
+        return [f"{ctx.author.display_name} looks up {capitalize_input_list[0]} > {capitalize_input_list[1]}", "\n".join(["(Error: Subsection Not Found)", grab_section(general_dictionary[input_list[0]][input_list[1]], list_num)]), section_img, "#CC0202"]
+
+    # Subsection
+    # ==========================================================================================
+    return [f"{ctx.author.display_name} looks up {capitalize_input_list[0]} > {capitalize_input_list[1]} > {capitalize_input_list[2]}", grab_subsection(general_dictionary[input_list[0]][input_list[1]][input_list[2]], list_num), subsection_img, ""]
+
+
 # Main program function        
-output_list = main(&ARGS&, "8/28/23")
+output_list = main(&ARGS&)
+l = "<"
 
 
 </drac2>
 -title "{{output_list[0]}}"
 -f "{{output_list[1]}}"
--footer "{{output_list[2]}}"
--thumb "{{output_list[3]}}"
--color "{{output_list[4]}}"
+-thumb "{{output_list[2]}}"
+-color "{{output_list[3]}}"
+-footer "!guide {{l}}guide_name> {{l}}section_name> {{l}}subsection_name> {{l}}#> | 9/5/2023 | ShadowsStride"

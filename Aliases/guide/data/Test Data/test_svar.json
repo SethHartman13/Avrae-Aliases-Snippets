@@ -1,0 +1,8 @@
+{
+    "Test SVAR Section 1": "Test content for section 1",
+    "Test SVAR Section 2": ["Test content for section 2.1", "Test content for section 2.2"],
+    "Test SVAR Section 3": {
+        "Test SVAR Subsection 3.1": ["Test content for subsection 3.1.1", "Test content for subsection 3.1.2"],
+        "Test SVAR Subsection 3.2": "Test content for subsection 3.2"
+    } 
+}

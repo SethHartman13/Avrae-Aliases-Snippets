@@ -1,0 +1,23 @@
+{
+    "Haell": { // Guide
+        "How to Job": ["Insert instructions that you're looking for"], // Section
+        "How to Craft": ["Insert instructions that you're looking for"], // Section
+        "How to Fish": ["Insert instructions that you're looking for"] // Section
+    },
+    "Artificer": { // Guide
+        "General": ["Insert Class Instructions here"], // Section
+        "Alchemist": ["Insert Subclass Instructions here"], // Section
+        "Armorer": ["Insert Subclass Instructions here"], // Section
+        "Artillerist": { // Section
+            "Eldritch Cannon": ["1. Summon", "2. Flamethrower", "3. Force Ballista", "4. Protector", "5. Detonate", "6. Fortified Position"], // Subsection
+            "Arcane Firearm": [""] // Subsection
+        },
+        "Battle Smith": ["Insert Subclass Instructions here"] // Section
+    },
+    "Example Guide 1": {
+        "svar": "Name of svar" // Yoinks content from a svar
+    },
+    "Example Guide 2": {
+        "gvar": "gvar GUID" // Yoinks content from a gvar
+    }
+}

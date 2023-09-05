@@ -1,0 +1,13 @@
+{
+    "Guide 1": { // Guide
+        "Section 1": ["Section Paragraph 1", "Section Paragraph 2"], // Section
+        "Section 2": "Only Section Paragraph", // Section
+        "Section 3": { // Section
+            "Subsection 1": ["Subsection Paragraph 1", "Subsection Paragraph 2"], //Subsection
+            "Subsection 2": "Only Subsection Paragraph" // Subsection
+            // Subsection values cannot be dictionaries
+        } 
+    },
+    "Guide 2": ["Guide Paragraph 1", "Guide Paragraph 2"], // Guide, formatting will be off if you put dictionaries or lists in this list
+    "Guide 3": "Only Guide Paragraph (or name of svar/gvar/svar that contains information)" // Guide
+}
