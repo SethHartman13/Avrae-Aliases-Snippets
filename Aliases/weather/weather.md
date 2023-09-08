@@ -90,7 +90,7 @@ You will need to run `!svar weather_location_list` to copy over the previous set
 ## Changelog:
 6/8/2023 - Alias created and documentation written.
 
-6/8/2023 - Subalias [help](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/weather/help/help.md) has been created. Check the markdown files within the folders marked with their names for additional details
+6/8/2023 - Subalias help has been created. Check the markdown files within the folders marked with their names for additional details
 
 6/14/2023 - Copyright notice updated
 
