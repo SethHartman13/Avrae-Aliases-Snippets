@@ -19,16 +19,16 @@ This server variable uses a json in order to work properly. It uses the "name" p
 ```json
 {
     "name": "Haell",
-    "Winter": { "temp_dice": "2d6", "temp_base": 60, "water_chance_dice": "1d20", "water_roll_thresholds": {"1":"Clear", "3": "Overcast", "5": "Fog/Mist", "8": "Light", "17": "Heavy"}, "wind_chance_dice": "1d20", "wind_roll_thresholds": {"1": "None", "4": "Gentle Breeze", "10": "Light Wind", "16": "Heavy Wind"}
+    "Winter": { "temp_dice": "2d6", "temp_base": 60, "water_chance_dice": "1d20", "water_roll_thresholds": {"1":"Clear", "3": "Overcast", "5": "Fog/Mist", "8": "Light", "17": "Heavy"}, "wind_chance_dice": "1d20", "wind_roll_thresholds": {"1": "None", "4": "Gentle Breeze", "10": "Light Wind", "16": "Heavy Wind"}, "img_url": "www.someimage.png" // img_url only supported currently by seasons not named winter, spring, fall/autumn, or summer
     },
 
-    "Spring": { "temp_dice": "2d6", "temp_base": 60, "water_chance_dice": "1d20", "water_roll_thresholds": {"1":"Clear", "3": "Overcast", "5": "Fog/Mist", "8": "Light", "17": "Heavy"}, "wind_chance_dice": "1d20", "wind_roll_thresholds": {"1": "None", "4": "Gentle Breeze", "10": "Light Wind", "16": "Heavy Wind"}
+    "Spring": { "temp_dice": "2d6", "temp_base": 60, "water_chance_dice": "1d20", "water_roll_thresholds": {"1":"Clear", "3": "Overcast", "5": "Fog/Mist", "8": "Light", "17": "Heavy"}, "wind_chance_dice": "1d20", "wind_roll_thresholds": {"1": "None", "4": "Gentle Breeze", "10": "Light Wind", "16": "Heavy Wind"} // img_url only supported currently by seasons not named winter, spring, fall/autumn, or summer
     },
 
-    "Summer": { "temp_dice": "2d6", "temp_base": 60, "water_chance_dice": "1d20", "water_roll_thresholds": {"1":"Clear", "3": "Overcast", "5": "Fog/Mist", "8": "Light", "17": "Heavy"}, "wind_chance_dice": "1d20", "wind_roll_thresholds": {"1": "None", "4": "Gentle Breeze", "10": "Light Wind", "16": "Heavy Wind"}
+    "Summer": { "temp_dice": "2d6", "temp_base": 60, "water_chance_dice": "1d20", "water_roll_thresholds": {"1":"Clear", "3": "Overcast", "5": "Fog/Mist", "8": "Light", "17": "Heavy"}, "wind_chance_dice": "1d20", "wind_roll_thresholds": {"1": "None", "4": "Gentle Breeze", "10": "Light Wind", "16": "Heavy Wind"} // img_url only supported currently by seasons not named winter, spring, fall/autumn, or summer
     },
 
-    "Fall": { "temp_dice": "2d6", "temp_base": 60, "water_chance_dice": "1d20", "water_roll_thresholds": {"1":"Clear", "3": "Overcast", "5": "Fog/Mist", "8": "Light", "17": "Heavy"}, "wind_chance_dice": "1d20", "wind_roll_thresholds": {"1": "None", "4": "Gentle Breeze", "10": "Light Wind", "16": "Heavy Wind"}
+    "Fall": { "temp_dice": "2d6", "temp_base": 60, "water_chance_dice": "1d20", "water_roll_thresholds": {"1":"Clear", "3": "Overcast", "5": "Fog/Mist", "8": "Light", "17": "Heavy"}, "wind_chance_dice": "1d20", "wind_roll_thresholds": {"1": "None", "4": "Gentle Breeze", "10": "Light Wind", "16": "Heavy Wind"} // img_url only supported currently by seasons not named winter, spring, fall/autumn, or summer
     }
 }
 ```
@@ -101,3 +101,5 @@ You will need to run `!svar weather_location_list` to copy over the previous set
 7/22/2023 - Weath has been depreciated, use `!weather` instead
 
 7/22/2023 - Added custom colors and images for IRL seasons
+
+9/8/2023 - Fixed bug and added support for non standard seasons (not summer, spring, fall/autumn, or winter)

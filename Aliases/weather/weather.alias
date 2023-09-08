@@ -370,7 +370,13 @@ def get_weather(season: str) -> list[str]:
         else:
             return ['Error', f'svar `{location}` does not exist']
 
-    return ['Success', "\n".join(result_list)]
+    try:
+        img_url = weather_settings_dict[img_url]
+
+    except:
+        img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/weather/image.png"
+
+    return ['Success', "\n".join(result_list), img_url]
 
 
 def main(input_list: list[str]) -> list[str]:
@@ -384,9 +390,6 @@ def main(input_list: list[str]) -> list[str]:
         (list[str]): Result
     """
 
-    # Defualt image
-    img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/weather/image.png"
-
     # If there is at least one input
     if len(input_list) >= 1:
 
@@ -394,7 +397,7 @@ def main(input_list: list[str]) -> list[str]:
         results = get_weather(input_list[0])
 
         # If there was not an error
-        if results[0] != "Error"
+        if results[0] != "Error":
 
             lower_input = input_list[0].lower()
 
@@ -421,25 +424,25 @@ def main(input_list: list[str]) -> list[str]:
             # Other
             else:
                 color = ""
+                img_url = results[2]
 
             return [f"The daily weather report by {ctx.author.display_name}", results[1], color, img_url]
 
         # If there was an error
         else:
-            return [f"{ctx.author.display_name} encountered an error running the daily weather report", results[1], "#CC0202", img_url]
+            return [f"{ctx.author.display_name} encountered an error running the daily weather report", results[1], "#CC0202", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/weather/image.png"]
 
     # If there was not at least one input
     else:
-        return [f"{ctx.author.display_name} encountered an error running the daily weather report", "Expected 1 argument", "#CC0202", img_url]
+        return [f"{ctx.author.display_name} encountered an error running the daily weather report", "Expected 1 argument", "#CC0202", "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/weather/image.png"]
 
 
 # Main program function
 output = main(&ARGS&)
-
 
 </drac2>
 -title "{{output[0]}}"
 -f "{{output[1]}}"
 -color "{{output[2]}}"
 -thumb "{{output[3]}}"
--footer "!weather [season] | Updated 7/22/2023 | ShadowsStride"
+-footer "!weather [season] | Updated 9/8/2023 | ShadowsStride"
