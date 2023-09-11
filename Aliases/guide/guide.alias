@@ -62,6 +62,7 @@ def capitalize_name(name: str) -> str:
 
     return " ".join(name_list)
 
+
 def guide_variable_find(guide_value: any) -> dict|list|str:
     """
     Tries to find variable contents (uvar -> svar -> gvar)
@@ -148,18 +149,18 @@ def parse_output_string(list_of_lists: list[list[str]], list_num: int, max_char:
     else:
         test_list.pop(-1)
 
-    # If it is within bounds
+    # If list_num is within bounds
     if len(test_list) >= list_num and list_num >= 1:
         pass
 
-    # If it is not within bounds
+    # If list_num is not within bounds
     else:
 
-        # If it is above bounds
+        # If list_num is above bounds
         if list_num > len(test_list):
             list_num = len(test_list)
 
-        # If it is below bounds
+        # If list_num is below bounds
         else:
             list_num = 1
 
@@ -447,6 +448,7 @@ def main(input_list: list[str]) -> list[str]:
         (list[str]): Result
     """
     
+    # Image urls
     error_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/guide/images/fail.png"
     general_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/guide/images/general.png"
     guide_img = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/guide/images/guide.png"
@@ -549,7 +551,7 @@ def main(input_list: list[str]) -> list[str]:
     # General
     # ==========================================================================================
 
-    # If there were no inputs, return list of guides and their section names 
+    # If there were no inputs, return list of guides and their section names/guide paragraphs
     if len(input_list) == 0:
         return [f"{ctx.author.display_name} looks up available guides", grab_general(general_dictionary, list_num), general_img, ""]
 
@@ -584,12 +586,12 @@ def main(input_list: list[str]) -> list[str]:
             if len(capitalize_input_list) == 1:
                 pass
 
-            # If there was not a match made: Return list of guides and their section names (with error message)
+            # If there was not a match made: Return list of guides and their section names/guide paragraphs (with error message)
             else:
                 return [f"{ctx.author.display_name} looks up available guides", "\n".join(["(Error: Multiple Matching Guides)", grab_general(general_dictionary, list_num)]), general_img, "#CC0202"]
 
 
-    # If there were no inputs, return list of guides and their section names (with error message)
+    # If there were no matches: Return list of guides and their section names/guide paragraphs (with error message)
     else:
         return [f"{ctx.author.display_name} looks up available guides", "\n".join(["(Error: Guide Not Found)", grab_general(general_dictionary, list_num)]), general_img, "#CC0202"]
 
@@ -714,4 +716,4 @@ l = "<"
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
 -color "{{output_list[3]}}"
--footer "!guide {{l}}guide_name> {{l}}section_name> {{l}}subsection_name> {{l}}#> | 9/7/2023 | ShadowsStride"
+-footer "!guide {{l}}guide_name> {{l}}section_name> {{l}}subsection_name> {{l}}#> | 9/8/2023 | ShadowsStride"
