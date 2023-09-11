@@ -103,9 +103,9 @@ def guide_variable_find(guide_value: any) -> dict|list|str:
                 return str(guide_value)
 
 
-def parse_output_string(list_of_lists: list[list[str]], list_num: int, max_char: int = 250) -> str:
+def parse_output_string_character(list_of_lists: list[list[str]], list_num: int, max_char: int = 250) -> str:
     """
-    Dynamically splits up content from request.
+    Dynamically splits up content from request based upon characters.
 
     Args:
         list_of_lists (list[list[str]]): List of collections of data to be strung together
@@ -237,8 +237,8 @@ def grab_general(general_dictionary: dict, list_num: int) -> str:
         # Go onto next list
         i += 1
 
-    # Sends [[guide_key1, guide_value1, guide_value2], [guide_key2, guide_value1, guide_value2]] to parse_output_string()
-    return parse_output_string(result_list, list_num)
+    # Sends [[guide_key1, guide_value1, guide_value2], [guide_key2, guide_value1, guide_value2]] to parse_output_string_character()
+    return parse_output_string_character(result_list, list_num)
 
 
 def grab_guide(guide_value: dict|list|str, list_num: int) -> str:
@@ -326,8 +326,8 @@ def grab_guide(guide_value: dict|list|str, list_num: int) -> str:
     else:
         result_list.append([str(guide_value)])
 
-    # Sends [[section_key1, section_value1, section_value2], [guide_paragraph1, guide_paragraph2], [guide_paragraph]] to parse_output_string()
-    return parse_output_string(result_list, list_num)
+    # Sends [[section_key1, section_value1, section_value2], [guide_paragraph1, guide_paragraph2], [guide_paragraph]] to parse_output_string_character()
+    return parse_output_string_character(result_list, list_num)
 
 
 def grab_section(section_value: list|dict|str, list_num: int) -> str:
@@ -393,8 +393,8 @@ def grab_section(section_value: list|dict|str, list_num: int) -> str:
         # Go onto next collection
         i += 1
 
-    # Sends [[subsection_key 1, subsection_value1, subsection_value2], [subsection_value1, subsection_value2], [subsection_value]] to parse_output_string()
-    return parse_output_string(result_list, list_num)
+    # Sends [[subsection_key 1, subsection_value1, subsection_value2], [subsection_value1, subsection_value2], [subsection_value]] to parse_output_string_character()
+    return parse_output_string_character(result_list, list_num)
 
     
 def grab_subsection(subsection_value: list|str, list_num: int) -> str:
@@ -433,8 +433,8 @@ def grab_subsection(subsection_value: list|str, list_num: int) -> str:
         result_list.append([str(subsection_value)])
         result_list.append("")
 
-    # Sends [[subsection_value1, subsection_value2], [subsection_value]] to parse_output_string()
-    return parse_output_string(result_list, list_num)
+    # Sends [[subsection_value1, subsection_value2], [subsection_value]] to parse_output_string_character()
+    return parse_output_string_character(result_list, list_num)
 
 
 def main(input_list: list[str]) -> list[str]:
