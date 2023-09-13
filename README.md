@@ -1,6 +1,6 @@
 # Avrae Snippets and Aliases
 
-This is a repository of all the snippets and aliases I have either worked on or own myself. If you have recommendations/bug fixes, contact me at shadowsstride@gmail.com or at shadowsstride on Discord. I will review bug fixes, recommendations, and other queries at my earliest convenience.
+This is a repository of all the snippets and aliases I own for the Avrae Discord Bot, supplied by WoTC. If you have recommendations/bug fixes, contact me at shadowsstride@gmail.com or at shadowsstride on Discord. I will review bug fixes, recommendations, and other queries at my earliest convenience.
 
 ## Snippets:
 - None
