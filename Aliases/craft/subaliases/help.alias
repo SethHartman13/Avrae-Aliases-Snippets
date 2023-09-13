@@ -24,8 +24,6 @@ result_string.append(f"Sounds like you need someone to provide the help action. 
 result_string.append("")
 photo = "" 
 
-quote = '"'
-
 if input_list[0] == 1:
 
     # Help/main
@@ -34,7 +32,7 @@ if input_list[0] == 1:
     result_string.append("`<item_category>*`: Name of category. `!craft help 3` for more details")
     result_string.append("`<item_type/cost>*`: If a cost-based category, name of the type. Otherwise, cost of the item in GP. `!craft help 3` for more details")
     result_string.append("`-b`: Adds a misc bonus to the check. ")
-    result_string.append(f'`-s skill_name`: Adds skill modifier of the name given. (This is retained item to item, `-s \{quote}\{quote}` to clear skill)')
+    result_string.append(f'`-s skill_name`: Adds skill modifier of the name given. (This is retained item to item, `-s none` to clear skill)')
     result_string.append("`eadv/adv/dis`: Applies double advantage/advantage/disadvantage.")
     result_string.append("`-i`: Ignores training cooldown and cost (if first crafting session). DO NOT USE EXCEPT WHEN TOLD BY AN ADMIN.")
     result_string.append("`-succ*`: Success multiplier (multiplies the number of successes required)")
@@ -82,4 +80,4 @@ l = "<"
 -f "{{'\n'.join(result_string)}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/craft/images/{{img_name}}.png"
 -image "{{photo}}"
--footer "!craft help {{l}}#> | Updated 8/30/23 | ShadowsStride"
+-footer "!craft help {{l}}#> | Updated 9/12/23 | ShadowsStride"

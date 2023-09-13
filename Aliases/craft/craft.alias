@@ -453,33 +453,37 @@ def grab_stat_mod(stat_roll: str, jack_of_trades: bool, ch: character) -> list[i
     """
     
     # Sleight of hand alteration (to fit Avrae)
-    if stat_roll.lower() in "sleight of hand" or "sleight" in stat_roll.lower():
+    if "sleight" in stat_roll.lower():
         stat_roll = "sleightOfHand"
 
     # Animal handling alteration (to fit Avrae)
-    elif stat_roll.lower() in "animal handling" or "animal" in stat_roll.lower():
+    elif "animal" in stat_roll.lower():
         stat_roll = "animalHandling"
 
     else:
         pass
+    if stat_roll.lower() not in ['', "none"]:
+        # Tries to match the stat roll with the stat value and prof
+        for (skill_name, skill) in ch.skills:
+            if stat_roll.lower() in skill_name.lower() or skill_name.lower() in stat_roll.lower():
+                mod = skill.value
+                prof = skill.prof
+                stat_roll = skill_name
 
-    # Tries to match the stat roll with the stat value and prof
-    for (skill_name, skill) in ch.skills:
-        if stat_roll.lower() in skill_name.lower() or skill_name.lower() in stat_roll.lower():
-            mod = skill.value
-            prof = skill.prof
-            stat_roll = skill_name
+            else:
+                pass
 
-        else:
-            pass
+        # Checks to see if mod and prof got found
+        try:
+            mod
+            prof
 
-    # Checks to see if mod and prof got found
-    try:
-        mod
-        prof
+        # If mod and prof did not get find
+        except:
+            mod = 0
+            prof = 0
 
-    # If mod and prof did not get find
-    except:
+    else:
         mod = 0
         prof = 0
 
@@ -535,11 +539,19 @@ def run_crafting_session(settings_dictionary: dict, crafting_dict: dict, ch: cha
 
     skill_list = ["acrobatics", "animal handling", "arcana", "athletics", "deception", "history", "insight", "intimidation", "investigation", "medicine", "nature", "perception", "performance", "persuasion", "religion", "sleight of hand", "stealth", "survival", 'strength', 'dexterity', 'constitution', 'intellegence', 'wisdom', 'charisma']
 
-    # If the stat roll is being changed and there is a skill
-    if stat_roll and stat_roll != "":
+    if typeof(stat_roll) != "str":
+        pass
 
+    else:
+        stat_roll = stat_roll.lower()
+
+    # If the stat roll is being changed and there is a skill
+    if stat_roll and (stat_roll != "none" and stat_roll != ""):
+
+        
         # A stat_roll is "none"
-        if stat_roll.lower() == "none":
+        
+        if stat_roll == "none":
             crafting_dict['stat'] = ""
 
         # Searches for the stat
@@ -555,22 +567,26 @@ def run_crafting_session(settings_dictionary: dict, crafting_dict: dict, ch: cha
             else:
                 crafting_dict['stat'] = ""
 
-    # If the stat roll is not being changed  there is no skill
+    # If the stat roll is not being changed or there is no skill
     else:
-
-        # Checks to see if it already exists
-        try:
-            crafting_dict['stat']
-
-        # If it doesn't already exist
-        except:
+        if stat_roll == "none":
             crafting_dict['stat'] = ""
+
+        else:
+
+            # Checks to see if it already exists
+            try:
+                crafting_dict['stat']
+
+            # If it doesn't already exist
+            except:
+                crafting_dict['stat'] = ""
 
     # Search and grab mod
     mod_skill = grab_stat_mod(crafting_dict['stat'], settings_dictionary['jack_of_trades'], ch)
 
     # If there is a stat
-    if mod_skill[1] != "":
+    if mod_skill[1] != "" and mod_skill[1].lower() != "none":
         crafting_dict['stat'] = capitalize_name(mod_skill[1])
 
     # No stat, no mod
@@ -1399,6 +1415,24 @@ def main(input_list: list[str], ch = character()) -> list[str]:
             
         else:
             result_string.append("**Failure**")
+
+        # Tries to use crafting_dictionary['stat']
+        try:
+
+            # If there is a stat being used
+            if crafting_dictionary['stat'] != "":
+                result_string.append(f"Skill used: {crafting_dictionary['stat']}")
+
+            # If there is not a stat being used
+            else:
+                result_string.append("Skill used: None")
+
+        # If there is an error, set skill used to none
+        except:
+            result_string.append("Skill used: None")
+
+
+
         result_string.append(f"DC: {settings_dictionary[crafting_dictionary['category']][crafting_dictionary['type']][1]}")
         result_string.append("")
 
@@ -1506,4 +1540,4 @@ except:
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
 -color "{{output_list[3]}}"
--footer "!craft {{l}}item_name> {{l}}item_category> {{l}}magic_type | cost> {{l}}{{d}}s skill> {{l}}eadv/adv/dis> {{l}}{{d}}succ #>{{"\n"}}Updated 8/21/2023 | ShadowsStride"
+-footer "!craft {{l}}item_name> {{l}}item_category> {{l}}magic_type | cost> {{l}}{{d}}s skill> {{l}}eadv/adv/dis> {{l}}{{d}}succ #>{{"\n"}}Updated 9/12/2023 | ShadowsStride"
