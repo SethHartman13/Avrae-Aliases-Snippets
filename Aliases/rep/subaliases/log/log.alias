@@ -1,0 +1,244 @@
+embed
+<drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International 
+# * License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
+
+
+def search_key(query: str, key_list: list[str]) -> list[str]|str:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
+
+    # Creates list to store matches
+    key_results = []
+
+    # Checks each item if a match occurs
+    for key in key_list:
+
+        # If matches
+        if query.lower() in key.lower():
+            key_results.append(key)
+
+        else:
+            pass
+
+    # Finds at least 1 match
+    if len(key_results) > 0:
+        return key_results
+
+    # If it finds no matches
+    else:
+        return None
+
+
+def contstruct_final_string(list_of_lists: list[list[str]], list_num: int) -> str:
+    """
+    Constructs final string to be displayed
+    
+    Args:
+        list_of_lists (list[list[str]]): List of lists of logs to be displayed
+        list_num (int): List number to be displayed
+    
+    Return:
+        (str): Result
+    """
+
+    # If list_num is below upper bound
+    if list_num <= len(list_of_lists):
+
+        # if list_num is above lower bound
+        if list_num >= 1:
+            pass
+
+        # If list_num is below lower bound
+        else:
+            list_num = 1
+
+    # If list_num is above upper bound
+    else:
+        list_num = len(list_of_lists)
+        
+    # If there is only one collection that exists
+    if len(list_of_lists) == 1:
+        list_str = ""
+
+    # If there is more than one collection that exists
+    else:
+        list_str = f"{list_num}/{len(list_of_lists)}"
+
+    # Return requested collection of data
+    return f"{list_str}\n" + "\n".join(list_of_lists[list_num - 1])
+    
+
+def grab_organization_logs(log_dictionary: dict, organization_name: str, list_num: int) -> list[str]:
+    """
+    Grabs organization details
+
+    Args:
+        log_dictionary (dict): dictionary cotnaining all logs
+        organization_name (str): Name of organization
+        list_num (int): List number to return
+
+    Return:
+        (list[str]): Result
+    """
+
+    # Temporary result holder
+    result_list = []
+
+    # Searches for organization in organization
+    key_result = search_key(organization_name, log_dictionary.keys())
+
+    # If it finds at least one match
+    if key_result:
+        
+        # If there is exactly one match, set found to true and set organization_name
+        if len(key_result) == 1:
+            found = True
+            organization_name = key_result[0]
+
+        # If there is exactly one match, then set found to False
+        else:
+            found = False
+
+            # For each match
+            for key in key_result:
+
+                # If the match is not exact (non-case sensitive)
+                if key.lower() != organization_name.lower():
+                    pass
+
+                # If the match is exact (non-case sensitive), set found to true and set organization_name
+                else:
+                    found = True
+                    organization_name = key
+
+    # If there are no matches, set found to false
+    else:
+        found = False
+
+    # Default list length to be displayed
+    list_length = 10
+
+    # If found is true, add every log with the organization and add it to temp list made above
+    if found:
+        for entry in log_dictionary[organization_name]['log']:
+            result_list.append(entry)
+
+        # Combine the logs into lists of 10
+        temp_list = [result_list[i * list_length:(i + 1) * list_length] for i in range((len(result_list) + list_length - 1) // list_length)]
+
+        # Grab image and color
+        img_url = log_dictionary[organization_name]['img_url']
+        color = log_dictionary[organization_name]['color']
+
+    # If found is false, add every log with every organization and create another temp_list
+    else:
+        temp_list = []
+
+        # For each organization, add name header
+        for log_key, log_value in log_dictionary.items():
+            temp_list.append([f"**{log_key}**"])
+
+            # For each entry log
+            for entry in log_value['log']:
+
+                # If the most recent entry is within length, add log
+                if len(temp_list[-1]) < list_length:
+                    temp_list[-1].append(entry)
+
+                # If the most recent entry is not within length, add another name header and entry
+                else:
+                    temp_list.append([f"**{log_key} cont.**", entry])
+
+        # Set image and color
+        img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
+        color = ""
+
+    return [found, contstruct_final_string(temp_list, list_num), organization_name, img_url, color]
+
+
+def main(input_list: list[str]) -> list[str]:
+    """
+    Main program function
+
+    Args:
+        input_list (list[str]): List of strings
+
+    Return:
+        (list[str]): List of strings
+    """
+
+    # Set defaults
+    img_url = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
+    ch = character()
+    color = "#CC0202"
+
+    # Search for repLog in cvar
+    log_test = ch.get_cvar('repLog')
+
+    # If the cvar exists, load dictionary
+    if log_test:
+        log_dictionary = load_json(log_test)
+
+    # If the cvar does not exist
+    else:
+        return [f"{name} ({ctx.author.display_name}) checks their reputation log", "None", img_url, color]
+
+    # If there is at least one input
+    if len(input_list) > 0:
+
+        # Try to make the last input an integer
+        try:
+            list_num = int(input_list[-1])
+            input_list.pop(-1)
+
+        # Last input is not a number
+        except:
+            list_num = 1
+
+    # If there is not at least one input
+    else:
+        list_num = 1
+
+    # If there was at least one input (organization log)
+    if len(input_list) > 0:
+        result_list = grab_organization_logs(log_dictionary, input_list[0], list_num)
+
+    # If there was no inputs (general logs)
+    else:
+        result_list = grab_organization_logs(log_dictionary, "", list_num)
+
+    # If it found an organization
+    if result_list[0]:
+        prep_str = f" for {result_list[2]}"
+
+    # If it did not find an organization
+    else:
+        prep_str = ""
+
+
+    return [f'{name} ({ctx.author.display_name}) checks their reputation log{prep_str}', result_list[1], result_list[3], result_list[4]]
+
+
+# Main program function
+output_list = main(&ARGS&)
+l = "<"
+
+
+</drac2>
+-title "{{output_list[0]}}"
+-f "{{output_list[1]}}"
+-thumb "{{output_list[2]}}"
+-color "{{output_list[3]}}"
+-footer "!rep log {{l}}organization> {{l}}#> | Updated 9/12/2023 | ShadowsStride"

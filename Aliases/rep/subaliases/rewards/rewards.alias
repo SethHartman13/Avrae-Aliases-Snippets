@@ -1,0 +1,261 @@
+embed
+<drac2>
+# *******************************************************
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International 
+# * License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
+
+
+def search_key(query: str, key_list: list[str]) -> list[str]|str:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (str): If it finds it, it returns the key, otherwise it returns 'None'
+    """
+
+    # Creates list to store matches
+    key_results = []
+
+    # Checks each item if a match occurs
+    for key in key_list:
+
+        # If matches
+        if query.lower() in key.lower():
+            key_results.append(key)
+
+        else:
+            pass
+
+    # Finds at least 1 match
+    if len(key_results) > 0:
+        return key_results
+
+    # If it finds no matches
+    else:
+        return None
+
+
+def get_rewards(organization_name: str, organization_dictionary: dict) -> list[str]:
+    """
+    Constructs alias output
+
+    Args:
+        ch (character): Character object
+        organization_name (str): Name of organization
+        organization_dictionary (dict): Organization dictionary
+
+    Return:
+        (list[str]): Result
+    """
+
+    # Sets img_url and color
+    img_url = organization_dictionary.pop('imgurl', default="https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png")
+    color = organization_dictionary.pop('color', default="")
+
+    # Builds rewards list
+    rewards_list = ["***Current Redemption List:***", ""]
+
+    # For each key in the organization dictionary
+    for key in organization_dictionary.keys():
+        
+        # Try to turn key into integer
+        try:
+            int(key)
+
+            # Add threshold header
+            rewards_list.append(f"**{key} Points:**")
+
+            # Add rewards within threshold
+            for reward in organization_dictionary[key]:
+                rewards_list.append(reward)
+
+            # Add divider
+            rewards_list.append("")
+
+        # If key is not an integer
+        except:
+            pass
+
+    # If there were any available rewards
+    if len(rewards_list) > 2:
+        rewards_list.pop(1)
+
+    # If there were no available rewards
+    else:
+        rewards_list[1] = "None"
+
+    return [f"{ctx.author.display_name} checks the rewards for {organization_name}", "\n".join(rewards_list), img_url, color]
+
+
+def grab_organization_dictionaries() -> dict:
+    """
+    Creates dictionary containing all the organizations
+
+    Args:
+        None
+    
+    Return:
+        (dict): Dictionary containing organization dictionaries
+    """
+
+    # Grabs organization settings list/dictionary
+    organization_test = get_svar("org_settings")
+
+    # If svar exists
+    if organization_test:
+        organization_container = load_json(organization_test)
+
+    # If svar does not exist
+    else:
+        return ['Error', 'svar `org_settings` does not exist!']
+
+    # If svar is using legacy dictionary
+    if typeof(organization_container) == "SafeDict":
+        container = organization_container.values()
+
+    # If svar is using updated list style
+    elif typeof(organization_container) == "SafeList":
+        container = organization_container
+
+    # If for some reason this is a string
+    else:
+        container = [str(organization_container)]
+
+    full_organization_dictionary = dict()
+
+    # It will search gvars and svars to pull dictionaries
+    for item in container:
+
+        # Tries to search svar
+        svar_test = get_svar(item)
+
+        # If svar exists, load dictionary
+        if svar_test:
+            test_dictionary = load_json(svar_test)
+
+            # Try to search for name
+            try:
+                key_result = search_key("name", test_dictionary.keys())
+
+            # If there is a problem loading dictionary
+            except:
+                key_result = None
+
+        # If svar doesn't exist, try to search gvar
+        else:
+            gvar_test = get_gvar(item)
+
+            # If gvar exists, load dictionary
+            if gvar_test:
+                test_dictionary = load_json(gvar_test)
+
+                # Try to search for name
+                try:
+                    key_result = search_key("name", test_dictionary.keys())
+
+                # If there is a problem loading dictionary
+                except:
+                    key_result = None
+
+            # If gvar does not exist
+            else:
+                pass
+
+        # If it finds a name
+        if key_result:
+            full_organization_dictionary[test_dictionary[key_result[0]]] = test_dictionary
+
+        # If it doesn't find a name
+        else:
+            pass
+
+    return full_organization_dictionary
+
+
+def main(input_list: list[str]) -> list[str]:
+    """
+    Main program function
+
+    Args:
+        input_list (list[str]): List of inputs
+
+    Return:
+        (list[str]): Result
+    """
+
+    # Defaults
+    full_organization_dictionary = grab_organization_dictionaries()
+    img_url = 'https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png'
+
+    # If an error has not occured 
+    if typeof(full_organization_dictionary) != "SafeList":
+        pass
+
+    # If an error has occured
+    else:
+        return [f"{ctx.author.display_name} has encountered an error", full_organization_dictionary[1], img_url, "#CC0202"]
+
+    # If there is at least one input
+    if len(input_list) > 0:
+        key_result = search_key(input_list[0], full_organization_dictionary.keys())
+
+    # If there are no inputs
+    else:
+        return [f"{ctx.author.display_name} has encountered an error", "Expected at least one argument", img_url, "#CC0202"]
+
+    # If it found an organization
+    if key_result:
+
+        # If it matched exactly one organization
+        if len(key_result) == 1:
+            input_list[0] = f"{key_result[0]}"
+
+        # If it matches more than one organization, find exact match (non-case sensitive)
+        else:
+            found = False
+            for key in key_result:
+
+                # If key does not exactly match (non-case sensitive) input
+                if key.lower() != input_list[0].lower():
+                    pass
+
+                # If key does exactly match (non-case sensitive) input
+                else:
+                    input_list[0] = f"{key}"
+                    found = True
+
+            # If organization dictionary was found
+            if found:
+                pass
+
+            # If organization dictionary was not found, throw error
+            else:
+                key_result.insert(0, "**Multiple matches found:**")
+
+                return [f"{ctx.author.display_name} has encountered an error", "\n".join(key_result), img_url, "#CC0202"]
+
+    # If it did not find an organization
+    else:
+        return [f"{ctx.author.display_name} has encountered an error", "Organization not found", img_url, "#CC0202"]
+
+
+    return get_rewards(input_list[0], full_organization_dictionary[input_list[0]])
+
+
+# Main function
+output_list = main(&ARGS&)
+left_arrow = "<"
+
+
+</drac2>
+-title "{{output_list[0]}}"
+-f "{{output_list[1]}}"
+-thumb "{{output_list[2]}}"
+-color "{{output_list[3]}}"
+-footer "!rep rewards [organization] | Updated 9/12/23 | ShadowsStride"

@@ -11,17 +11,24 @@ result_string = []
 result_string.append("Sounds like you need someone to provide the help action. Here is a list of the subaliases used for this library.")
 result_string.append("")
 
+# Help
 result_string.append("`!rep help`: This subalias")
 result_string.append("")
 
+# Main/rewards/list
 result_string.append("`!rep [organization] <#>`: Allows players to add and subtract reputation, if no number is given it shows what their reputation is at")
 result_string.append("`!rep rewards [organization]`: Checks the rewards of a organization")
 result_string.append("`!rep list`: Lists all known organizations")
 result_string.append("")
+
+# Log
+result_string.append("`!rep log <organization> <#>`: Shows reputation log")
+result_string.append("`organization`: Lists log for a specific organization, if not specified lists all logs.")
+result_string.append("`#`: List number (if logs overflows into additional lists)")
 
 
 </drac2>
 -title "{{f"{ctx.author.display_name} needs help!"}}"
 -f "{{"\n".join(result_string)}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/rep/image.png"
--footer "!rep help | Updated 7/5/23 | ShadowsStride"
+-footer "!rep help | Updated 9/12/23 | ShadowsStride"
