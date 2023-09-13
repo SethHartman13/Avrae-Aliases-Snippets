@@ -1,6 +1,6 @@
 # Avrae Snippets and Aliases
 
-This is a repository of all the snippets and aliases I own that is written for the [Avrae](https://avrae.io) Discord Bot (which is owned by WoTC). If you have recommendations/bug fixes, contact me at shadowsstride@gmail.com, shadowsstride on Discord, or by going to Requests[#Requests] I will review bug fixes, recommendations, and other queries at my earliest convenience.
+This is a repository of all the snippets and aliases I own that is written for the [Avrae](https://avrae.io) Discord Bot (which is owned by WoTC). If you have recommendations/bug fixes, contact me at shadowsstride@gmail.com, shadowsstride on Discord, or by going to [Requests](#Requests) I will review bug fixes, recommendations, and other queries at my earliest convenience.
 
 ## Snippets:
 - None
