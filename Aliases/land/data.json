@@ -1,0 +1,87 @@
+{
+    "Test": {
+        "1": {
+            "Description": "String",
+            "MinSize": "String",
+            "BuildCost": 0,
+            "BuildTime": 0,
+            "UpkeepCost": 0,
+            "UpkeepCool": 0,
+            "url": "String",
+            "color": "String"
+        },
+
+        "2": {
+            "Description": "String",
+            "MinSize": "String",
+            "BuildCost": 0,
+            "BuildTime": 0,
+            "UpkeepCost": 0,
+            "UpkeepCool": 0,
+            "url": "String",
+            "color": "String"
+        }
+    },
+
+    "Bedroom": {
+        "1": {
+            "Tier": "Basic",
+            "Description": "For sleeping/resting",
+            "MinSize": "1x1",
+            "BuildCost": 1500,
+            "BuildTime": 86400,
+            "UpkeepCost": 0,
+            "UpkeepCool": 0,
+            "url": "",
+            "color": ""
+        },
+
+        "2": {
+            "Tier": "Fine",
+            "Description": "For sleeping/resting",
+            "MinSize": "1x2",
+            "BuildCost": 5000,
+            "BuildTime": 259200,
+            "UpkeepCost": 0,
+            "UpkeepCool": 0,
+            "url": "",
+            "color": ""
+        },
+
+        "3": {
+            "Tier": "Fancy",
+            "Description": "For sleeping/resting",
+            "MinSize": "2x2",
+            "BuildCost": 7500,
+            "BuildTime": 345600,
+            "UpkeepCost": 0,
+            "UpkeepCool": 0,
+            "url": "",
+            "color": ""
+        },
+        
+        "4": {
+            "Tier": "Exquisite",
+            "Description": "For sleeping/resting",
+            "MinSize": "2x3",
+            "BuildCost": 12000,
+            "BuildTime": 432000,
+            "UpkeepCost": 0,
+            "UpkeepCool": 0,
+            "url": "",
+            "color": ""
+        },
+
+        "5": {
+            "Tier": "Luxury",
+            "Description": "For sleeping/resting",
+            "MinSize": "3x3",
+            "BuildCost": 0,
+            "BuildTime": 864000,
+            "UpkeepCost": 0,
+            "UpkeepCool": 0,
+            "url": "",
+            "color": ""
+        }
+    }
+}
