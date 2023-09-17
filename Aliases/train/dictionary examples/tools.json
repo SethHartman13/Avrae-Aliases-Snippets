@@ -19,5 +19,6 @@
     "forgery kit": ["int", "wis"],
     "herbalism kit": ["int", "wis"],
     "navigator's tools": ["int", "wis"],
-    "poisoner's kit": ["int", "wis"]
+    "poisoner's kit": ["int", "wis"],
+    "smith's tools": ["str", "dex"]
 }
