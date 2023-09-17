@@ -1,0 +1,585 @@
+embed
+<drac2>
+
+
+def search_key(query: str|list[str], key_list: list[str]) -> list[str]|None:
+    """
+    Searches for dictionary key.
+
+    Args:
+        query (str|list[str]): The query being made
+        key_list (list): List of keys
+
+    Return:
+        (list[str]|None): If it finds it, it returns the key, otherwise it returns None
+    """
+
+    # Creates list to store matches
+    key_results = []
+
+    # If checking a string in a list
+    if typeof(query) == "str":
+        
+        # Checks each item if a match occurs
+        for key in key_list:
+
+            # If matches
+            if query.lower() in key.lower():
+                key_results.append(key)
+
+            else:
+                pass
+
+    # If checking items from a list[str] in a list 
+    else:
+
+        # Checks each item if a match occurs against every key
+        for query_item in query:
+            for key in key_list:
+
+            # If matches
+            if query_item.lower() in key_list.lower():
+                key_results.append(key)
+
+            else:
+                pass
+                
+    # Finds at least 1 match
+    if len(key_results) > 0:
+        return key_results
+
+    # If it finds no matches
+    else:
+        return None
+
+
+def attack_roll(ch: character, bonus: str, adv: int, autohit: str|None) -> list[str]:
+
+
+    def lucky_reroll(rerolled: bool) -> list[bool, SimpleRollResult]:
+        """
+        Handles lucky rerolls
+        
+        Args:
+            rerolled (bool): Whether or not if lucky had already been triggered
+        
+        Return:
+            (list[bool, SimpleRollResult]): Results
+        """
+        dice_roll = vroll('1d20')
+
+        if not rerolled:
+            if dice_roll.total != 1:
+                return [False, dice_roll]
+
+            else:
+                return [True, vroll('1d20'), "**~~1~~**"]
+
+        else:
+            return [True, dice_roll]
+
+    # Setup rolls 
+    roll_string = []
+    roll_total = 0
+    result_d20 = 0
+    reliable = False
+
+    if not autohit:
+        pass
+
+    else:
+        return [999, "*Automatic Hit!*"]
+
+    # Halfling
+    if 'halfling' in ch.race.lower():
+              
+        # Advantage
+        if adv >= 1:
+
+            # No reliatble talent
+            if not reliable:
+                roll_string.append('2d20ro1kh1 (')
+
+            # Reliable talent
+            else:
+                roll_string.append('2d20ro1kh1mi10 (')
+
+            # Dice rolls
+            roll1 = lucky_reroll(False)
+            roll2 = lucky_reroll(roll1[0])
+
+            # Finds highest die
+            if roll1[1].total < roll2[1].total:
+                result_d20 = roll2[1].total
+
+            else:
+                result_d20 = roll1[1].total
+
+            # Format crossouts
+            if roll1[1].total == result_d20:
+                roll1_initial_str = f"{roll1[1].total}"
+                roll2_initial_str = f"~~{roll2[1].total}~~"
+
+            else:
+                roll1_initial_str = f"~~{roll1[1].total}~~"
+                roll2_initial_str = f"{roll2[1].total}"
+                
+
+            # Add dice roll 1 to str list
+            if len(roll1) == 2:
+                if roll1[1].total not in [1,20]:
+                    roll_string.append(f'{roll1_initial_str},')
+
+                else:
+                    roll_string.append(f"**{roll1_initial_str}**,")
+
+            else:
+                if roll1[1].total not in [1,20]:
+                    roll_string.append(f"{roll1[2]}, {roll1_initial_str},")
+
+                else:
+                    roll_string.append(f"{roll1[2]}, **{roll1_initial_str}**,")
+            
+            # Add dice roll 2 to str list
+            if len(roll2) == 2:
+                if roll2[1].total not in [1,20]:
+                    roll_string.append(f' {roll2_initial_str}')
+
+                else:
+                    roll_string.append(f" **{roll2_initial_str}**")
+
+            else:
+                if roll2[1].total not in [1,20]:
+                    roll_string.append(f' {roll2[2]}, {roll2_initial_str}')
+
+                else:
+                    roll_string.append(f" {roll2[2]}, **{roll2_initial_str}**")
+
+            # No reliable talent
+            if result_d20 >= 10 or not reliable:
+                roll_string[-1] = roll_string[-1] + ")"
+
+            # Reliable talent
+            else:
+                roll_string[-1] = roll_string[-1] + " -> 10)"
+                result_d20 = 10
+               
+        # No advantage/disadvantage
+        elif adv == 0:
+
+            # No reliable talent
+            if not reliable:
+                roll1 = vroll('1d20ro1')
+
+            # Reliable talent
+            else:
+                roll1 = vroll('1d20ro1mi10')
+
+            roll_string.append(roll1.dice)
+            result_d20 = roll1.total
+        
+        # Disadvantage
+        else:
+
+            # no reliable talent
+            if not reliable: 
+                roll_string.append('2d20ro1kl1 (')
+
+            # Reliable talent
+            else:
+                roll_string.append('2d20ro1kl1mi10 (')
+
+            # Dice rolls
+            roll1 = lucky_reroll(False)
+            roll2 = lucky_reroll(roll1[0])
+
+            # Finds lowest die
+            if roll1[1].total > roll2[1].total:
+                result_d20 = roll2[1].total
+
+            else:
+                result_d20 = roll1[1].total
+
+            # Format crossouts
+            if roll1[1].total == result_d20:
+                roll1_initial_str = f"{roll1[1].total}"
+                roll2_initial_str = f"~~{roll2[1].total}~~"
+
+            else:
+                roll1_initial_str = f"~~{roll1[1].total}~~"
+                roll2_initial_str = f"{roll2[1].total}"
+                
+
+            # Add dice roll 1 to str list
+            if len(roll1) == 2:
+                if roll1[1].total not in [1,20]:
+                    roll_string.append(f'{roll1_initial_str},')
+
+                else:
+                    roll_string.append(f"**{roll1_initial_str}**,")
+
+            else:
+                if roll1[1].total not in [1,20]:
+                    roll_string.append(f"{roll1[2]}, {roll1_initial_str},")
+
+                else:
+                    roll_string.append(f"{roll1[2]}, **{roll1_initial_str}**,")
+            
+            # Add dice roll 2 to str list
+            if len(roll2) == 2:
+                if roll2[1].total not in [1,20]:
+                    roll_string.append(f' {roll2_initial_str}')
+
+                else:
+                    roll_string.append(f" **{roll2_initial_str}**")
+
+            else:
+                if roll2[1].total not in [1,20]:
+                    roll_string.append(f' {roll2[2]}, {roll2_initial_str}')
+
+                else:
+                    roll_string.append(f" {roll1[2]}, **{roll2_initial_str}**")
+
+            # No reliable talent
+            if result_d20 >= 10 or not reliable:
+                roll_string[-1] = roll_string[-1] + ")"
+
+            # Reliable talent
+            else:
+                roll_string[-1] = roll_string[-1] + " -> 10)"
+                result_d20 = 10
+             
+        # Apply bonus
+        if bonus:
+            bonus_roll = vroll(bonus)
+            roll_total = result_d20 + bonus_roll.total
+            roll_string.append(f" + {bonus_roll.dice} = `{roll_total}`")
+
+        # Skip bonus          
+        else:
+            roll_string.append(f" = `{result_d20}`")
+            roll_total = result_d20
+
+        roll_string = "".join(roll_string)
+
+    # Non-halfling race
+    else:
+
+        # No reliable talent
+        if not reliable:
+            # Double advantage    
+            if adv == 2:
+                result_d20_obj = vroll('3d20kh1')
+
+            # Advantage
+            elif adv == 1:
+                result_d20_obj = vroll('2d20kh1')            
+
+            # Straight roll
+            elif adv == 0:
+                result_d20_obj = vroll('1d20')
+                    
+            # Disadvantage
+            else:
+                result_d20_obj = vroll('2d20kl1')
+
+        # Reliable talent
+        else:
+
+            # Double advantage    
+            if adv == 2:
+                result_d20_obj = vroll('3d20kh1mi10')
+
+            # Advantage
+            elif adv == 1:
+                result_d20_obj = vroll('2d20kh1mi10')            
+
+            # Straight roll
+            elif adv == 0:
+                result_d20_obj = vroll('1d20mi10')
+                    
+            # Disadvantage
+            else:
+                result_d20_obj = vroll('2d20kl1mi10')
+
+        # Put result d20 total in result_d20
+        result_d20 = result_d20_obj.total
+
+        # Apply bonus
+        if bonus:
+            bonus_roll = vroll(bonus)
+            roll_total = result_d20 + bonus_roll.total
+            roll_string = f"{result_d20_obj.dice} + {bonus_roll.dice} = `{roll_total}`"
+
+        # Skip bonus
+        else:
+            roll_total = result_d20
+            roll_string = result_d20_obj.full
+
+        return [roll_total, roll_string]
+
+def handle_lightning_usage(ch: character, ignore: bool, activate: bool) -> AliasCounter, lightning_ability: bool, cc_status: str
+    """
+    
+    
+    """
+    # If the cc exists
+    if ch.cc_exists("Javelin of Lighting"):
+        jol_cc = ch.cc("Javelin of Lighting")
+
+    # If the cc does not exist
+    else:
+        jol_cc = ch.create_cc(
+            name="Javelin of Lighting",
+            minVal="0",
+            maxVal="1",
+            reset="long",
+            dispType="bubble",
+            reset_to="1",
+            title="Javelin of Lighting",
+            desc="This javelin is a magic weapon. When you hurl it and speak its command word, it transforms into a bolt of lightning, forming a line 5 feet wide that extends out from you to a target within 120 feet. Each creature in the line excluding you and the target must make a DC 13 Dexterity saving throw, taking 4d6 lightning damage on a failed save, and half as much damage on a successful one. The lightning bolt turns back into a javelin when it reaches the target. Make a ranged weapon attack against the target. On a hit, the target takes damage from the javelin plus 4d6 lightning damage.\nThe javelin's property can't be used again until the next dawn. In the meantime, the javelin can still be used as a magic weapon."
+        )
+
+    if activate:
+        lightning_ability = True
+     
+        # If there is enough uses (but not ignoring counter usage)
+        if jol_cc.value == 1 and not ignore:
+            jol_cc.set(0)
+            cc_status = "used"
+
+        # Ignored counter usage
+        elif ignore:
+            cc_status = "unused"
+
+        # Not enough uses and not ignoring counter
+        else:
+            lightning_ability = False
+            cc_status = "fail"
+    
+    else:
+        lightning_ability = False
+        cc_status = "unused"
+
+    return jol_cc, lightning_ability, cc_status
+
+
+
+
+
+
+
+def out_of_combat_management(ch: character, argparse_obj: argparse, attack_roll: list[int,str], lightning_ability: bool, not_found_list: None|list[str] = None)
+    if not not_found_list:
+        not_found_list = []
+
+    else:
+        pass
+
+
+def damage_calc(target_obj: combatant, attack_roll: list[int,str], lightning_ability: bool):
+
+    if attack_roll >= target_obj.ac:
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+def in_combat_management(ch: character, com: combat, argparse_obj: argparse, attack_roll: list[int,str], lightning_ability: bool, target_list: list[str]) -> list[str]:
+    """
+    
+    
+    """
+    combantant_list = [combantant for combantant in com.combatants]
+    combantant_name_list = [combatant.name for combantant in combantant_list]
+
+    key_result = search_key(target_list[0], combantant_name_list)
+
+
+    if key_result:
+        first_target_obj = com.get_combatant(key_result[0])
+        target_list[0] = key_result[0]
+        not_found_list = []
+    
+    else:
+        if len(target_list) == 0:
+            return out_of_combat_management(ch, argparse, attack_roll, lightning_ability, not_found_list=[target_list[0]])
+
+        else:
+            not_found_list = [f"{target_list[0]}"]
+            target_list[0] = None
+
+
+    
+    
+    if target_list[0]:
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def main(input_list: list[str]):
+    ch = character()
+    com = combat()
+
+    if len(input_list) > 0:
+        i = 0
+        for i in range(0, len(input_list) - 1):
+            input_list[i] = input_list[i].lower()
+        
+        parsed_args = argparse(" ".join(input_list))
+        target_list = parsed_args.get("t")
+
+    else:
+        no_target = True
+
+    if len(target_list) > 0:
+        no_target = False
+
+    else:
+        no_target = True
+    
+    autohit = parsed_args.last("hit")
+    crit = parsed_args.last("crit")
+    autofail = parsed_args.last("fail")
+    autosuccess = parsed_args.last("success")
+    bonus = parsed_args.last("b")
+    advantage = 
+    activate = parsed_args.last("activate")
+
+    if bonus:
+        bonus = bonus.replace("+", "")
+    
+    else:
+        pass
+
+    attack_roll = attack_roll(ch, bonus, advantage, autohit)
+    
+    jol_cc, lightning_ability, cc_status = handle_lightning_usage(ch, parsed_args.last("i"), parsed_args.adv())
+
+    if com:
+        handle_combat(com)
+
+
+
+        combantant_name_list = []
+        for combatant in com.combatant:
+            combantant_name_list.append(combantant.name)
+
+        if not no_target:
+            key_result = search_key(target_list[0], combantant_name_list)
+
+            if key_result:
+                target_list[0] = key_result[0]
+
+            else:
+                target_list[0] = None
+        else:
+            target_list = [None]
+            
+
+    else:
+        no_target = True
+        target_list = [None]
+
+
+    if not no_target and target_list[0]:
+        first_target = com.get_combatant(target_list[0])
+
+        if attack_roll[0] >= first_target.ac:
+            hit = True
+
+
+
+        if 
+
+        hit_target
+
+
+
+
+
+        if not lightning_ability:
+
+
+
+
+    
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</drac2>
+
+
+
+
+
+
+
+
+
+
