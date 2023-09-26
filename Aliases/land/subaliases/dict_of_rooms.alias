@@ -1,0 +1,67 @@
+def set_default_settings(settings_dict: dict, default_dict: dict) -> dict:
+        """
+        Sets default parameters when items are missing
+        
+        Args:
+            settings_dict (dict): Dictionary to set default parameters to
+            default_dict (dict): Dictionary of default parameters
+
+        Return:
+            (dict): Resultant dictionary
+        
+        """
+        # For each item in the default dictionary
+        for key, value in default_dict.items():
+
+            # Check to see if there is an entry in the settings dictionary
+            try:
+                settings_dict[key]
+
+            # Due to missing key, set value to default value
+            except:
+                settings_dict[key] = value
+
+        return settings_dict
+
+
+    def check_tier_settings(dict_of_rooms: dict) -> dict|str:
+        """
+        Verifies that tier settings are done correctly
+
+        Args:
+            dict_of_rooms (dict): Dictionary containing each room type.
+
+        Returns:
+            (dict): Checked room settings
+        """
+
+        default_dict = {
+            "TierName": None, 
+            "Description": None, 
+            "MinSize": None, 
+            "BuildCost": 0, 
+            "BuildTime": 0, 
+            "UpkeepCost": 0, 
+            "Requirements": None, 
+            "URL": "", 
+            "Color": "", 
+            "Benefits": None
+        }
+
+        # For each room
+        for room_key, room_value in dict_of_rooms.items():
+
+            # Try to turn room keys into a float
+            try:
+                for tier_key in room_value.keys():
+                    float(tier_key)
+
+            # Return error if it can't convert (through a None)
+            except:
+                return None
+            
+            # For each tier, set default values to missing keys
+            for tier_key, tier_value in room_value.items():
+                dict_of_rooms[room_key][tier_key] = set_default_settings(tier_value, default_dict)
+
+        return dict_of_rooms

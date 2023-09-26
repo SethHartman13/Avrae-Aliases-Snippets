@@ -1,0 +1,96 @@
+{
+    "Test": {
+        "1": { // At least one tier, must be numbered.
+            "TierName": "String", // Defaults to null
+            "Description": "String", // Defaults to null
+            "MinSize": "String", // Defaults to null
+            "BuildCost": 0, // Defaults to 0
+            "BuildTime": 0, // Defaults to 0
+            "UpkeepCost": 0, // Defaults to 0
+            "Requirements": "String", // Defaults to null
+            "URL": "String", // Defaults to ""
+            "Color": "String", // Defaults to ""
+            "Benefits": "String" // Defaults to null
+        },
+
+        "2": {
+            "TierName": "String",
+            "Description": "String",
+            "MinSize": "String",
+            "BuildCost": 0,
+            "BuildTime": 0,
+            "UpkeepCost": 0,
+            "Requirements": "String",
+            "URL": "String",
+            "Color": "String",
+            "Benefits": "String"
+        }
+    },
+
+    "Bedroom": {
+        "1": {
+            "TierName": "Basic",
+            "Description": "For sleeping/resting",
+            "MinSize": "1x1",
+            "BuildCost": 1500,
+            "BuildTime": 86400,
+            "UpkeepCost": 0,
+            "Requirements": "String",
+            "URL": "",
+            "Color": "",
+            "Benefits": "String"
+        },
+
+        "2": {
+            "TierName": "Fine",
+            "Description": "For sleeping/resting",
+            "MinSize": "1x2",
+            "BuildCost": 5000,
+            "BuildTime": 259200,
+            "UpkeepCost": 0,
+            "Requirements": "String",
+            "URL": "",
+            "Color": "",
+            "Benefits": "String"
+        },
+
+        "3": {
+            "TierName": "Fancy",
+            "Description": "For sleeping/resting",
+            "MinSize": "2x2",
+            "BuildCost": 7500,
+            "BuildTime": 345600,
+            "UpkeepCost": 0,
+            "Requirements": "String",
+            "URL": "",
+            "Color": "",
+            "Benefits": "String"
+        },
+        
+        "4": {
+            "TierName": "Exquisite",
+            "Description": "For sleeping/resting",
+            "MinSize": "2x3",
+            "BuildCost": 12000,
+            "BuildTime": 432000,
+            "UpkeepCost": 0,
+            "Requirements": "String",
+            "URL": "",
+            "Color": "",
+            "Benefits": "String"
+        },
+
+        "5": {
+            "TierName": "Luxury",
+            "Description": "For sleeping/resting",
+            "MinSize": "3x3",
+            "BuildCost": 0,
+            "BuildTime": 864000,
+            "UpkeepCost": 0,
+            "Requirements": "String",
+            "URL": "",
+            "Color": "",
+            "Benefits": "String"
+        }
+    }
+}

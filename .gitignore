@@ -7,3 +7,4 @@ Aliases/clock/*.json
 line.py
 /Private
 Aliases/guide/poc.py
+Aliases/land/design/*

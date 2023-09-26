@@ -1,0 +1,160 @@
+embed
+<drac2>
+
+
+def set_default_settings(settings_dict: dict, default_dict: dict) -> dict:
+    """
+    Sets default parameters when items are missing
+    
+    Args:
+        settings_dict (dict): Dictionary to set default parameters to
+        default_dict (dict): Dictionary of default parameters
+
+    Return:
+        (dict): Resultant dictionary
+    
+    """
+    # For each item in the default dictionary
+    for key, value in default_dict.items():
+
+        # Check to see if there is an entry in the settings dictionary
+        try:
+            settings_dict[key]
+
+        # Due to missing key, set value to default value
+        except:
+            settings_dict[key] = value
+
+    return settings_dict
+
+
+def var_find(var: str) -> dict:
+    """
+    
+    
+    
+    """
+    svar_test = get_svar(var)
+
+    if svar_test:
+        return load_json(svar_test)
+
+    else:
+        gvar_test = get_gvar(var)
+
+        if gvar_test:
+            return load_json(gvar_test)
+
+        else:
+            return {}
+
+
+def get_settings_dictionary() -> dict:
+    """
+    
+    
+    
+
+    """
+
+    settings_test = get_svar("housing_settings")
+
+    # NEED TO CHANGE VALUE OF ROOMS SO THAT IT CONTAINS THE NECESSARY GVARS
+    default_dict = {"Plot_limit": 999, "Rooms": []}
+
+    # If settings dictionary exists, store and set default values
+    if settings_test:
+        settings_dict = set_default_settings(load_json(settings_test), default_dict)
+
+
+        try:
+            if len(settings_dict['Plots']).keys() > 0:
+                default_dict = {
+                "Tier": None,
+                "Description": None,
+                "MinSize": None,
+                "BuildCost": 0,
+                "BuildTime": 0,
+                "UpkeepCost": 0,
+                "Requirements": None,
+                "URL": "",
+                "Color": "",
+                "Benefits": None
+                }
+
+                for tier_key, tier_value in settings_dict['Plots'].items():
+                    float(tier_key)
+                    settings_dict['Plots'][tier_key] = set_default_settings(tier_value, default_dict)
+
+            else:
+                return None
+        
+        except:
+            return None
+
+    else:
+        return None
+
+    if typeof(settings_dict['Rooms']) == "SafeList":
+        temp_list = []
+        for var in settings_dict['Rooms']:
+            temp_list.append(var_find(var))
+
+    elif typeof(settings_dict['Rooms']) == "Str":
+        temp_list = [var_find(settings_dict['Rooms'])]
+
+    else:
+        temp_list = [settings_dict['Rooms']]
+
+    settings_dict['Room_Dict'] = {key: value, for dictionary in temp_list for key, value in dictionary.items()}
+
+    return settings_dict
+
+
+def main(input_list: list[str]) -> str, str, str, str:
+    """
+    
+    
+    
+    
+    """
+
+
+
+
+
+
+
+
+
+    if (dict_of_rooms := check_room_settings(test_dict)):
+        print(dict_of_rooms)
+
+    else:
+        print("Error")
+
+
+
+
+
+
+
+
+
+
+
+
+
+title, content, thumbnail, color = main(&ARGS&)
+
+
+
+
+
+
+</drac2>
+
+
+
+
+
