@@ -1,0 +1,5 @@
+{
+    "light armor": ["dex", "str"],
+    "medium armor": ["dex", "str"],
+    "heavy armor": ["str"]
+}

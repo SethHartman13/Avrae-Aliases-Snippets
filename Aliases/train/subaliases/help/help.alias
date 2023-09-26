@@ -29,9 +29,11 @@ result_string.append("")
 result_string.append("`!train log`: Checks training progress (also gives proficiency name)")
 result_string.append("")
 
+result_string.append("**Note:** This alias was updated on 9/20. Skill proficencies, by default, are turned off. View the GitHub (run `!help train` to get link) for additional information")
+
 
 </drac2>
 -title "{{f"{ctx.author.display_name} needs help!"}}"
 -f "{{string}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/train/image.png"
--footer "!train help | Updated 7/5/23 | ShadowsStride"
+-footer "!train help | Updated 9/20/23 | ShadowsStride"

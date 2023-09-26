@@ -47,58 +47,62 @@ def search_key(query: str, key_list: list[str]) -> list[str]|str:
 
 
 def get_settings_dict() -> dict:
+    """
+    Grabs/constructs settings dictionary
+
+    Return:
+        (dict): Settings dictionary
+    """
+
+    def set_default_settings(settings_dict: dict, default_dict: dict) -> dict:
+        """
+        Sets default parameters when items are missing
+        
+        Args:
+            settings_dict (dict): Dictionary to set default parameters to
+            default_dict (dict): Dictionary of default parameters
+
+        Return:
+            (dict): Resultant dictionary
+        
+        """
+        # For each item in the default dictionary
+        for key, value in default_dict.items():
+
+            # Check to see if there is an entry in the settings dictionary
+            try:
+                settings_dict[key]
+
+            # Due to missing key, set value to default value
+            except:
+                settings_dict[key] = value
+
+        return settings_dict
 
     # Checks to see if the settings_svar exists
-    settings_test = get_svar('training_settings', default="None")
+    settings_test = get_svar('training_settings')
+    default_dict = {'max_val': 10, 'disp_type': 'star', 'jack_of_trades': 1, 'time_cooldown': 561600, 'thresholds': {"-999": 0, "10": 1, "20": 2}}
+    
+    # If settings dict exists, set missing values to default values
+    if settings_test:
+        settings_dict = set_default_settings(load_json(settings_test), default_dict)
+        
+        # Checks to see if -999 threshold exists
+        try:
+            settings_dict['thresholds']["-999"]
 
-    # If settings dict exists
-    if settings_test != "None":
-        settings_dict = load_json(settings_test)
+        # If -999 didn't exist        
+        except:
+            settings_dict['thresholds']["-999"] = 0
+
+        return settings_dict
 
     # If settings dict does not exist
     else:
-        settings_dict = dict()
-
-    # Maximum 'successes' value
-    try:
-        settings_dict['max_val']
-    except:
-        settings_dict['max_val'] = 10
-
-    # CC display type
-    try:
-        settings_dict['disp_type']
-    except:
-        settings_dict['disp_type'] = 'star'
-
-    # If jack of all trades adds to dice roll
-    try:
-        settings_dict['jack_of_trades']
-    except:
-        settings_dict['jack_of_trades'] = 1
-
-    # Time cool down (default: 6 days 12 hours)
-    try:
-        settings_dict['time_cooldown']
-    except:
-        settings_dict['time_cooldown'] = 561600
-
-    # Success thresholds
-    try:
-        settings_dict['thresholds']
-    except:
-        settings_dict['thresholds'] = {"-999": 0, "10": 1, "20": 2}
-
-    # Checks to see if a default threshold is made
-    try:
-        settings_dict['thresholds']["-999"]
-    except:
-        settings_dict['thresholds']["-999"] = 0
-
-    return settings_dict
+        return default_dict
 
 
-def grab_tool_weapon_lang_skill() -> dict:
+def grab_tool_weapon_lang_skill_armor() -> dict:
     """
     Grabs all the dictionaries necessary for the skills
 
@@ -106,64 +110,218 @@ def grab_tool_weapon_lang_skill() -> dict:
         (dict): Dictionary of all proficencies and relavant skills
     """
 
+    # Default values
+    # Tool dictionary
+    tool_dict = {
+    "alchemist's supplies": ["int", "wis"],
+    "brewer's supplies": ["int", "wis", "cha"],
+    "calligrapher's supplies": ["dex", "int", "cha"],
+    "carpenter's tools": ["str", "dex", "int", "wis"],
+    "cobbler's tools": ["str", "dex", "int", "wis", "cha"],
+    "cook's tools": ["dex", "int", "wis"],
+    "glassblower's tools": ["dex", "int"],
+    "jeweler's tools": ["dex", "cha"],
+    "leatherworker's tools": ["str", "dex", "wis"],
+    "mason's tools": ["str", "int"],
+    "painter's supplies": ["dex", "wis", "cha"],
+    "potter's tools": ["dex", "wis"],
+    "thieves' tools": ["dex", "int"],
+    "tinker's tools": ["dex", "int"],
+    "weaver's tools": ["dex", "int", "wis"],
+    "woodcarver's tools": ["dex", "int", "wis"],
+    "disguise kit": ["int", "wis", "cha"],
+    "forgery kit": ["int", "wis"],
+    "herbalism kit": ["int", "wis"],
+    "navigator's tools": ["int", "wis"],
+    "poisoner's kit": ["int", "wis"],
+    "smith's tools": ["str", "dex"]
+    }
+
+    # Language dictionary
+    lang_dict = {
+    "abanasinian": ["int", "wis", "cha"], 
+    "abyssal": ["int", "wis", "cha"], 
+    "aquan": ["int", "wis", "cha"], 
+    "auran": ["int", "wis", "cha"], 
+    "celestial": ["int", "wis", "cha"], 
+    "daelkyr": ["int", "wis", "cha"], 
+    "deep speech": ["int", "wis", "cha"], 
+    "draconic": ["int", "wis", "cha"], 
+    "dwarvish": ["int", "wis", "cha"], 
+    "elvish": ["int", "wis", "cha"], 
+    "ergot": ["int", "wis", "cha"], 
+    "giant": ["int", "wis", "cha"], 
+    "gith": ["int", "wis", "cha"], 
+    "gnomish": ["int", "wis", "cha"], 
+    "goblin": ["int", "wis", "cha"], 
+    "hadozee": ["int", "wis", "cha"], 
+    "halfling": ["int", "wis", "cha"], 
+    "ignan": ["int", "wis", "cha"], 
+    "infernal": ["int", "wis", "cha"], 
+    "istarian": ["int", "wis", "cha"], 
+    "kenderspeak": ["int", "wis", "cha"], 
+    "kharolian": ["int", "wis", "cha"], 
+    "khur": ["int", "wis", "cha"], 
+    "kothian": ["int", "wis", "cha"], 
+    "kraul": ["int", "wis", "cha"], 
+    "leonin": ["int", "wis", "cha"], 
+    "loxodon": ["int", "wis", "cha"], 
+    "marquesian": ["int", "wis", "cha"], 
+    "minotaur": ["int", "wis", "cha"], 
+    "naush": ["int", "wis", "cha"], 
+    "nerakese": ["int", "wis", "cha"], 
+    "nordmaarian": ["int", "wis", "cha"], 
+    "ogre": ["int", "wis", "cha"], 
+    "orc": ["int", "wis", "cha"], 
+    "primordial": ["int", "wis", "cha"], 
+    "quori": ["int", "wis", "cha"], 
+    "riedran": ["int", "wis", "cha"], 
+    "solamnic": ["int", "wis", "cha"], 
+    "sylvan": ["int", "wis", "cha"], 
+    "terran": ["int", "wis", "cha"], 
+    "thri-kreen": ["int", "wis", "cha"], 
+    "undercommon": ["int", "wis", "cha"], 
+    "vedalken": ["int", "wis", "cha"], 
+    "zemnian": ["int", "wis", "cha"]
+    }
+
+    # Weapon dictionary
+    weapon_dict = {
+    "club": ["str"], 
+    "dagger": ["str", "dex"], 
+    "greatclub": ["str"], 
+    "handaxe": ["str"], 
+    "javelin": ["str"], 
+    "light hammer": ["str"], 
+    "mace": ["str"], 
+    "quarterstaff": ["str"], 
+    "sickle": ["str"], 
+    "spear": ["str"], 
+    "yklwa": ["str"], 
+    "light crossbow": ["dex"], 
+    "dart": ["dex"], 
+    "shortbow": ["dex"], 
+    "sling": ["dex"], 
+    "battleaxe": ["str"], 
+    "flail": ["str"], 
+    "glaive": ["str"], 
+    "greataxe": ["str"], 
+    "greatsword": ["str"], 
+    "halberd": ["str"], 
+    "lance": ["str"], 
+    "longsword": ["str"], 
+    "maul": ["str"], 
+    "morningstar": ["str"], 
+    "pike": ["str"], 
+    "rapier": ["str", "dex"], 
+    "scimitar": ["str", "dex"], 
+    "shortsword": ["str", "dex"], 
+    "trident": ["str"], 
+    "war pick": ["str"], 
+    "warhammer": ["str"], 
+    "whip": ["str", "dex"], 
+    "blowgun": ["dex"], 
+    "hand crossbow": ["dex"], 
+    "heavy crossbow": ["dex"], 
+    "longbow": ["dex"], 
+    "net": ["str"]
+    }
+
+    # Instrument dictionary
+    instrument_dict = {
+    "bagpipes": ["int", "cha"], 
+    "drum": ["int", "cha"], 
+    "dulcimer": ["int", "cha"], 
+    "flute": ["int", "cha"], 
+    "lute": ["dex", "int", "cha"], 
+    "horn": ["int", "cha"],
+    "pan flute": ["int", "cha"],
+    "shawm": ["int", "cha"],
+    "lyre": ["dex", "int", "cha"],  
+    "viol": ["dex", "int", "cha"],
+    "bird pipes": ["int", "cha"],
+    "glaur": ["con", "cha"],
+    "hand drum": ["dex", "cha"],
+    "longhorn": ["wis", "cha"],
+    "songhorn": ["int", "cha"],
+    "tantan": ["dex", "cha"],
+    "thelarr": ["int", "cha"],
+    "tocken": ["dex", "cha"],
+    "wargong": ["str", "cha"],
+    "whistle-stick": ["wis", "cha"],
+    "yarting": ["dex", "cha"],
+    "zulkoon": ["con", "cha"]
+    }
+
+    # Gaming set dictionary
+    gaming_dict = {
+    "dice set": ["dex", "int", "wis", "cha"], 
+    "dragonchess set": ["int", "wis", "cha"], 
+    "playing card set": ["dex", "int", "wis", "cha"], 
+    "three-dragon ante set": ["int", "wis", "cha"]
+    }
+
     # Setup
     full_dict = dict()
     list_dicts = []
 
     # Thank you genesisest for putting these dictionaries together
     # Tool dictionary
-    tool_test = get_svar('tool_dict', default="None")
-    if tool_test != 'None':
+    tool_test = get_svar('tool_dict')
+    if tool_test:
         list_dicts.append(load_json(tool_test))
 
     else:
-        list_dicts.append(load_json(get_gvar('33d14ee1-3951-449e-86df-9630b1f75173')))
+        list_dicts.append(tool_dict)
 
     # Language dictionary
-    lang_test = get_svar('lang_dict', default="None")
-    if lang_test != 'None':
+    lang_test = get_svar('lang_dict')
+    if lang_test:
         list_dicts.append(load_json(lang_test))
     
     else:
-        list_dicts.append(load_json(get_gvar('70de35e5-aab5-4896-8f00-10bd85af732d')))
+        list_dicts.append(lang_dict)
 
     # Weapon dictionary
-    weapon_test = get_svar('weapon_dict', default="None")
-    if weapon_test != 'None':
+    weapon_test = get_svar('weapon_dict')
+    if weapon_test:
         list_dicts.append(load_json(weapon_test))
 
     else:
-        list_dicts.append(load_json(get_gvar('7b5154d2-85bf-4581-91e9-46295c5581e6')))
+        list_dicts.append(weapon_dict)
 
     # Instrument dictionary
-    instrument_test = get_svar('instrument_dict', default="None")
-    if instrument_test != 'None':
+    instrument_test = get_svar('instrument_dict')
+    if instrument_test:
         list_dicts.append(load_json(instrument_test))
 
     else:
-        list_dicts.append(load_json(get_gvar('1c11be1f-d1c0-46b1-80cb-5a1ae5efafc8')))
+        list_dicts.append(instrument_dict)
 
     # Gaming set dictionary
-    game_test = get_svar('gaming_dict', default="None")
+    game_test = get_svar('gaming_dict')
     if game_test != 'None':
         list_dicts.append(load_json(game_test))
 
     else:
-        list_dicts.append(load_json(get_gvar('1ff63486-fd0e-44fd-aa20-72165a92a840')))
+        list_dicts.append(gaming_dict)
 
     # Skill dictionary
-    skill_test = get_svar('skill_dict', default="None")
-    if skill_test != 'None':
+    skill_test = get_svar('skill_dict')
+    if skill_test:
         list_dicts.append(load_json(skill_test))
     else:
-        list_dicts.append(load_json(get_gvar('49fa8417-b31c-4c8f-bb4c-69bdcf6fcc92')))
+        pass
+
+    # Armor dictionary
+    armor_test = get_svar('armor_dict')
+    if armor_test:
+        list_dicts.append(load_json(armor_test))
+    else:
+        pass
 
     # Combines all the dictionaries into one
-    for dictionary in list_dicts:
-        for key in dictionary.keys():
-            full_dict[key] = dictionary[key]
-
-    return full_dict
+    return {key: value, for dictionary in list_dicts for key, value in dictionary.items()}
 
 
 def find_highest_stat(stat_list: list, ch = character()) -> int:
@@ -178,75 +336,25 @@ def find_highest_stat(stat_list: list, ch = character()) -> int:
         (int): Ability mod
     """
 
-    # Sets threshold so that mod will always be changed
-    mod = -999
+    # Checks to see if there is a subclass cvar
+    subclass_test = ch.get_cvar("subclass", default="None")
 
-    # For each relavant stat
-    for stat in stat_list:
+    # If fey wanderer is not in subclass cvar
+    if "fey wanderer" not in subclass_test.lower():
+        char_mod = charismaMod
 
-        # Strength
-        if stat == "str":
-            if strengthMod > mod:
-                mod = strengthMod
+    # If fey wanderer is in subclass cvar
+    else:
+        char_mod = charismaMod + wisdomMod
 
-            else:
-                pass
+    # Creates mod dictionary
+    mod_dict = {"str": strengthMod, "dex": dexterityMod, "con": constitutionMod, "wis": wisdomMod, "int": intelligenceMod, "cha": char_mod}
 
-        # Dexterity
-        elif stat == "dex":
-            if dexterityMod > mod:
-                mod = dexterityMod
+    # For stats not in the stat_list, set them to -999
+    for stat in list(set(mod_dict.keys()).symmetric_difference(set(stat_list))):
+        mod_dict[stat] = -999
 
-            else:
-                pass
-
-        # Constitution
-        elif stat == "con":
-            if constitutionMod > mod:
-                mod = constitutionMod
-
-            else:
-                pass
-
-        # Intelligence
-        elif stat == "int":
-            if intelligenceMod > mod:
-                mod = intelligenceMod
-
-            else:
-                pass
-        
-        # Wisdom
-        elif stat == "wis":
-            if wisdomMod > mod:
-                mod = wisdomMod
-
-            else:
-                pass
-
-        # Charisma
-        else:
-
-            # Tries to find fey wanderer subclass
-            subclass_test = ch.get_cvar("subclass", default="None")
-
-            # If they do have fey wanderer subclass
-            if "Fey Wanderer" in subclass_test:
-                if charismaMod + wisdomMod > mod:
-                    mod = charismaMod + wisdomMod
-
-                else:
-                    pass
-
-            # If they do not fey wanderer subclass
-            else:
-                if charismaMod > mod:
-                     mod = charismaMod
-
-                else:
-                    pass             
-
-    return mod
+    return [mod_dict[max(mod_dict)], max(mod_dict)]
 
 
 def setup_training_cc(target: str, settings_dict: dict, ch = character()) -> list[str]:
@@ -262,7 +370,7 @@ def setup_training_cc(target: str, settings_dict: dict, ch = character()) -> lis
         (list[str]): Result
     """
 
-    full_dict = grab_tool_weapon_lang_skill()
+    full_dict = grab_tool_weapon_lang_skill_armor()
     key_result = search_key(target, full_dict.keys())
 
     # If it finds at least one proficiency
@@ -282,7 +390,7 @@ def setup_training_cc(target: str, settings_dict: dict, ch = character()) -> lis
                 else:
                     pass
             
-            key_result.insert(0, "**Multiple results found:**")
+            key_result.insert(0, "**Multiple proficiencies found:**")
 
             return ["Error", "\n".join(key_result)]
 
@@ -294,7 +402,17 @@ def setup_training_cc(target: str, settings_dict: dict, ch = character()) -> lis
     desc_dict = {"time": 0, "prof": target}
 
     # Creates the cc
-    ch.create_cc(name="Training", minVal="0", maxVal=str(settings_dict['max_val'] - find_highest_stat(full_dict[target])), reset=None, dispType=settings_dict['disp_type'], reset_to="0", title=f"{name}'s training ({target})", desc=dump_json(desc_dict), initial_value=0)
+    ch.create_cc(
+        name="Training", 
+        minVal="0", 
+        maxVal=str(settings_dict['max_val'] - find_highest_stat(full_dict[target]))[0], 
+        reset=None, 
+        dispType=settings_dict['disp_type'], 
+        reset_to="0", 
+        title=f"{name}'s training ({target})", 
+        desc=dump_json(desc_dict), 
+        initial_value=0
+        )
 
     return ['Success']
 
@@ -316,7 +434,7 @@ def run_training_session(settings_dict, ch = character(), adv: int = 0, bonus: s
     counter = ch.cc("Training")
 
     # Full proficiency dictionary
-    full_dict = grab_tool_weapon_lang_skill()
+    full_dict = grab_tool_weapon_lang_skill_armor()
 
     # Dictionary from description
     desc_dict = load_json(counter.desc)
@@ -324,8 +442,8 @@ def run_training_session(settings_dict, ch = character(), adv: int = 0, bonus: s
     # Current time (in epoch)
     current_time = int(round(time(), 0))
 
-    # Grabs appropriate ability mod
-    ability_mod = find_highest_stat(full_dict[desc_dict['prof']])
+    # Grabs appropriate ability mod and name
+    result_list = find_highest_stat(full_dict[desc_dict['prof']])
 
     # If it is run at the appropriate timeframe (or that is ignored)
     if (current_time >= desc_dict['time'] + settings_dict['time_cooldown']) or ignore_time:
@@ -360,11 +478,11 @@ def run_training_session(settings_dict, ch = character(), adv: int = 0, bonus: s
 
         # If there is no bonus
         if bonus == "None":
-            roll_check = vroll(f"{dice} + {ability_mod}")
+            roll_check = vroll(f"{dice} + {result_list[0]}")
 
         # If there is no bonus
         else:
-            roll_check = vroll(f"{dice} + {bonus} + {ability_mod}")
+            roll_check = vroll(f"{dice} + {bonus} + {result_list[0]}")
 
         # Figures out how much the counter is increased by
         for key in settings_dict['thresholds'].keys():
@@ -387,13 +505,23 @@ def run_training_session(settings_dict, ch = character(), adv: int = 0, bonus: s
             desc_dict['bypass'] = True
 
         # Edits the cc
-        ch.edit_cc("Training", minVal="0", maxVal=str(settings_dict['max_val'] - ability_mod), desc=dump_json(desc_dict), dispType=settings_dict['disp_type'])
+        ch.edit_cc("Training", minVal="0", maxVal=str(settings_dict['max_val'] - result_list[0]), desc=dump_json(desc_dict), dispType=settings_dict['disp_type'])
     
-        return ['Success', roll_check, mod_num]
+        return ['Success', roll_check, mod_num, result_list[1]]
 
     # If time was not skipped and time cooldown has not been met
     else:
         return ['Error', f"You have until <t:{desc_dict['time'] + settings_dict['time_cooldown']}:f> before you can train again"]
+
+
+def threshold_string(threshold_dict: dict) -> str:
+
+    string_list = [f"**DC:** # of successes"]
+    
+    for key, value in threshold_dict.items():
+        string_list.append(f"**{key}:** {value}")
+
+    return "\n".join(threshold_string)
 
 
 def main(input_list: list[str] = [], ch=character()) -> list[str]:
@@ -492,8 +620,11 @@ def main(input_list: list[str] = [], ch=character()) -> list[str]:
             prof_name_list.append(prof_name.capitalize())
         prof_name = " ".join(prof_name_list)
 
+        ability_dict = {"str": "Strength", "dex": "Dexterity", "con": "Constitution", "int": "Intelligence", "wis": "Wisdom", "cha": "Charisma"}
+
         # Results
-        result_string = [f"{str(results[1])}"]
+        result_string = [f"**{ability_dict[results[3]]}**", threshold_string(settings_dict['thresholds'])]
+        result_string.append(f"{str(results[1])}")
         result_string.append(ch.cc_str('Training'))
         result_string.append(f"{counter.value}/{counter.max}  (+{results[2]})")
         result_string.append(f"Next training session: <t:{desc_dict['time'] + settings_dict['time_cooldown']}:f>")
@@ -527,4 +658,4 @@ dash = "-"
 -title "{{output_list[0]}}"
 -f "{{output_list[1]}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/train/image.png"
--footer "!train {{left_arrow}}prof_name> {{left_arrow}}{{dash}}b> {{left_arrow}}adv/dis> | Updated 7/8/2023 | ShadowsStride"
+-footer "!train {{left_arrow}}prof_name> {{left_arrow}}{{dash}}b> {{left_arrow}}adv/dis> | Updated 9/25/2023 | ShadowsStride"

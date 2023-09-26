@@ -29,6 +29,7 @@ This does require cvar `subclass` to contain `Fey Wanderer`, otherwise the bonus
 - [Instruments](#instrument-settings-dictionary)
 - [Gaming Sets](#gaming-set-settings-dictionary)
 - [Skills README](#skill-settings-dictionary-readme)
+- [Armor REAMDE](#armor-settings-dictionary-readme)
 
 ### Settings Dictionary Variable
 The `training_settings` server variable uses a json to customize the settings with training. This is not required, instead it will use default values. Here are the following settings:
@@ -229,12 +230,21 @@ If you do not have the `gaming_dict` svar created, it will default to the below 
 | Three-dragon Ante Set |           |       X      |    X   |     X    |
 
 ### Skill Settings Dictionary (README)
-This server variable uses a json to determine what skills can be learned. Ability score to learn is the ability score associated with the skill. This is **NOT** RAW. 
+This server variable uses a json to determine what skills can be learned. This is **NOT** RAW. 
 
-If you do not have the `skill_dict` svar created, it will be (by default) turned on
+If you do not have the `skill_dict` svar created, it will be (by default) turned off.
 
 [Dictionary Example](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/train/dictionary%20examples/skills.json)
 
-## Change log
+### Armor Settings Dictionary (README)
+This server variable uses a json to determine what skills can be learned. This is **NOT** RAW. 
 
-7/6/2023 - Alias creation
+If you do not have the `armor_dict` svar created, it will be (by default) turned off.
+
+[Dictionary Example](https://github.com/SethHartman13/Avrae-Aliases-Snippets/blob/master/Aliases/train/dictionary%20examples/armor.json)
+
+## Changelog
+- 9/20/23
+  - Skill proficiencies are now turned off by default.
+  - Armor proficiencies have been added, they are turned off by default
+  - Moved proficiency dictionaries into the alias itself, no longer dependent upon GVARs
