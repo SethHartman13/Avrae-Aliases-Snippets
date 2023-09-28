@@ -10,8 +10,6 @@ Clock alias that allows players and DMs to keep track of various tasks. It's pri
 ## Help:
 `!clock`
 
-This alias works as a 
-
 ## Changelog:
 6/25/2023 - Alias created
 
