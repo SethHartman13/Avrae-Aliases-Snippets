@@ -1,0 +1,94 @@
+multiline
+<drac2>
+# *******************************************************
+# * This work includes material taken from the System Reference Document 5.1 
+# * (“SRD 5.1”) by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. 
+# * The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License 
+# * available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# * 
+# * This work includes material written by Seth Hartman (aka ShadowsStride)
+# * and is licensed under the Creative Commons Attribution 4.0 International License 
+# * available at https://creativecommons.org/licenses/by/4.0/legalcode.
+# *******************************************************
+
+# Character object
+ch = character()
+
+# Finds a non-taken CC
+i = 1
+while ch.cc_exists(f"Javelin of Lightning {i}"):
+    i += 1
+
+# Creates CC
+ch.create_cc(
+    name=f"Javelin of Lightning {i}",
+    minVal="0",
+    maxVal="1",
+    reset="long",
+    dispType="star",
+    reset_to="1",
+    title=f"Javelin of Lightning {i}",
+    desc="This javelin is a magic weapon. When you hurl it and speak its command word, it transforms into a bolt of lightning, forming a line 5 feet wide that extends out from you to a target within 120 feet. Each creature in the line excluding you and the target must make a DC 13 Dexterity saving throw, taking 4d6 lightning damage on a failed save, and half as much damage on a successful one. The lightning bolt turns back into a javelin when it reaches the target. Make a ranged weapon attack against the target. On a hit, the target takes damage from the javelin plus 4d6 lightning damage.\n\nThe javelin's property can't be used again until the next dawn. In the meantime, the javelin can still be used as a magic weapon.\n\nProficiency with a javelin allows you to add your proficiency bonus to the attack roll for any attack you make with it.",
+    initial_value="1"
+)
+
+attack = f"""
+name: Javelin of Lightning {i} (Correct)
+automation:
+  - type: text
+    text: >-
+      This javelin is a magic weapon. When you hurl it and speak its command
+      word, it transforms into a bolt of lightning, forming a line 5 feet wide
+      that extends out from you to a target within 120 feet. Each creature in
+      the line excluding you and the target must make a DC 13 Dexterity saving
+      throw, taking 4d6 lightning damage on a failed save, and half as much
+      damage on a successful one. The lightning bolt turns back into a javelin
+      when it reaches the target. Make a ranged weapon attack against the
+      target. On a hit, the target takes damage from the javelin plus 4d6
+      lightning damage.
+
+
+      The javelin's property can't be used again until the next dawn. In the meantime, the javelin can still be used as a magic weapon.
+
+
+      Proficiency with a javelin allows you to add your proficiency bonus to the attack roll for any attack you make with it.
+  - type: counter
+    counter: Javelin of Lightning {i}
+    amount: "1"
+    allowOverflow: null
+    errorBehaviour: null
+  - type: target
+    target: all
+    effects:
+      - type: condition
+        condition: targetIndex == 0
+        onTrue:
+          - type: attack
+            hit:
+              - type: damage
+                damage: 1d6[magical piercing] + 4d6[lightning]
+                overheal: null
+            miss: []
+            attackBonus: strengthMod + proficiencyBonus
+        onFalse:
+          - type: save
+            stat: dex
+            fail:
+              - type: damage
+                damage: 4d6[lightning]
+                overheal: null
+            success:
+              - type: damage
+                damage: 4d6[lightning] / 2
+                overheal: null
+            dc: "13"
+        errorBehaviour: "false"
+_v: 2
+activation_type: 1
+"""
+l = "("
+space = "\n\n"
+
+</drac2>
+!attack import {{attack}}
+!embed -title "{{name}} ({{ctx.author.display_name}}) has imported the Javelin of Lightning" -f "On your character sheet, unequip the Javelin of Lighting as it automatically activates the Javelin and does not do the dex saves properly. Instead, equip a standard javelin (and treat damage as magical).{{space}}To activate this item, simply target the creature you are throwing the JoL at first, then target creatures that need to make the dex save.{{space}}You can have multiple of these. They will show up in your actions as Javelin of Lightning # {{l}}Correct). When you get rid of a Javelin of Lightning, promptly delete the CC associated with it by `!cc delete`." -thumb "https://www.dndbeyond.com/avatars/thumbnails/7/275/1000/1000/636284746259121503.jpeg" -footer "!importjol | Updated 9/30/23 | ShadowsStride"
