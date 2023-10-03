@@ -1,4 +1,4 @@
-a import
+multiline
 <drac2>
 # *******************************************************
 # * This work includes material taken from the System Reference Document 5.1 
@@ -11,21 +11,49 @@ a import
 # * available at https://creativecommons.org/licenses/by/4.0/legalcode.
 # *******************************************************
 
-input_list = &ARGS&
 
-if len(input_list) == 0:
+# Character object
+ch = character()
+
+# If there are no inputs
+if len((input_list := &ARGS)) == 0:
     finesse = False
+    dmg_str = ""
 
+# If there is at least one input, parse arguments
 else:
-    if input_list[0].lower() in "finesse":
+    args_parsed = argparse(input_list)
+
+    # Finesse args
+    fin = args_parsed.last("fin", default=False)
+    fine = args_parsed.last("fine", default=False)
+    fines = args_parsed.last("fines", default=False)
+    finess = args_parsed.last("finess", default=False)
+    finesse = args_parsed.last("finesse", default=False)
+
+    if fin or fine or fines or finess or finesse:
         finesse = True
-    
+
     else:
         finesse = False
 
+    # Magic args
+    mag = args_parsed.last("mag", default=False)
+    magi = args_parsed.last("magi", default=False)
+    magic = args_parsed.last("magic", default=False)
+    magica = args_parsed.last("magica", default=False)
+    magical = args_parsed.last("magical", default=False)
+
+    if mag or magi or magic or magica or magical:
+        dmg_str = "magical "
+
+    else:
+        dmg_str = ""
+
+# If it is finesse, import finesse version
 if finesse:
-    guid = """_v: 2
-name: Double-Bladed Scimitar BA (Finesse) 
+    yaml = f"""_v: 2
+name: {dmg_str.capitalize()}Double-Bladed Scimitar BA (Finesse) 
 automation: 
  - type: condition
    condition: strengthMod > dexterityMod
@@ -44,17 +72,19 @@ automation:
     - type: attack 
       hit: 
         - type: damage 
-          damage: 1d4 + {weapmod} [slashing] 
+          damage: 1d4 + {{weapmod}} [{dmg_str}slashing] 
       miss: [] 
-      attackBonus: "{weapmod+proficiencyBonus}" 
+      attackBonus: "{{weapmod+proficiencyBonus}}" 
  - type: text 
    text: If you attack with a double-bladed scimitar as part of the Attack action on your turn, you can use a bonus action immediately after to make a melee attack with it. This attack deals 1d4 slashing damage on a hit, instead of 2d4. 
 activation_type: 3
 """
+    title_add = " (Finesse)"
 
+# If it is not finesse, import normal version
 else:
-    guid = """_v: 2
-name: Double-Bladed Scimitar BA 
+    yaml = f"""_v: 2
+name: {dmg_str.capitalize()}Double-Bladed Scimitar BA 
 automation: 
  - type: variable 
    name: weapmod 
@@ -65,13 +95,20 @@ automation:
     - type: attack 
       hit: 
         - type: damage 
-          damage: 1d4 + {weapmod} [slashing] 
+          damage: 1d4 + {{weapmod}} [{dmg_str}slashing] 
       miss: [] 
-      attackBonus: "{weapmod+proficiencyBonus}" 
+      attackBonus: "{{weapmod+proficiencyBonus}}" 
  - type: text 
    text: If you attack with a double-bladed scimitar as part of the Attack action on your turn, you can use a bonus action immediately after to make a melee attack with it. This attack deals 1d4 slashing damage on a hit, instead of 2d4. 
 activation_type: 3
 """
+    title_add = ""
+
+
+# To make Avrae like <'s 
+l = "<"
+
 
 </drac2>
-{{guid}}
+!attack import {{yaml}}
+!embed -title "{{name}} ({{ctx.author.display_name}}) has imported the Double Scimitar BA attack{{title_add}}" -thumb "https://i.pinimg.com/736x/b5/7c/24/b57c2440ab740fb279bfbaccbfefb519.jpg" -footer "!importdba {{l}}finesse> {{l}}magical> | Updated 9/30/23 | ShadowsStride"
