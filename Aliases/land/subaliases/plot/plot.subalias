@@ -66,7 +66,6 @@ def get_settings_dictionary() -> dict:
     if settings_test:
         settings_dict = set_default_settings(load_json(settings_test), default_dict)
 
-
         try:
             if len(settings_dict['Plots']).keys() > 0:
                 default_dict = {
@@ -119,29 +118,11 @@ def main(input_list: list[str]) -> str, str, str, str:
     
     """
 
-
-
-
-
-
-
-
-
-    if (dict_of_rooms := check_room_settings(test_dict)):
-        print(dict_of_rooms)
+    if (dict_of_rooms := get_settings_dictionary(test_dict)):
+        pass
 
     else:
-        print("Error")
-
-
-
-
-
-
-
-
-
-
+        return f"{ctx.author.display_name} has encountered an error", "Problems with svar settings", "url", "#cc0202"
 
 
 
