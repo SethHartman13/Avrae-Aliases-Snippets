@@ -6,7 +6,4 @@ Subalias that removes a tracker on a server.
 - Seth Hartman (ShadowsStride)
 
 ## Help:
-`!clock removes [tracker name]`
-
-## Changelog:
-7/3/2023 - Subalias created
+`!clock remove [tracker name]`

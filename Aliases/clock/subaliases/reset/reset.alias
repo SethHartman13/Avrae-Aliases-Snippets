@@ -7,7 +7,7 @@ embed
 # *******************************************************
 
 
-def search_key(query: str, key_list: list[str]) -> list[str]|str:
+def search_key(query: str, key_list: list[str]) -> list[str]|None:
     """
     Searches for dictionary key.
 
@@ -16,53 +16,58 @@ def search_key(query: str, key_list: list[str]) -> list[str]|str:
         key_list (list): List of keys
 
     Return:
-        (str): If it finds it, it returns the key, otherwise it returns 'None'
+        (list[str]|None): If it finds at least one match it returns list of matches, otherwise it returns None
     """
 
     # Creates list to store matches
-    results_keys = []
+    key_results = []
 
-    # For each key in the key_list
+    # Checks each item if a match occurs
     for key in key_list:
 
-        # Sets up process to creater iterations
-        initial_iterations = []
-        iterations = []
-        lst = []
-        lst[:] = key.lower()
-
-        for i in range(len(key) + 1):
-            initial_iterations.append(lst[:i])
-
-
-        # So, what happens is it will create iterations like 'r' and 're'
-        # This removes the first two so that at least three letters are needed
-        initial_iterations.pop(0)
-        initial_iterations.pop(0)
-
-
-        # Puts all the iterations of the key in a list
-        for iteration in initial_iterations:
-            iterations.append("".join(iteration))
-
-        # If the query returns a match, it will return the key
-        if query.lower() in iterations:
-
-            results_keys.append(key)
+        # If matches
+        if query.lower() in key.lower():
+            key_results.append(key)
 
         else:
             pass
 
-    # If there are matches, return a list
-    if len(results_keys) != 0:
-        return results_keys
+    # Finds at least 1 match
+    if len(key_results) > 0:
+        return key_results
 
-    # If there are no matches, return a string
+    # If it finds no matches
     else:
-        return "None"
+        return None
 
 
-def reset_time(name: str) -> list[str]:
+def dictionary_change(result_key: str, all_server_dict: dict, server_id: str) -> str, list:
+
+    # Create backup uvar
+    set_uvar('clock_dict_backup', dump_json(all_server_dict))
+    time_check = all_server_dict[server_id][result_key][:]
+
+    try:
+        time_check[4] += time_check[2]
+
+    except:
+        time_check.append(time_check[3])
+
+    try:
+        time_check[5] += time_check[3]
+
+    except:
+        time_check.append(time_check[2])
+
+    # Reset values for the tracker
+    all_server_dict[server_id][result_key] = [False, round(time(), 0), 0, 0, time_check[4], time_check[5]]
+
+    set_uvar('clock_dict', dump_json(all_server_dict))
+
+    return result_key, time_check
+
+
+def reset_time(name: str = "dm_time") -> int|str, list:
     """
     Resets the tracker
 
@@ -74,82 +79,58 @@ def reset_time(name: str) -> list[str]:
     """
 
     # Pulls and checks if uvar exists
-    all_server_test = get_uvar("clock_dict", default="None")
+    all_server_test = get_uvar("clock_dict")
 
     # If the uvar exists
-    if all_server_test != "None":
+    if all_server_test:
         pass
 
     # If the uvar does not exist
     else:
-        return ['Error', "uvar not found!\nPlease run `!clock create [tracker name]`"]
+        return -1, "UVAR not found!"
     
     # Tries to convert the uvar to a dictionary
     try:
         all_server_dict = load_json(all_server_test)
 
     except:
-        return ['Error', 'Problems loading dictionary']
-
-    # Grabs the server id
-    server_id = f"{ctx.guild.id}"
+        return None, 'Problems loading dictionary'
 
     # Checks to see if the server id is in the uvar
-    key_result = search_key(server_id, all_server_dict.keys())
+    key_result = search_key(str(ctx.guild.id), all_server_dict.keys())
 
     # If the server id exists in the uvar, pulls dictionary of all trackers made within the server.
-    if key_result != "None":
-        server_dict = all_server_dict[server_id]
+    if key_result:
+        pass
 
     # If the server id does not exist, throws an error
     else:
-        return ['Error', "Server dictionary within `clock_dict` \nPlease run `!clock create [tracker name]` or `!clock in`"]
+        return None, "Server dictionary not found"
 
     # Checks to see if the tracker requested exists.
-    key_result = search_key(name, server_dict.keys())
+    key_result = search_key(name, all_server_dict[str(ctx.guild.id)].keys())
 
-    # If it doesn't find the tracker specified
-    if key_result == "None":
-        return ['Error', "Tracker not found!\nPlease run `!clock create [tracker name]`"]
 
-    # If it finds only one key
-    elif len(key_result) == 1:
+    if key_result:
+        if len(key_result) == 1:
+            return dictionary_change(key_result[0], all_server_dict, str(ctx.guild.id))
 
-        # Create backup uvar
-        set_uvar('clock_dict_backup', dump_json(all_server_dict))
-        time_check = server_dict[key_result[0]]
+        else:
+            for key in key_result:
+                if name.lower() != key.lower():
+                    pass
 
-        # Reset values for the tracker
-        server_dict[key_result[0]] = [False, int(round(time(), 0)), 0, 0]
-        all_server_dict[server_id] = server_dict
-        set_uvar('clock_dict', dump_json(all_server_dict))
+                else:
+                    return dictionary_change(key, all_server_dict, str(ctx.guild.id))
 
-        return ['Success', time_check, key_result[0]]
 
-    # If it finds more than one result
+            # If no exact match was made
+            key_result.insert(0, "**Multiple trackers found:**")
+            
+            return None, "\n".join(key_result)
+
     else:
-        for dict_key in key_result:
-
-            # If it finds the exact value
-            if name.lower() == dict_key.lower():
-
-                # Create backup uvar
-                set_uvar('clock_dict_backup', dump_json(all_server_dict))
-                time_check = server_dict[dict_key]
-
-                # Reset values for the tracker
-                server_dict[dict_key] = [False, int(round(time(), 0)), 0, 0]
-                all_server_dict[server_id] = server_dict
-                set_uvar('clock_dict', dump_json(all_server_dict_dict))
-
-                return ['Success', time_check, dict_key]
-                
-            else:
-                pass
-        
-        key_result.insert(0, "**Multiple trackers found:**")
-
-        return ["Error", "\n".join(key_result)]
+        return None, "Tracker not found!"
 
 
 def calc_time(time:int) -> str:
@@ -165,13 +146,36 @@ def calc_time(time:int) -> str:
 
     result_list = []
 
-    # Converts time into hours, minutes, seconds
-    hours = time // 3600
-    minutes = (time % 3600) // 60
-    seconds = (time % 3600) % 60
+    # Weeks
+    if (weeks := time // 604800) > 0:
+        if hours != 1:
+            result_list.append(f"{weeks} weeks")
+        
+        else:
+            result_list.append(f"{weeks} week")
+    
+    else:
+        pass
+
+    # Intermediary calc 1
+    t1 = time % 604800
+
+    # Days
+    if (days := t1 // 86400) > 0:
+        if days != 1:
+            result_list.append(f"{days} days")
+        
+        else:
+            result_list.append(f"{days} day")
+    
+    else:
+        pass
+
+    # Intermediary calc 2
+    t2 = t1 % 86400
 
     # Hours
-    if hours > 0:
+    if (hours := t2 // 3600) > 0:
         if hours != 1:
             result_list.append(f"{hours} hours")
         
@@ -181,8 +185,11 @@ def calc_time(time:int) -> str:
     else:
         pass
 
+    # Intermediary calc 3
+    t3 = t2 % 3600
+
     # Minutes
-    if minutes > 0:
+    if (minutes := t3 // 60) > 0:
         if minutes != 1:
             result_list.append(f"{minutes} minutes")
         
@@ -193,7 +200,7 @@ def calc_time(time:int) -> str:
         pass
 
     # Seconds
-    if seconds > 0:
+    if (seconds := t3 % 60) > 0:
         if seconds != 1:
             result_list.append(f"{seconds} seconds")
         
@@ -219,36 +226,36 @@ def main(input_list: list[str]) -> list[str]:
 
     # If the length of inputs is 0, will automatically choose the dm timer
     if len(input_list) == 0:
-        result_list = reset_time("dm_time")
-        input_list.append("DM Time")
+        name, tracker_details = reset_time()
 
     # Grabs first input
     else:
-        result_list = reset_time(input_list[0])
+        name, tracker_details = reset_time(input_list[0])
 
     # If there was no error
-    if result_list[0] != "Error":
-        tracker_details = result_list[1]
+    if name:
 
         # Tracker details
-        end_result_list = []
-        end_result_list.append(f"**Final time:** {calc_time(tracker_details[2])}")
-        end_result_list.append(f"**Final clock-ins:** {tracker_details[3]}")
+        result_list = []
+        result_list.append(f"**Final time:** {calc_time(tracker_details[2])}")
+        result_list.append(f"**Final clock-ins:** {tracker_details[3]}")
+        result_list.append(f"**All-time: {calc_time(tracker_details[4])}")
+        result_list.append(f"**All-time clock-ins: {calc_time(tracker_details[5])}")
 
-        return [f"{ctx.author.display_name}: {input_list[0]} tracker has been reset", "\n".join(end_result_list)]   
+        return f"{ctx.author.display_name}: {name} tracker has been reset", "\n".join(result_list)
 
     # If there was an error
     else:
-        return [f"{ctx.author.display_name} encountered an error", result_list[1]]
+        return f"{ctx.author.display_name} has encountered an error", tracker_details
 
 
 # Runs main program
-output_list = main(&ARGS&)
+title, f = main(&ARGS&)
 left_arrow = "<"
 
 
 </drac2>
--title "{{output_list[0]}}"
+-title "{{title}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/clock/image.png"
--f "{{output_list[1]}}"
--footer "!clock reset {{left_arrow}}tracker name> | Updated 7/27/23 | ShadowsStride"
+-f "{{f}}"
+-footer "!clock reset {{left_arrow}}tracker name> | Updated 10/3/23 | ShadowsStride"

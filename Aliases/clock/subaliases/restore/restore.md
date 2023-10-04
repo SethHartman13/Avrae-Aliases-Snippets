@@ -7,6 +7,3 @@ Subalias that restores global tracker data.
 
 ## Help:
 `!clock restore`
-
-## Changelog:
-7/4/2023 - Subalias created

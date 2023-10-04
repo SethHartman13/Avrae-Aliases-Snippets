@@ -7,6 +7,3 @@ Subalias that lists all the trackers you have on a server.
 
 ## Help:
 `!clock list`
-
-## Changelog:
-7/3/2023 - Subalias created

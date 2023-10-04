@@ -1,20 +1,32 @@
-1. Rewrite create.alias
+1. ~~Rewrite create.alias~~
+    - Testing
 
-2. Rewrite help.alias
+2. ~~Rewrite help.alias~~
+    - Testing
 
 3. ~~Rewrite in.alias~~
     - Testing
 
-4. Rewrite list.alias
+4. ~~Rewrite list.alias~~
+    - Testing
 
-5. Rewrite log.alias
+5. ~~Rewrite log.alias~~
+    - Testing
 
-6. Rewrite out.alias
+6. ~~Rewrite out.alias~~
+    - Testing
 
-7. Rewrite remove.alias
+7. ~~Rewrite remove.alias~~
+    - Testing
+  
+8. ~~Rewrite reset.alias~~
+    - Testing
 
-8. Rewrite reset.alias
+9.  ~~Rewrite restore.alias~~
+    - Testing
 
-9. Rewrite restore.alias
+10. ~~Maybe add all-time tracker~~
+    - Testing
 
-10. Maybe add all-time tracker
+11. ~~Add alltime.alias~~
+    - Testing

@@ -8,7 +8,4 @@ Subalias that checks the time log of a tracker on a server.
 ## Help:
 `!clock log <tracker name>`
 
-`<tracker name>` is an optional argument, uses DM Time by default.
-
-## Changelog:
-7/3/2023 - Subalias created
+`<tracker name>` is an optional argument, uses dm_time by default.

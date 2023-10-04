@@ -7,6 +7,3 @@ Subalias that creates a tracker on a server.
 
 ## Help:
 `!clock create [tracker name]`
-
-## Changelog:
-7/3/2023 - Subalias created

@@ -16,16 +16,16 @@ def restore_time() -> list[str]:
     """
 
     # Pulls and checks if clock_dict uvar exists
-    all_server_test = get_uvar("clock_dict", default="None")
+    all_server_test = get_uvar("clock_dict")
 
     # If the uvar exists
-    if all_server_test != "None":
+    if all_server_test:
 
         # Pulls and checks if clock_dict_backup dict exists.
-        all_server_test_backup = get_uvar('clock_dict_backup', default="None")
+        all_server_test_backup = get_uvar('clock_dict_backup')
 
         # If the uvar exists
-        if all_server_test_backup != "None":
+        if all_server_test_backup:
 
             # Puts the clock_dict_backup into clock_dict
             set_uvar('clock_dict_backup', all_server_test)
@@ -33,34 +33,34 @@ def restore_time() -> list[str]:
             # Puts the clock_dict into clock_dict_backup
             set_uvar('clock_dict', all_server_test_backup)
 
-            return ["Success", 'Clock tracker data restored']
+            return 'Clock tracker data restored', ''
 
         # If the uvar does not exist
         else:
-            return ["Error", "No backup found"]
+            return None, "No backup found"
 
     # If the uvar does not exist
     else:
-        return ['Error', "uvar not found!\nPlease run `!clock create [tracker name]`"]
+        return None, "uvar not found!"
     
 
 def main(input_list: list) -> list:
 
-    result_list = restore_time()
+    title, f = restore_time()
 
-    if result_list[0] != "Error":
-        return [f"{ctx.author.display_name}: {result_list[1]}", ""]
+    if title:
+        return f"{ctx.author.display_name}: {title}", ""
 
     else:
-        return [f"{ctx.author.display_name} ran into an error", result_list[1]]
+        return f"{ctx.author.display_name} has encountered an error", f
 
 
 # Runs main program
-output_list = main(&ARGS&)
+title, f = main(&ARGS&)
 
 
 </drac2>
--title "{{output_list[0]}}"
+-title "{{title}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/clock/image.png"
--f "{{output_list[1]}}"
--footer "!clock restore | Updated 7/3/23 | ShadowsStride"
+-f "{{f}}"
+-footer "!clock restore | Updated 10/3/23 | ShadowsStride"

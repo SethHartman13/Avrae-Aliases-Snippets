@@ -8,7 +8,4 @@ Subalias that resets the time on a tracker on a server.
 ## Help:
 `!clock reset <tracker name>`
 
-`<tracker name>` is an optional argument, uses DM Time by default.
-
-## Changelog:
-7/3/2023 - Subalias created
+`<tracker name>` is an optional argument, uses dm_time by default.

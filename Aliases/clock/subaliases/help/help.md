@@ -7,6 +7,3 @@ Subalias that lists the subaliases and descriptions.
 
 ## Help:
 `!clock help`
-
-## Changelog:
-7/4/2023 - Subalias created

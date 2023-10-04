@@ -41,6 +41,86 @@ def search_key(query: str, key_list: list[str]) -> list[str]|None:
         return None
 
 
+def calc_time(time:int) -> str:
+    """
+    Converts seconds into weeks, days, hours, minutes, seconds.
+    
+    Args:
+        time(int): Time in seconds
+
+    Return:
+        (str): Result
+    """
+
+    result_list = []
+
+    # Weeks
+    if (weeks := time // 604800) > 0:
+        if hours != 1:
+            result_list.append(f"{weeks} weeks")
+        
+        else:
+            result_list.append(f"{weeks} week")
+    
+    else:
+        pass
+
+    # Intermediary calc 1
+    t1 = time % 604800
+
+    # Days
+    if (days := t1 // 86400) > 0:
+        if days != 1:
+            result_list.append(f"{days} days")
+        
+        else:
+            result_list.append(f"{days} day")
+    
+    else:
+        pass
+
+    # Intermediary calc 2
+    t2 = t1 % 86400
+
+    # Hours
+    if (hours := t2 // 3600) > 0:
+        if hours != 1:
+            result_list.append(f"{hours} hours")
+        
+        else:
+            result_list.append(f"{hours} hour")
+    
+    else:
+        pass
+
+    # Intermediary calc 3
+    t3 = t2 % 3600
+
+    # Minutes
+    if (minutes := t3 // 60) > 0:
+        if minutes != 1:
+            result_list.append(f"{minutes} minutes")
+        
+        else:
+            result_list.append(f"{minutes} minute")
+    
+    else:
+        pass
+
+    # Seconds
+    if (seconds := t3 % 60) > 0:
+        if seconds != 1:
+            result_list.append(f"{seconds} seconds")
+        
+        else:
+            result_list.append(f"{seconds} second")
+    
+    else:
+        pass
+
+    return ", ".join(result_list)
+
+
 def get_trackers() -> list[str]:
     """
     Gets the list of trackers for a player.
@@ -73,8 +153,12 @@ def get_trackers() -> list[str]:
     if key_result:
 
         # Pulls names of every tracker
-        for key in all_server_dict[key_result[0]].keys():
-            key_list.append(key)
+        for key, value in all_server_dict[key_result[0]].items():
+            try:
+                key_list.append(f"`{key}`: {calc_time(value[4])}")
+
+            except:
+                key_list.append(f"`{key}`: {calc_time(value[2])}")
 
         # If the list is length of 0, it will list "None"
         if len(key_list) != 0:
