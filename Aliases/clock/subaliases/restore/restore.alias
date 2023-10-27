@@ -15,17 +15,11 @@ def restore_time() -> list[str]:
         (list[str]): Result
     """
 
-    # Pulls and checks if clock_dict uvar exists
-    all_server_test = get_uvar("clock_dict")
-
     # If the uvar exists
-    if all_server_test:
-
-        # Pulls and checks if clock_dict_backup dict exists.
-        all_server_test_backup = get_uvar('clock_dict_backup')
+    if (all_server_test := get_uvar("clock_dict")):
 
         # If the uvar exists
-        if all_server_test_backup:
+        if (all_server_test_backup := get_uvar('clock_dict_backup')):
 
             # Puts the clock_dict_backup into clock_dict
             set_uvar('clock_dict_backup', all_server_test)
@@ -41,16 +35,28 @@ def restore_time() -> list[str]:
 
     # If the uvar does not exist
     else:
-        return None, "uvar not found!"
+        return None, "UVAR not found!"
     
 
-def main(input_list: list) -> list:
+def main(input_list: list[str]) -> str:
+    """
+    Main program function
 
+    Args:
+        input_list (list[str]): List of inputs
+
+    Output:
+        str: Result
+    """
+
+    # Restores old clock
     title, f = restore_time()
 
+    # No error
     if title:
         return f"{ctx.author.display_name}: {title}", ""
 
+    # Error
     else:
         return f"{ctx.author.display_name} has encountered an error", f
 
@@ -63,4 +69,4 @@ title, f = main(&ARGS&)
 -title "{{title}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/clock/image.png"
 -f "{{f}}"
--footer "!clock restore | Updated 10/3/23 | ShadowsStride"
+-footer "!clock restore | Updated 10/16/23 | ShadowsStride"

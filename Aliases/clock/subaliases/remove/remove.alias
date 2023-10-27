@@ -7,34 +7,21 @@ embed
 # *******************************************************
 
 
-def search_key(query: str, key_list: list[str]) -> list[str]|None:
+def search_list(query: str, item_list: list[str]) -> list[str]|None:
     """
-    Searches for dictionary key.
+    Searches for item in list.
 
     Args:
         query (str): The query being made
-        key_list (list): List of keys
+        item_list (list): List of items
 
     Return:
-        (list[str]|None): If it finds at least one match it returns list of matches, otherwise it returns None
+        list[str]|None: If it finds at least one match, it returns the item(s) in a list, otherwise it returns None
     """
 
-    # Creates list to store matches
-    key_results = []
-
-    # Checks each item if a match occurs
-    for key in key_list:
-
-        # If matches
-        if query.lower() in key.lower():
-            key_results.append(key)
-
-        else:
-            pass
-
     # Finds at least 1 match
-    if len(key_results) > 0:
-        return key_results
+    if len(item_results := [item for item in item_list if query.lower() in item.lower()]) > 0:
+        return item_results
 
     # If it finds no matches
     else:
@@ -42,10 +29,26 @@ def search_key(query: str, key_list: list[str]) -> list[str]|None:
 
 
 def delete_from_dict(key_result: str, all_server_dict: dict, server_id: str) -> None:
+    """
+    Deletes entry from dict
+
+    Args:
+        key_result (str): Tracker name
+        all_server_dict (dict): Dictionary containing all trackers
+        server_id (str): Server ID    
+    """
+
+    # Turns off tracker and sets time to when it got turned off
+    all_server_dict[server_id][key_result][0] = False
+    all_server_dict[server_id][key_result][1] = int(time())
+
+    # Setup backup_dict
     set_uvar('clock_dict_backup', dump_json(all_server_dict))
 
-    all_server_dict.pop(key_result)
+    # Pop tracker
+    all_server_dict[server_id].pop(key_result)
 
+    # Setup main dict
     set_uvar('clock_dict', dump_json(all_server_dict))
 
 
@@ -60,16 +63,13 @@ def setup_time(name: str) -> list:
         (list[str]): Results
     """
 
-    # Pulls and checks if uvar exists
-    all_server_test = get_uvar("clock_dict")
-
-    # If the uvar exists
-    if all_server_test:
+    # If the UVAR exists
+    if (all_server_test := get_uvar('clock_dict')):
         pass
 
-    # If the uvar does not exist
+    # If the UVAR does not exist
     else:
-        return -1, "uvar not found!\nPlease run `!clock create [tracker name]` or `!clock in`"
+        return -1, "UVAR not found!\nPlease run `!clock create [tracker name]` or `!clock in`"
     
     # Tries to convert the uvar to a dictionary
     try:
@@ -78,52 +78,54 @@ def setup_time(name: str) -> list:
     except:
         return -1, 'Problems loading dictionary'
 
-    # Searches for server id
-    key_result = search_key(str(ctx.guild.id), all_server_dict.keys())
-
     # If the server id exists in the uvar, pulls dictionary of all trackers made within the server.
-    if key_result:
+    if (key_result := search_list(str(ctx.guild.id), all_server_dict.keys())):
         pass
 
     # If the server id does not exist, throws an error
     else:
-        return -1, "Server dictionary within `clock_dict` \nPlease run `!clock create [tracker name]` or `!clock in`"
+        return -1, "You need to create a tracker on this server before you can remove one"
 
-    # Checks to see if the tracker requested exists.
-    key_result = search_key(name.lower(), all_server_dict[str(ctx.guild.id)].keys())
+    # If it finds a tracker
+    if (key_result := search_list(name.lower(), all_server_dict[str(ctx.guild.id)].keys())):
 
-    if key_result:
+        # If it only has exactly 1 match, delete tracker
         if len(key_result) == 1:
             delete_from_dict(key_result[0], all_server_dict, str(ctx.guild.id))
             return key_result[0], ""
 
+        # If multiple matches
         else:
+
+            # For each match, if it is not an exact match
             for key in key_result:
                 if name.lower() != dict_key.lower():
                     pass
 
+                # If it finds an exact match, delete tracker
                 else:
                     delete_from_dict(key, all_server_dict, str(ctx.guild.id))
-                    return key
+                    return key, ""
 
             # If no exact match was made
             key_result.insert(0, "**Multiple trackers found:**")
             
             return -1, "\n".join(key_result)
 
+    # No matches
     else:
         return -1, "Tracker not found!"
    
 
-def main(input_list: list) -> list:
+def main(input_list: list[str]) -> str:
     """
     Main program function.
     
     Args:
-        input_list(list[str]): List of inputs
+        input_list (list[str]): List of inputs
     
     Output:
-        (list[str]): Result
+        str: Result
     """
 
     # If the length of inputs is 0, throws error
@@ -151,4 +153,4 @@ title, f = main(&ARGS&)
 -title "{{title}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/clock/image.png"
 -f "{{f}}"
--footer "!clock remove [tracker name] | Updated 10/3/23 | ShadowsStride"
+-footer "!clock remove [tracker name] | Updated 10/26/23 | ShadowsStride"

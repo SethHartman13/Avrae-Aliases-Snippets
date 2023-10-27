@@ -7,39 +7,29 @@ embed
 # ********************************************************
 
 
-# Header
-result_string = []
-result_string.append("Sounds like you need someone to provide the help action. Here is a list of the subaliases used for this library.\n**Note:** Unless specified as global, commands only work for trackers that were made on this server.")
-result_string.append("")
-
-# Help
-result_string.append("`!clock`: Displays a message similar to this. ")
-result_string.append("`!clock help`: This subalias")
-result_string.append("")
-
-# Create/remove
-result_string.append("`!clock create [tracker name]`: Creates a tracker")
-result_string.append("`!clock remove [tracker name]`: Removes a tracker")
-result_string.append("")
-
-# In/out
-result_string.append("`!clock in <tracker name>`: Clocks into a tracker, uses dm_time by default")
-result_string.append("`!clock out <tracker name>`: Clocks out of a tracker, uses dm_time by default")
-result_string.append("")
-
-# List/log
-result_string.append("`!clock list`: Lists out names of trackers")
-result_string.append("`!clock log <tracker name>`: Shows time on tracker, uses dm_time by default")
-result_string.append("`!clock alltime`: Lists out the all-times of trackers")
-result_string.append("")
-
-# Reset/restore
-result_string.append("`!clock reset <tracker name>`: Resets time on tracker, uses dm_time be default")
-result_string.append("`!clock restore`: Restores the tracker dictionary from when you last ran `!clock remove`, `!clock reset`, or `!clock restore` (global)")
+result_string = [
+    "Sounds like you need someone to provide the help action. Here is a list of the subaliases used for this library.\n**Note:** Unless specified as global, commands only work for trackers that were made on this server.", # Header
+    "",
+    "`!clock`: Displays a message similar to this.", # Help
+    "`!clock help`: This subalias",
+    "",
+    "`!clock create [tracker name]`: Creates a tracker", # Create/remove
+    "`!clock remove [tracker name]`: Removes a tracker",
+    "",
+    "`!clock in <tracker name>`: Clocks into a tracker, uses dm_time by default", # In/out
+    "`!clock out <tracker name>`: Clocks out of a tracker, uses dm_time by default",
+    "",
+    "`!clock list`: Lists out names of trackers", # List/log
+    "`!clock log <tracker name>`: Shows time on tracker, uses dm_time by default",
+    "`!clock alltime`: Lists out the all-times of trackers",
+    "",
+    "`!clock reset <tracker name>`: Resets time on tracker, uses dm_time be default", # Reset/restore
+    "`!clock restore`: Restores the tracker dictionary from when you last ran `!clock remove`, `!clock reset`, or `!clock restore` (global)"
+]
 
 
 </drac2>
 -title "{{f"{ctx.author.display_name} needs help!"}}"
 -f "{{"\n".join(result_string)}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/clock/image.png"
--footer "!clock help | Updated 10/3/23 | ShadowsStride"
+-footer "!clock help | Updated 10/26/23 | ShadowsStride"
