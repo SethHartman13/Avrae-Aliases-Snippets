@@ -12,60 +12,52 @@ embed
 # *******************************************************
 
 
-def search_key(query: str, key_list: list[str]) -> list[str]|str:
+def search_list(query: str, item_list: list[str]) -> list[str]|None:
     """
-    Searches for dictionary key.
+    Searches for item in list.
 
     Args:
         query (str): The query being made
-        key_list (list): List of keys
+        item_list (list): List of items
 
     Return:
-        (str): If it finds it, it returns the key, otherwise it returns 'None'
+        list[str]|None: If it finds at least one match, it returns the item(s) in a list, otherwise it returns None
     """
 
-    # Creates list to store matches
-    key_results = []
-
-    # Checks each item if a match occurs
-    for key in key_list:
-
-        # If matches
-        if query.lower() in key.lower():
-            key_results.append(key)
-
-        else:
-            pass
-
     # Finds at least 1 match
-    if len(key_results) > 0:
-        return key_results
+    if len(item_results := [item for item in item_list if query.lower() in item.lower()]) > 0:
+        return item_results
 
     # If it finds no matches
     else:
-        return 'None'
+        return None
 
 
-# ------------------------------------------------------------------
-# Required
-
-def get_character_name(ch: character):
+def set_default_settings(dictionary: dict, default_dictionary: dict) -> dict:
     """
-    Grabs character name for the title of the embed.
+    Loops through dictionary checking for missing entries and adding default ones where necessary
 
     Args:
-        ch (character): Character object
+        dictionary (dict): Dictionary to be checked
+        default_dictionary (dict): Default dictionary
 
     Return:
-        (str): Title for embed
+        dict: Corrected dictionary
     """
 
-    return f"{ch.name} is looking for a quest!"
+    # For each key in the default dictionary
+    for default_key in default_dictionary.keys():
+
+        if default_key in dictionary.keys():
+            pass
+
+        else:
+            dictionary[default_key] = default_dictionary[default_key]
+
+    return dictionary
 
 
-# ------------------------------------------------------------------
-# Required/optional, enabled by default
-def get_classes(ch: character, subclass_bool: bool, full_subclass: bool) -> str:
+def get_classes(ch: character, subclass_bool: int, full_subclass_bool: int) -> str:
     """
     Grabs class information and (optional) subclass information
     
@@ -77,545 +69,284 @@ def get_classes(ch: character, subclass_bool: bool, full_subclass: bool) -> str:
         result_string (str): Resultant string
     """
     # Variable setup
-    results = []
-    multiclass = False
+    class_list = []
 
-    # If subclass is involved in details
-    if subclass_bool:
+    if subclass_bool == 1:
+        if (cvar_subclass_test := ch.get_cvar('subclass')):
+            cvar_subclass_dict = load_json(cvar_subclass_test)
 
-        # Check to see if subclass cvar has been created
-        try:
-            subclass_dict = load_json(ch.cvars['subclass'])
+        else:
+            subclass_bool = 0
 
-        # subclass svar has not been created
-        except:
-            subclass_bool = False
-
-    # if subclass is not involved in details
-    else:
-        subclass_bool = False
-
-    # Grabs all the class(es) and level(s)
-    class_details = []
-    for (player_cls, level) in ch.levels:
-        class_details.append([player_cls, level])
-
-    # Says whether or not it is a multiclass or not
-    if len(class_details) > 1:
-        multiclass = True            
     else:
         pass
 
+    # Grabs all the class(es) and level(s)
+    class_details = {player_cls: level for player_cls, level in ch.levels}
 
-    # If subclass is involved in details
-    if subclass_bool:
+    for player_cls, cls_level in class_details.items():
 
-        # For each class/level set
-        for item in class_details:
-
-            # Search for class within subclass dict
-            result_key = search_key(item[0], subclass_dict.keys())
-
-            # If there is a subclass, creates class subclass (level) string
-            if result_key != "None":
-
-                # If we are using the full subclass name
-                if full_subclass:
-
-                    # Barbarian
-                    if item[0] == "Barbarian":
-                        if item[1] >= 3:
-                            if subclass_dict[result_key[0]] != "Wild Magic":
-                                intro_sub = "Path of the "
-                            else:
-                                intro_sub = "Path of "
-
-                            outro_sub = ""
-                        
-                        else:
-                            subclass_dict[result_key[0]] = ""
-
-                    # Bard
-                    elif item[0] == "Bard":
-                        if item[1] >= 3:
-                            intro_sub = "College of "
-                            outro_sub = ""
-
-                        else:
-                            subclass_dict[result_key[0]] = ""
-
-                    # Blood Hunter
-                    elif item[0] == "Blood Hunter":
-                        if item[1] >= 3:
-                            intro_sub = "Order of the "
-                            outro_sub = ""
-
-                        else:
-                            subclass_dict[result_key[0]] = ""
-
-                    # Cleric
-                    elif item[0] == "Cleric":
-                        intro_sub = ""
-                        outro_sub = " Domain"
-
-                    # Druid
-                    elif item[0] == "Druid":
-                        if item[1] >= 2:
-                            if subclass_dict[result_key[0]] in ['Dreams', 'Spores', 'Stars', 'Wildfire']:
-                                intro_sub = "Circle of "
-                            else:
-                                intro_sub = "Circle of the "
-
-                            outro_sub = ""
-                        
-                        else:
-                            subclass_dict[result_key[0]] = ""
-                    
-                    # Monk
-                    elif item[0] == "Monk":
-                        if item[1] >= 3:
-                            if subclass_dict[result_key[0]] not in ['Mercy', 'Shadow']:
-                                intro_sub = "Way of the "
-                            else:
-                                intro_sub = "Way of "
-                            
-                            outro_sub = ""
-
-                        else:
-                            subclass_dict[result_key[0]] = ""
-
-                    # Paladin
-                    elif item[0] == "Paladin":
-                        if item[1] >= 3:
-                            if subclass_dict[result_key[0]] in ['Conquest', 'Devotion', 'Glory', 'Redemption', 'Vengeance']:
-                                intro_sub = "Oath of "
-                            elif subclass_dict[result_key[0]] != "Oathbreaker":
-                                intro_sub = "Oath of the "
-                            else:
-                                intro_sub = ""
-
-                            outro_sub = ""
-
-                        else:
-                            subclass_dict[result_key[0]] = ""
-
-                    # Warlock
-                    elif item[0] == "Warlock":
-                        intro_sub = "The "
-                        outro_sub = ""
-
-                    # Wizard
-                    elif item[0] == "Wizard":
-                        if item[1] >= 2:
-                            if subclass_dict[result_key[0]] in ["Bladesinger", "War Magic"]:
-                                intro_sub = ""
-                                outro_sub = ""
-
-                            elif subclass_dict[result_key[0]] == "Scribes":
-                                intro_sub = "Order of "
-                                outro_sub = ""
-                            
-                            elif subclass_dict[result_key[0]] in ['Graviturgist', 'Chronurgy']:
-                                intro_sub = ""
-                                outro_sub = " Magic"
-                            
-                            else:
-                                intro_sub = "School of "
-                                outro_sub = ""
-
-                        else:
-                            subclass_dict[result_key[0]] = ""
-
-                    # Covers all other classes
-                    else:
-                        if item[1] >= 3:
-                            intro_sub = ""
-                            outro_sub = ""
-                        
-                        else:
-                            subclass_dict[result_key[0]] = ""
-
-                    # If subclass is not empty, add full subclass string
-                    if subclass_dict[result_key[0]] != "":
-                        results.append(f"{intro_sub}{subclass_dict[result_key[0]]}{outro_sub} {item[0]} ({item[1]})")
-
-                    # If subclass is empty, only do class and level
-                    else:
-                        results.append(f"{item[0]} ({item[1]})")
-
-                # If full subclass is not being used
-                else:
-
-                    # Druid, Wizard
-                    if item[0] in ['Druid', 'Wizard']:
-                        if item[1] >= 2:
-                            pass
-                        else:
-                            subclass_dict[result_key[0]] = ""
-
-                    # Every other class (except Warlock, Cleric, and Sorcerer)
-                    elif item[0] not in ["Warlock", "Cleric", "Sorcerer"]:
-                        if item[1] >= 3:
-                            pass
-                        else:
-                            subclass_dict[result_key[0]] = ""
-
-                    # Warlock, Cleric, Sorcerer
-                    else:
-                        pass
-
-                    # If subclass is not empty, add subclass
-                    if subclass_dict[result_key[0]] != "":
-                        results.append(f"{subclass_dict[result_key[0]]} {item[0]} ({item[1]})")
-
-                    # If subclass is empty, only do class and level
-                    else:
-                        results.append(f"{item[0]} ({item[1]})")
-
-            # If there is not a subclass, creates class (level) string
-            else:
-                results.append(f"{item[0]} ({item[1]})")
-
-        # Joins results
-        temp_string = ("/").join(results)
-
-    # If subclass is not involved in details
-    else:
-        for item in class_details:
-            results.append(f"{item[0]} ({item[1]})")
-
-        temp_string = "/".join(results) 
-
-
-    # If it is multiclass
-    if multiclass:
-        result_string = f"**Classes:** {temp_string}\n**Total levels:** {ch.levels.total_level}"
-
-    # If it is not a multiclass
-    else:
-        result_string = f"**Class:** {temp_string}"
-                
-    # Returns result
-    return result_string
-
-
-def get_hp_thp(ch:character, thp_bool: bool) -> str:
-    """
-    Grabs HP and (optional) Temp HP
-
-    Args:
-        ch (character): Character object
-        thp_pool(bool): Whether thp is included
-
-    Return:
-        (str): Resultant_string
-    """
-
-    # If thp is involved
-    if thp_bool:
-        return f"**HP:** {ch.hp_str()}"
-
-    # If thp is not involved
-    else:
-        return f"**HP:** {ch.hp}"
-
-
-# ------------------------------------------------------------------
-# Optional, enabled by default
-def get_photo_url(ch: character, char_bool: bool):
-    """
-    Grabs photo url to use for the thumbnail
-
-    Args:
-        ch (character): Character object
-
-    Return:
-        (str): String containing URL
-    """
-    if char_bool:
-        if ch.image != "":
-            return ch.image
+        if "blood" not in player_cls.lower():
+            pass
 
         else:
-            return "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/lfg/image.png"
+            player_cls = "blood"
+
+        if (result_key := search_list(player_cls, cvar_subclass_dict.keys())) and subclass_bool == 1:
+
+            match result_key[0]:
+
+                case c if "barbarian" in c.lower():
+
+                    if cls_level >= 3 and full_subclass_bool == 1:
+
+                        if cvar_subclass_dict[result_key[0]] != "Wild Magic":
+                            class_list.append(f"Path of the {cvar_subclass_dict[result_key[0]]} Barbarian ({cls_level})")
+
+                        else:
+                            class_list.append(f"Path of Wild Magic Barbarian ({cls_level})")
+
+                    elif cls_level >= 3:
+                        class_list.append(f"{cvar_subclass_dict[result_key[0]]} Barbarian ({cls_level})")
+
+                    else:
+                        class_list.append(f"Barbarian ({cls_level})")
+
+
+                case c if "bard" in c.lower():
+
+                    if cls_level >= 3 and full_subclass_bool == 1:
+                        class_list.append(f"College of {cvar_subclass_dict[result_key[0]]} Bard ({cls_level})")
+
+                    elif cls_level >= 3:
+                        class_list.append(f"{cvar_subclass_dict[result_key[0]]} Bard ({cls_level})")
+
+                    else:
+                        class_list.append(f"Bard ({cls_level})")
+
+                case c if "blood" in c.lower():
+
+                    if cls_level >= 3 and full_subclass_bool == 1:
+                        class_list.append(f"Order of the {cvar_subclass_dict[result_key[0]]} Blood Hunter ({cls_level})")
+
+                    elif cls_level >= 3:
+                        class_list.append(f"{cvar_subclass_dict[result_key[0]]} Blood Hunter ({cls_level})")
+
+                    else:
+                        class_list.append(f"Blood Hunter ({cls_level})")
+
+                case c if "cleric" in c.lower():
+                    if full_subclass_bool == 1:
+                        class_list.append(f"{cvar_subclass_dict[result_key[0]]} Domain Cleric ({cls_level})")
+
+                    else:
+                        class_list.append(f"{cvar_subclass_dict[result_key[0]]} Cleric ({cls_level})")
+
+                case c if "druid" in c.lower():
+                    if cls_level >= 2 and full_subclass_bool == 1:
+                        if cvar_subclass_dict[result_key[0]] in ['Dreams', 'Spores', 'Stars', 'Wildfire']:
+                            class_list.append(f"Circle of {cvar_subclass_dict[result_key[0]]} Druid ({cls_level})")
+
+                        else:
+                           class_list.append(f"Circle of the {cvar_subclass_dict[result_key[0]]} Druid ({cls_level})")
+
+                    elif cls_level >= 2:
+                        class_list.append(f"{cvar_subclass_dict[result_key[0]]} Druid ({cls_level})")
+
+                    else:
+                        class_list.append(f"Druid (1)")
+
+                case c if "monk" in c.lower():
+                    if cls_level >= 3 and full_subclass_bool == 1:
+                        if cvar_subclass_dict[result_key[0]] not in ['Mercy', 'Shadow']:
+                            class_list.append(f"Way of the {cvar_subclass_dict[result_key[0]]} Monk ({cls_level})")
+
+                        else:
+                            class_list.append(f"Way of {cvar_subclass_dict[result_key[0]]} Monk ({cls_level})")
+
+                    elif cls_level >= 3:
+                        class_list.append(f"{cvar_subclass_dict[result_key[0]]} Monk ({cls_level})")
+
+                    else:
+                        class_list.append(f"Monk ({cls_level})")
+
+                case c if "paladin" in c.lower():
+                    if cls_level >= 3 and full_subclass_bool == 1 and cvar_subclass_dict[result_key[0]] != "Oathbreaker":
+                        if cvar_subclass_dict[result_key[0]] in ['Conquest', 'Devotion', 'Glory', 'Redemption', 'Vengeance']:
+                            class_list.append(f"Oath of {cvar_subclass_dict[result_key[0]]} Paladin ({cls_level})")
+
+                        else:
+                            class_list.append(f"Oath of the {cvar_subclass_dict[result_key[0]]} Paladin ({cls_level})")
+
+                    elif cls_level >= 3:
+                        class_list.append(f"{cvar_subclass_dict[result_key[0]]} Paladin ({cls_level})")
+
+                    else:
+                        class_list.append(f"Paladin ({cls_level})")
+
+                case c if "warlock" in c.lower():
+                    class_list.append(f"{cvar_subclass_dict[result_key[0]]} Warlock ({cls_level})")
+
+                case c if "wizard" in c.lower():
+                    if cls_level >= 2 and full_subclass_bool and cvar_subclass_dict[result_key[0]] not in ["Bladesinger", "War Magic"]:
+
+                        match cvar_subclass_dict[result_key[0]]:
+
+                            case "Scribes":
+                                class_list.append(f"Order of {cvar_subclass_dict[result_key[0]]} Wizard ({cls_level})")
+
+                            case c if c in ['Graviturgist', 'Chronurgy']:
+                                class_list.append(f"{cvar_subclass_dict[result_key[0]]} Magic Wizard ({cls_level})")
+
+                            case _:
+                                class_list.append(f"School of {cvar_subclass_dict[result_key[0]]} Wizard ({cls_level})")
+
+                    elif cls_level >= 2:
+                        class_list.append(f"{cvar_subclass_dict[result_key[0]]} Wizard ({cls_level})")
+
+                    else:
+                        class_list.append(f"Wizard ({cls_level})")
+
+                case _:
+
+                    if cls_level >= 3:
+                        class_list.append(f"{cvar_subclass_dict[result_key[0]]} {result_key[0].split('Level')[0]} ({cls_level})")
+
+                    else:
+                        class_list.append(f"{result_key[0]} ({cls_level})")
+
+        else:
+            class_list.append(f"{player_cls} ({cls_level})")
+
+    # Says whether or not it is a multiclass or not
+    if len(class_list) > 1:
+        return "\n".join(class_list + ["", f"**Total levels:** {ch.levels.total_level}"])       
     else:
-        return "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/lfg/image.png"
+        return "\n".join(class_list)
 
 
-# ------------------------------------------------------------------
-# Optional, disabled by default
-def get_player_name(ch: character, player_bool: bool):
-    """
-    Grabs player ID and returns a string that contains a discord mention
-
-    Args:
-        ch (character): Character object
-
-    Return:
-        (str): Resultant string
-    """
-    if not player_bool:
-
-        return "None"
-
-    else:
-        # Sometimes Avrae hates special characters when they are put together
-        right_point = ">" 
-        left_point = "<" 
-        at = "@"
-
-        # Returns result string
-        return f"{left_point}{at}{ch.owner}{right_point}"
-
-
-def get_ac(ch: character, ac_bool: bool):
-    """
-    Grabs AC
-    
-    Args:
-        ch (character): Character object
-
-    Return:
-        (str): Resultant string
-    """
-    if not ac_bool:
-        return "None"
-
-    else:
-        return f"**AC:** {ch.ac}"
-
-
-def get_passives(ch: character, ins_bool: bool, inv_bool: bool, perc_bool: bool) -> str:
+def get_passives(ch: character, ins_bool: int, inv_bool: int, perc_bool: int) -> str:
     """
     Grabs character's passives
 
     Args:
         ch (character): Character object
-        ins_bool (bool): If passive insight is included
-        inv_bool (bool): If passive investigation is included
-        perc_bool (bool): If passive perception is included 
+        ins_bool (int): If passive insight is included
+        inv_bool (int): If passive investigation is included
+        perc_bool (int): If passive perception is included 
 
     Return:
         (str): Resultant string
     """
+    result_list = []
 
-    if not ins_bool and inv_bool and perc_bool:
-        return "None"
+    if ins_bool == 1 or perc_bool == 1:
+        if (feat_cvar_test := ch.get_cvar('feats')):
 
-    else:
-  
-        # Creates results list
-        results = []
+            if 'obs' in feat_cvar_test.lower():
+                observant = True
 
-        # If it involved perception or insight
-        if ins_bool or perc_bool:
-
-            # If the character does not have the feats cvar
-            if get('feats') == "":
+            else:
                 observant = False
 
-            # If the character does have the feats svar
-            else:
-                feats = get('feats')
-                feats = str(feats).lower()
+        else:
+            observant = False
 
-                split_string = feats.split('obs')
-                if len(split_string) > 1:
-                    result_key = "Found"
-                else:
-                    result_key = "None"
+        # If Passive Perception
+        if perc_bool == 1:
 
-                # If it did not find the feat
-                if result_key == "None":
-                    observant = False
+            match (observant, typeof(ch.skills.perception.adv)):
 
-                # If it found the feat
-                else:
-                    observant = True
+                # Straight value
+                case (False, "NoneType"):
+                    result_list.append(f"**Passive Perception:** {10 + ch.skills['perception'].value}")
 
-            # If perception is included
-            if perc_bool:
+                # Observant
+                case (True, "NoneType"):
+                    result_list.append(f"**Passive Perception:** {10 + 5 + ch.skills['perception'].value} [observant]")
 
-                # Not observant and no adv/dis
-                if not observant and typeof(ch.skills.perception.adv) == "NoneType":
-                    results.append(f"**Passive Perception:** {10 + ch.skills['perception'].value}")
+                # Advantage
+                case (False, _):
+                    result_list.append(f"**Passive Perception:** {10 + ch.skills['perception'].value + 5} [advantage]")
 
-                # Observant and no adv/dis
-                elif observant and typeof(ch.skills.perception.adv) == "NoneType":
-                    results.append(f"**Passive Perception:** {10 + 5 + ch.skills['perception'].value} [observant]")
+                # Observant and advantage
+                case (True, _):
+                    result_list.append(f"**Passive Perception:** {10 + 5 + ch.skills['perception'].value + 5} [observant and advantage]")
 
-                else:
+                # Disadvantage
+                case (False, False):
+                    result_list.append(f"**Passive Perception:** {10 + ch.skills['perception'].value - 5} [disadvantage]")
 
-                    # Observant and adv
-                    if observant and ch.skills.perception.adv:
-                        results.append(f"**Passive Perception:** {10 + 5 + ch.skills['perception'].value + 5} [observant and advantage]")
-
-                    # Observant and dis
-                    elif observant and not ch.skills.perception.adv:
-                        results.append(f"**Passive Perception:** {10 + ch.skills['perception'].value} [observant and disadvantage]")
-
-                    # Not observant and adv
-                    elif ch.skills.perception.adv:
-                        results.append(f"**Passive Perception:** {10 + ch.skills['perception'].value + 5} [advantage]")
-
-                    # Not observant and dis
-                    else:
-                        results.append(f"**Passive Perception:** {10 + ch.skills['perception'].value - 5} [disadvantage]")
-
-            else:
-                pass
-
-            # If insight is included
-            if ins_bool:
-
-                # Not observant and no adv/dis
-                if not observant and typeof(ch.skills.insight.adv) == "NoneType":
-                    results.append(f"**Passive Insight:** {10 + ch.skills['insight'].value}")
-
-                # Observant and no adv/dis
-                elif observant and typeof(ch.skills.insight.adv) == "NoneType":
-                    results.append(f"**Passive Insight:** {10 + 5 + ch.skills['insight'].value} [observant]")
-
-                else:
-
-                    # Observant and adv
-                    if observant and ch.skills.insight.adv:
-                        results.append(f"**Passive Insight:** {10 + 5 + ch.skills['insight'].value + 5} [observant and advantage]")
-
-                    # Observant and dis
-                    elif observant and not ch.skills.insight.adv:
-                        results.append(f"**Passive Insight:** {10 + ch.skills['insight'].value} [observant and disadvantage]")
-
-                    # Not observant and adv
-                    elif ch.skills.insight.adv:
-                        results.append(f"**Passive Insight:** {10 + ch.skills['insight'].value + 5} [advantage]")
-
-                    # Not observant and dis
-                    else:
-                        results.append(f"**Passive Insight:** {10 + ch.skills['insight'].value - 5} [disadvantage]")
-
-            else:
-                pass
-
+                # Observant and Disadvantage
+                case (True, False):
+                    result_list.append(f"**Passive Perception:** {10 + ch.skills['perception'].value} [observant and disadvantage]")
+        
+        # If not Passive Perception
         else:
             pass
 
-        # If investigation is included
-        if inv_bool:
-            if ch.skills.investigation.adv != "":
-                if ch.skills.investigation.adv:
-                    results.append(f"**Passive Investigation:** {10 + ch.skills['investigation'].value + 5} [advantage]")
+        # If Passive Insight
+        if ins_bool == 1:
 
-                else:
-                    results.append(f"**Passive Investigation:** {10 + ch.skills['investigation'].value - 5} [disadvantage]")
+            match (observant, typeof(ch.skills.insight.adv)):
 
-            else:
-                results.append(f"**Passive Investigation:** {10 + ch.skills['investigation'].value}")
+                # Straight value
+                case (False, "NoneType"):
+                    result_list.append(f"**Passive Insight:** {10 + ch.skills['insight'].value}")
 
+                # Observant
+                case (True, "NoneType"):
+                    result_list.append(f"**Passive Insight:** {10 + 5 + ch.skills['insight'].value} [observant]")
+
+                # Advantage
+                case (False, _):
+                    result_list.append(f"**Passive Insight:** {10 + ch.skills['insight'].value + 5} [advantage]")
+
+                # Observant and advantage
+                case (True, _):
+                    result_list.append(f"**Passive Insight:** {10 + 5 + ch.skills['insight'].value + 5} [observant and advantage]")
+
+                # Disadvantage
+                case (False, False):
+                    result_list.append(f"**Passive Insight:** {10 + ch.skills['insight'].value - 5} [disadvantage]")
+
+                # Observant and Disadvantage
+                case (True, False):
+                    result_list.append(f"**Passive Insight:** {10 + ch.skills['insight'].value} [observant and disadvantage]")
+        
+        # If not Passive Perception
         else:
             pass
 
-        # If the result list is not empty
-        if len(results) != 0:
-            return "\n" + "\n".join(results) + "\n"
-
-        # If for some reason the results list is empty, it will return nothing
-        else:
-            return "None"
-    
-
-def get_spell_list(ch: character, spell_list_bool: bool) -> str:
-    """
-    Grab's a character's spell list
-
-    Args:
-        ch (character): Character object
-    
-    Return:
-        (str) Resultant string
-    """
-    if spell_list_bool:
-        # Creates spell_list list
-        spell_list = []
-
-        for spell in ch.spellbook.spells:
-            spell_list.append(spell.name)
-
-        initial_string = ", ".join(spell_list)
-        if len(spell_list) == 0:
-            final_string = "None"
-
-        else:
-            final_string = f"**Spell list:** {initial_string}"
-
-        return final_string
-    
+    # If no Passive Perception or Passive Insight
     else:
-        return 'None'
+        pass
 
+    # If Passive Investigation
+    if inv_bool == 1:
 
-def get_spell_slot(ch: character, spell_slot_bool: bool) -> str:
-    """
-    Grab's a character's spell slots
+        match typeof(ch.skills.investigation.adv):
 
-    Args:
-        ch (character): Character object
+            # Straight Value
+            case "NoneType":
+                result_list.append(f"**Passive Investigation:** {10 + ch.skills['investigation'].value}")
+
+            # Advantage
+            case _ if ch.skills.investigation.adv:
+                result_list.append(f"**Passive Investigation:** {10 + ch.skills['investigation'].value + 5} [advantage]")
+
+            # Disadvantage
+            case _:
+                result_list.append(f"**Passive Investigation:** {10 + ch.skills['investigation'].value - 5} [disadvantage]")
+
+    # If not Passive Investigation
+    else:
+        pass
+
+    return "\n".join(result_list)
     
-    Return:
-        (str) String containing a character's spell slots
-    """
-    if not spell_slot_bool:
-        return "None"
 
-    else:
-        spell_slot_list = []
-
-        for i in range(1,10):
-            spell_slot_list.append(ch.spellbook.slots_str(i))
-      
-        temp_string = "\n".join([slot for slot in spell_slot_list if slot != "No spell slots."])
-
-        if temp_string != "":
-            return f"**Spell Slots:**\n{temp_string}"
-
-        else:
-            return "None"
-
-def get_crafting_integration(ch: character) -> str:
-
-    settings_test = get_svar('crafting_settings', default="None")
-
-    if settings_test == "None":
-        return ""
-
-    else:
-        settings_dictionary = load_json(settings_test)
-
-        try:
-            if not settings_dictionary['lfg_integration']:
-                return ""
-
-            else:
-                crafting_test = ch.get_cvar('crafting_dict', default="None")
-
-                if crafting_test != "None":
-                    crafting_dictionary = load_json(crafting_test)
-
-                    if time() >= crafting_dictionary['time'] + settings_dictionary[crafting_dictionary['category']][crafting_dictionary['type']][6]:
-                        return ""
-
-                    else:
-                        return "`This character's crafting cooldown has not expired`"
-
-
-                else:
-                    return ""
-
-        except:
-            return ""
-
-
-def main(input_string):
+def main(input_list: list[str]) -> str:
     """
     Main program function
 
@@ -625,224 +356,140 @@ def main(input_string):
     Output:
         (list): List of outputs
     """
-    and_sym = '&' 
-    astr_sym = '*'
-
-    if input_string == f"{and_sym}{astr_sym}{and_sym}":
-        caption_bool = False
-    else:
-        caption_bool = True
 
     ch = character()
-    result_list = []
 
-    svar_test = get_svar("lfg_settings", default="None")
-
-    # Sets default behavior
-    if svar_test == "None":
-        subclass_bool = True
-        thp_bool = True
-        img_bool = True
-        player_bool = False
-        ac_bool = False
-        ins_bool = False
-        inv_bool = False
-        perc_bool = False
-        spell_list_bool = False
-        spell_slot_bool = False
-        full_subclass_bool = False
+    # If 
+    if (svar_test := get_svar("lfg_settings")):
+        svar_dict = set_default_settings(load_json(svar_test), {'subclass': 1, 'thp': 1, 'img': 1, 'player': 0, 'ac': 0, 'ins': 0, 'inv': 0, 'perc': 0, 'spell_list': 0, 'spell_slot': 0, 'full_subclass': 0, "color_lvl": {"0": ""}, "response_req": 0})
 
     else:
-        svar = load_json(svar_test)
-        # Sets up subclass boolean
-        try:
-            # Tries to pull value from dictionary
-            subclass_bool = svar['subclass']
+        svar_dict = {'subclass': 1, 'thp': 1, 'img': 1, 'player': 0, 'ac': 0, 'ins': 0, 'inv': 0, 'perc': 0, 'spell_list': 0, 'spell_slot': 0, 'full_subclass': 0, "color_lvl": {"0": ""}, "response_req": 0}
 
-            if subclass_bool == 0:
-                subclass_bool = False
-            else:
-                subclass_bool = True
-        
-        # Default behavior
-        except:
-            subclass_bool = True
+    title = f"{name} is looking for a group!"
 
-        # Sets up thp boolean
-        try:
-            thp_bool = svar['thp']
-
-            if thp_bool == 0:
-                thp_bool = False
-            else:
-                thp_bool = True
-
-        # Default behavior
-        except:
-            thp_bool = True
-
-        # Sets up image boolean
-        try:
-            img_bool = svar['img']
-
-            if img_bool == 0:
-                img_bool = False
-            else:
-                img_bool = True
-
-        # Default behavior
-        except:
-            img_bool = True
-
-        # Sets up player boolean
-        try:
-            player_bool = svar['player']
-
-            if player_bool == 1:
-                player_bool = True
-            else:
-                player_bool = False
-
-        # Default behavior
-        except:
-            player_bool = False
-
-        # Sets up ac boolean
-        try:
-            ac_bool = svar['ac']
-
-            if ac_bool == 1:
-                ac_bool = True
-            else:
-                ac_bool = False
-
-        # Default behavior
-        except:
-            ac_bool = False
-
-        # Sets up insight boolean
-        try:
-            ins_bool = svar['ins']
-
-            if ins_bool == 1:
-                ins_bool = True
-            else:
-                ins_bool = False
-
-        # Default behavior
-        except:
-            ins_bool = False
-
-        # Sets up investigation boolean
-        try:
-            inv_bool = svar['inv']
-
-            if inv_bool == 1:
-                inv_bool = True
-            else:
-                inv_bool = False
-
-        # Default behavior
-        except:
-            inv_bool = False
-
-        # Sets up perception boolean
-        try:
-            perc_bool = svar['perc']
-
-            if perc_bool == 1:
-                perc_bool = True
-            else:
-                perc_bool = False
-
-        # Default behavior
-        except:
-            perc_bool = False
-
-        # Sets up spellbook boolean
-        try:
-            spell_list_bool = svar['spell_list']
-        
-            if spell_list_bool == 1:
-                spell_list_bool = True
-            else:
-                spell_list_bool = False
-
-        # Default behavior
-        except:
-            spell_list_bool = False
-
-        # Sets up spellslot boolean
-        try:
-            spell_slot_bool = svar['spell_slot']
-        
-            if spell_slot_bool == 1:
-                spell_slot_bool = True
-            else:
-                spell_slot_bool = False
-
-        # Default behavior
-        except:
-            spell_slot_bool = False
-
-        # Sets up full subclass boolean
-        try:
-            full_subclass_bool = svar['full_subclass']
-
-            if full_subclass_bool == 1:
-                full_subclass_bool = True
-            else:
-                full_subclass_bool = False
-
-        # Default behavior
-        except:
-            full_subclass_bool = False
-
-
-    if caption_bool:
-        caption = f"**Quest:** {input_string}\n"
-    else:
-        caption = "**Quest:**\n"
-
-
+    if (thumb := ch.image) != "" and svar_dict['img'] == 1:
+        pass
     
-    title = get_character_name(ch)
-    image_url = get_photo_url(ch, img_bool)
+    else:
+        thumb = "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/lfg/image.png"
 
-    result_list.append(caption)
-    result_list.append(get_classes(ch, subclass_bool, full_subclass_bool))
-    result_list.append(get_hp_thp(ch, thp_bool))
+    if svar_dict['response_req'] == 0 or len(input_list) > 0:
+        pass
 
-    # Runs all the optional functions and puts results in a list
-    optional_list = []
-    optional_list.append(get_ac(ch, ac_bool))
-    optional_list.append(get_passives(ch, ins_bool, inv_bool, perc_bool))
-    optional_list.append(get_spell_list(ch, spell_list_bool))
-    optional_list.append(get_spell_slot(ch, spell_slot_bool))
-    optional_list.append(get_player_name(ch, player_bool))
+    else:
+        return f"{ctx.author.display_name} has encountered an error", "You are required to give a quest suggestion/response", thumb, "#CC0202"
 
-    # If the result was not "None", it will add the result to the result_list
-    for result in optional_list:
-        if result != "None":
-            result_list.append(result)
+    f = [
+        "**Quest:** " + " ".join(input_list)
+    ]
+
+    f.append(get_classes(ch, svar_dict['subclass'], svar_dict['full_subclass']))
+
+    if svar_dict['thp'] == 1:
+        f.append(f"**HP:** {ch.hp_str()}")
+
+    else:
+        f.append(f"**HP:** {ch.hp}")
+
+    # Show AC
+    if svar_dict['ac'] == 1:
+        f.append(f"**AC:** {ch.ac}")
+
+    else:
+        pass
+
+    if svar_dict['ins'] == 1 or svar_dict['inv'] == 1 or svar_dict['perc'] == 1:
+        f.append(get_passives(ch, svar_dict['ins'], svar_dict['inv'], svar_dict['perc']))
+
+    else:
+        pass
+
+    if svar_dict['spell_list'] == 1 and len((spell_list := [spell.name for spell in ch.spellbook.spells if spell.prepared])) > 0:
+        f.append("**Prepared Spell List:** " + ", ".join(spell_list))
+
+    else:
+        pass
+
+    if svar_dict['spell_slot'] == 1 and len((spell_book := [ch.spellbook.slots_str(i) for i in range(1, 10) if ch.spellbook.slots_str(i) != "No spell slots."])) > 0:
+        spell_book.insert(0, "**Spell Slots:**")
+
+        f.append("\n".join(spell_book))
+
+    else:
+        pass
+
+    if svar_dict['player'] == 1:
+        f.append(f"<@{ch.owner}>")
+
+    else:
+        pass
+
+    if (crafting_svar_test := get_svar('crafting_settings')):
+
+        crafting_svar_dict = load_json(crafting_svar_test)
+
+        if 'lfg_integration' in crafting_svar_dict.keys():
+            if not crafting_svar_dict['lfg_integration']:
+                pass
+
+            else:
+                if (crafting_cvar_test := ch.get_cvar('crafting_dict')):
+                    crafting_cvar_dict = load_json(crafting_cvar_test)
+
+                    try:
+                        if time() >= crafting_cvar_dict['time'] + crafting_svar_dict[crafting_cvar_dict['category']][crafting_dictionary['type']][6]:
+                            pass
+
+                        else:
+                            f.append("`This character's crafting cooldown has not expired`")
+
+                    except:
+                        f.append("`Problems have occured with the crafting integration, please contact Shadow through his request form in the workshop`")
+
+                else:
+                    pass
+
         else:
             pass
-    
 
-    # Crafting integration
-    result_list.append(get_crafting_integration(ch))
+    else:
+        pass
+        
+    if typeof(svar_dict['color_lvl']) == "SafeDict":
+        color = ""
 
-    return [title, image_url, "\n".join(result_list)]
+        for color_threshold in svar_dict['color_lvl'].keys():
+            try:
+                if ch.levels.total_level >= int(color_threshold):
+                    color =  svar_dict['color_lvl'][color_threshold]
+
+                else:
+                    pass
+            except:
+                pass
+
+    elif typeof(svar_dict['color_lvl']) == "str":
+        color = svar_dict['color_lvl']
+
+    else:
+        try:
+            color = randchoice(svar_dict['color_lvl'])
+
+        except:
+            color = ""
+        
+    return title, "\n\n".join(f), thumb, color
 
 
 # Main program
-input_list = &ARGS&
-output_list = main(" ".join(input_list))
+title, f, thumb, color = main(&ARGS&)
 l = "<"
 
 
 </drac2>
--title "{{output_list[0]}}"
--thumb "{{output_list[1]}}"
--f "{{output_list[2]}}"
--footer "!lfg {{l}}optional phrase> | Updated 7/21/23 | ShadowsStride"
+-title "{{title}}"
+-f "{{f}}"
+-thumb "{{thumb}}"
+-color "{{color}}"
+-footer "!lfg {{l}}phrase> | Updated 11/14/23 | ShadowsStride"
