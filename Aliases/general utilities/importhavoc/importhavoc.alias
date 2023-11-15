@@ -1,0 +1,98 @@
+multiline
+<drac2>
+
+attack = """
+name: Giant's Havoc
+automation:
+  - type: counter
+    counter:
+      id: 51
+      typeId: 12168134
+    amount: "1"
+    allowOverflow: false
+    errorBehaviour: raise
+  - type: target
+    target: self
+    effects:
+      - type: condition
+        condition: level >= 9
+        onTrue:
+          - type: condition
+            condition: level >= 16
+            onTrue:
+              - type: variable
+                name: DmgBoost
+                value: "4"
+            onFalse:
+              - type: variable
+                name: DmgBoost
+                value: "3"
+            errorBehaviour: "false"
+        onFalse:
+          - type: variable
+            name: DmgBoost
+            value: "2"
+        errorBehaviour: "false"
+      - type: ieffect2
+        name: Giant's Havoc
+        duration: "10"
+        effects:
+          resistances:
+            - piercing
+            - slashing
+            - bludgeoning
+          save_adv:
+            - str
+          check_adv:
+            - strength
+        attacks: []
+        buttons:
+          - label: End Giant's Havoc (Rage)
+            automation:
+              - type: remove_ieffect
+                removeParent: always
+            verb: ends Giant's Havoc (Rage)
+            style: "4"
+            defaultDC: null
+            defaultAttackBonus: null
+            defaultCastingMod: null
+        end: false
+        conc: false
+        desc: >-
+          Cannot cast/concentrate on spells
+
+          - Ends if knocked unconscious or if your turn ends and you haven't attacked a hostile creature or taken damage since your last turn
+        stacking: false
+        save_as: null
+        parent: null
+        target_self: false
+        tick_on_caster: false
+  - type: text
+    text: >-
+      As a bonus action enter a rage for up to 1 minute (10 rounds).
+
+
+      You gain advantage on STR checks and saving throws (not attacks), +{DmgBoost} melee damage with STR weapons, resistance to bludgeoning, piercing, slashing damage. You can't cast or concentrate on spells while raging.
+
+
+      Your rage ends early if you are knocked unconscious or if your turn ends and you haven't attacked a hostile creature since your last turn or taken damage since then. You can also end your rage as a bonus action.
+
+
+      **Crushing Throw.** When you make a successful ranged attack with a thrown weapon using Strength, you can add +{DmgBoost} to the attack's damage roll.
+
+
+      **Giant Stature.** Your reach increases by 5 ft., and if you are smaller than Large and there is enough room for you to increase your size, you become Large, along with anything you are wearing.
+    title: Effect
+_v: 2
+proper: true
+verb: uses
+activation_type: 3
+"""
+
+
+ch = character()
+
+
+</drac2>
+!attack import {{attack}}
+!embed -title "{{name}} ({{ctx.author.display_name}}) has imported the Giant's Havoc action" -f "If you are not a Path of the Giant Barbarian, please delete this action otherwise... have fun :)" -thumb "{{ch.image}}" -footer "!importhavoc | Updated 10/29/23 | ShadowsStride"
