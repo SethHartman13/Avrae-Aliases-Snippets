@@ -28,10 +28,7 @@ def search_list(query: str, item_list: list[str]) -> list[str]|None:
         return None
 
 
-def dictionary_change(result_key: str, all_server_dict: dict, server_id: str) -> str, list:
-
-    # Create backup uvar
-    set_uvar('clock_dict_backup', dump_json(all_server_dict))
+def dictionary_change(result_key: str, all_server_dict: dict, server_id: str) -> str:
 
     if len(all_server_dict[server_id][result_key]) == 4:
         all_server_dict[server_id][result_key].append(all_server_dict[server_id][result_key][2])
@@ -40,15 +37,18 @@ def dictionary_change(result_key: str, all_server_dict: dict, server_id: str) ->
     else:
         pass
 
+    # Create backup uvar
+    set_uvar('clock_dict_backup', (copy_dict := dump_json(all_server_dict)))
+
     # Reset values for the tracker
     all_server_dict[server_id][result_key] = [False, 0, 0, 0, all_server_dict[server_id][result_key][4], all_server_dict[server_id][result_key][5]]
 
     set_uvar('clock_dict', dump_json(all_server_dict))
 
-    return result_key, time_check
+    return result_key, load_json(copy_dict)[server_id][result_key]
 
 
-def reset_time(name: str = "dm_time") -> int|str, list:
+def reset_time(name: str = "dm_time") -> str:
     """
     Resets the tracker
 
@@ -220,12 +220,18 @@ def main(input_list: list[str]) -> str:
     # If there was no error
     if name:
 
+        if name != "dm_time":
+            name = f"`{name}`"
+
+        else:
+            name = "`DM Time`"
+
         # Construct output
         result_list = [
             f"**Final time:** {calc_time(tracker_details[2])}",
             f"**Final clock-ins:** {tracker_details[3]}",
             f"**Current All-time time: {calc_time(tracker_details[4])}",
-            f"**Current All-time clock-ins: {calc_time(tracker_details[5])}"
+            f"**Current All-time clock-ins: {tracker_details[5]}"
             ]
 
         return f"{ctx.author.display_name}: {name} tracker has been reset", "\n".join(result_list)
@@ -244,4 +250,4 @@ left_arrow = "<"
 -title "{{title}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/clock/image.png"
 -f "{{f}}"
--footer "!clock reset {{left_arrow}}tracker name> | Updated 10/26/23 | ShadowsStride"
+-footer "!clock reset {{left_arrow}}tracker name> | Updated 10/28/23 | ShadowsStride"
