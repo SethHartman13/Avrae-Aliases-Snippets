@@ -105,6 +105,8 @@ def set_time_uvar(tracker_list: list, tracker_key: str) -> None:
         tracker_key (str): Key used for dictionary    
     """
 
+    err
+
     # Grabs all_server_dict
     all_server_dict = load_json(get_uvar("clock_dict"))
 
@@ -118,10 +120,12 @@ def set_time_uvar(tracker_list: list, tracker_key: str) -> None:
         tracker_list.append(0)
 
     # Provides an updated tracker list
-    all_server_dict[f"{ctx.guild.id}"][tracker_key] = [False, int(time()), tracker_list[2], tracker_list[3], tracker_list[4] - tracker_list[1] + int(time()), tracker_list[5]]
+    all_server_dict[f"{ctx.guild.id}"][tracker_key] = [False, int(time()), tracker_list[2] - tracker_list[1] + int(time()), tracker_list[3], tracker_list[4] - tracker_list[1] + int(time()), tracker_list[5]]
 
     # Update dictionary
     set_uvar("clock_dict", dump_json(all_server_dict))
+
+    return all_server_dict[f"{ctx.guild.id}"][tracker_key][2]
     
 
 def calc_time(time:int) -> str:
@@ -241,7 +245,7 @@ def main(input_list: list[str]) -> str:
             return f"{ctx.author.display_name} has encountered an error", f"{tracker_name} tracker is not active"
 
         # Updates the time
-        set_time_uvar(data_list, tracker_name)
+        current_time = set_time_uvar(data_list, tracker_name)
 
         # If default tracker, format
         if tracker_name == "dm_time":
@@ -252,7 +256,7 @@ def main(input_list: list[str]) -> str:
             pass
 
         # Construct output list
-        result_list = [f"**Current total time:** {calc_time(data_list[2])}", f"**Current clock-ins:** {data_list[3]}", f"**Time since last clock-in:** {calc_time(int(time()) - data_list[1])}"]
+        result_list = [f"**Current total time:** {calc_time(current_time)}", f"**Current clock-ins:** {data_list[3]}", f"**Time since last clock-in:** {calc_time(int(time()) - data_list[1])}"]
 
         return f"{ctx.author.display_name}: {tracker_name} tracker has stopped", "\n".join(result_list)
 
@@ -270,4 +274,4 @@ l = "<"
 -title "{{title}}"
 -thumb "https://raw.githubusercontent.com/SethHartman13/Avrae-Aliases-Snippets/master/Aliases/clock/image.png"
 -f "{{f}}"
--footer "!clock in {{l}}tracker name> | Updated 10/26/23 | ShadowsStride"
+-footer "!clock in {{l}}tracker name> | Updated 10/30/23 | ShadowsStride"
