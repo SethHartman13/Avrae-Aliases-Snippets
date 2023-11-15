@@ -208,7 +208,7 @@ def get_rewards(ch: character, organization_name: str, organization_dictionary: 
     rewards_list.insert(0, f"**Current Reputation:** {cc_value}")
     rewards_list.insert(1, "")
 
-    return [f"{name} ({ctx.author.display_name}) {verb_str} their reputation with {organization_name}", "\n".join(rewards_list), img_url, color]
+    return [f"{name} {verb_str} their reputation with {organization_name}", "\n".join(rewards_list), img_url, color]
 
 
 def grab_organization_dictionaries() -> dict:
@@ -389,4 +389,4 @@ left_arrow = "<"
 -f "{{output_list[1]}}"
 -thumb "{{output_list[2]}}"
 -color "{{output_list[3]}}"
--footer "!rep [organization] {{left_arrow}}#> | Updated 9/12/23 | ShadowsStride"
+-footer "!rep [organization] {{left_arrow}}#> | Updated 11/14/23 | ShadowsStride"
