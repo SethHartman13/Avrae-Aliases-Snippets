@@ -537,7 +537,7 @@ def run_crafting_session(settings_dictionary: dict, crafting_dict: dict, ch: cha
         else:
             return [True, dice_roll]
 
-    skill_list = ["acrobatics", "animal handling", "arcana", "athletics", "deception", "history", "insight", "intimidation", "investigation", "medicine", "nature", "perception", "performance", "persuasion", "religion", "sleight of hand", "stealth", "survival", 'strength', 'dexterity', 'constitution', 'intellegence', 'wisdom', 'charisma']
+    skill_list = ["acrobatics", "animal handling", "arcana", "athletics", "deception", "history", "insight", "intimidation", "investigation", "medicine", "nature", "perception", "performance", "persuasion", "religion", "sleight of hand", "stealth", "survival", 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma']
 
     if typeof(stat_roll) != "str":
         pass
